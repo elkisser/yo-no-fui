@@ -1,0 +1,93 @@
+---
+import "../styles/global.css";
+import Header from "../components/ui/Header";
+import Footer from "../components/ui/Footer";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yo no fui - Investigación Criminal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta
+      name="description"
+      content="Juego de investigación criminal con casos únicos generados por IA. Cada misterio es irrepetible."
+    />
+    <meta property="og:title" content="Yo no fui - Investigación Criminal" />
+    <meta
+      property="og:description"
+      content="Resuelve misterios únicos generados por IA"
+    />
+    <meta property="og:image" content="/logo.png" />
+    <meta property="og:url" content="https://y-nofui.netlify.app" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+
+  <body
+    class="bg-fondo-principal text-texto-principal min-h-screen flex flex-col"
+  >
+    <!-- Componente Header React -->
+    <Header client:load />
+
+    <!-- Contenido principal -->
+    <main class="flex-grow">
+      <slot />
+    </main>
+
+    <!-- Componente Footer React -->
+    <Footer client:load />
+
+    <!-- Scripts globales -->
+    <script>
+      // Script para manejar el estado del caso activo
+      (function () {
+        // Verificar caso activo al cargar
+        const casoActivo = localStorage.getItem("caso-actual");
+        if (casoActivo) {
+          try {
+            const caso = JSON.parse(casoActivo);
+            document.documentElement.classList.add("caso-activo");
+
+            // Actualizar título si estamos en una página de investigación
+            if (
+              window.location.pathname.includes("/investigar") &&
+              caso.titulo
+            ) {
+              document.title = `${caso.titulo} - Yo no fui`;
+            }
+          } catch (e) {
+            console.error("Error parsing caso activo:", e);
+          }
+        }
+
+        // Prevenir comportamiento por defecto de formularios
+        document.addEventListener("submit", function (e) {
+          if (e.target.tagName === "FORM") {
+            e.preventDefault();
+          }
+        });
+
+        // Mejorar experiencia de scroll suave
+        document.addEventListener("click", function (e) {
+          if (e.target.matches('a[href^="#"]')) {
+            e.preventDefault();
+            const target = document.querySelector(
+              e.target.getAttribute("href")
+            );
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth" });
+            }
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

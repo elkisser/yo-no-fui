@@ -1,0 +1,975 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import {
+  Archive,
+  FileText,
+  Clock,
+  CheckCircle,
+  Search,
+  Download,
+  Trash2,
+  Filter,
+  BarChart3,
+  TrendingUp,
+  Target,
+  AlertCircle,
+  ChevronRight,
+} from "lucide-react";
+---
+
+<MainLayout>
+  <div class="min-h-screen bg-fondo-principal">
+    {/* Fondo decorativo sutil */}
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div
+        class="absolute top-20 -left-20 w-96 h-96 bg-acento-azul/3 rounded-full blur-3xl"
+      >
+      </div>
+      <div
+        class="absolute bottom-20 -right-20 w-96 h-96 bg-acento-turquesa/3 rounded-full blur-3xl"
+      >
+      </div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-12">
+      {/* Header elegante */}
+      <div class="mb-12">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="relative">
+            <div
+              class="absolute -inset-3 bg-gradient-to-r from-acento-azul/20 to-acento-turquesa/20 rounded-full blur-xl opacity-50"
+            >
+            </div>
+            <div
+              class="relative w-14 h-14 rounded-xl bg-gradient-to-br from-acento-azul to-acento-turquesa flex items-center justify-center"
+            >
+              <Archive class="w-7 h-7 text-fondo-principal" />
+            </div>
+          </div>
+          <div>
+            <h1
+              class="text-4xl md:text-5xl font-serif font-bold text-texto-principal mb-2"
+            >
+              Casos Archivados
+            </h1>
+            <p class="text-texto-secundario text-lg">
+              Historial completo de tus investigaciones criminales
+            </p>
+          </div>
+        </div>
+
+        {/* Barra de búsqueda y filtros */}
+        <div class="flex flex-col md:flex-row gap-4 mb-8">
+          <div class="flex-1 relative group">
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-acento-azul/10 to-acento-turquesa/10 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+            </div>
+            <div class="relative">
+              <Search
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-texto-secundario"
+              />
+              <input
+                type="text"
+                placeholder="Buscar casos por título, ID o fecha..."
+                id="buscar-casos"
+                class="w-full pl-12 pr-4 py-3.5 bg-fondo-panel/50 border border-fondo-borde/50 rounded-xl text-texto-principal placeholder:text-texto-secundario/50 focus:outline-none focus:border-acento-azul transition-colors backdrop-blur-sm"
+              />
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              onclick="filtrarCasos('todos')"
+              class="px-5 py-3 bg-fondo-panel/50 border border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul/50 transition-colors flex items-center gap-2 group"
+            >
+              <Filter
+                class="w-4 h-4 group-hover:text-acento-azul transition-colors"
+              />
+              <span class="text-sm font-medium">Todos</span>
+            </button>
+
+            <button
+              onclick="filtrarCasos('resueltos')"
+              class="px-5 py-3 bg-fondo-panel/50 border border-fondo-borde/50 rounded-xl text-texto-principal hover:border-green-500/50 transition-colors flex items-center gap-2 group"
+            >
+              <CheckCircle
+                class="w-4 h-4 group-hover:text-green-400 transition-colors"
+              />
+              <span class="text-sm font-medium">Resueltos</span>
+            </button>
+
+            <button
+              onclick="filtrarCasos('pendientes')"
+              class="px-5 py-3 bg-fondo-panel/50 border border-fondo-borde/50 rounded-xl text-texto-principal hover:border-yellow-500/50 transition-colors flex items-center gap-2 group"
+            >
+              <Clock
+                class="w-4 h-4 group-hover:text-yellow-400 transition-colors"
+              />
+              <span class="text-sm font-medium">Pendientes</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Contenido principal */}
+      <div class="grid lg:grid-cols-3 gap-8">
+        {/* Panel izquierdo - Lista de casos */}
+        <div class="lg:col-span-2">
+          <div
+            class="bg-fondo-panel/30 backdrop-blur-sm border border-fondo-borde/50 rounded-2xl overflow-hidden"
+          >
+            {/* Header de la lista */}
+            <div
+              class="p-6 border-b border-fondo-borde/30 bg-gradient-to-r from-fondo-panel/50 to-transparent"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-2xl font-serif text-texto-principal mb-1">
+                    Expedientes
+                  </h2>
+                  <p class="text-sm text-texto-secundario">
+                    <span id="contador-casos">0</span> casos encontrados
+                  </p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <div class="text-sm text-texto-secundario hidden md:block">
+                    Ordenar por:
+                  </div>
+                  <select
+                    id="ordenar-casos"
+                    class="px-4 py-2 bg-fondo-secundario/50 border border-fondo-borde/50 rounded-lg text-texto-principal text-sm focus:outline-none focus:border-acento-azul"
+                  >
+                    <option value="reciente">Más reciente</option>
+                    <option value="antiguo">Más antiguo</option>
+                    <option value="titulo">Título (A-Z)</option>
+                    <option value="estado">Estado</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Lista de casos */}
+            <div class="divide-y divide-fondo-borde/30">
+              <div id="casos-lista" class="min-h-[400px]">
+                <!-- Los casos se cargarán aquí -->
+              </div>
+
+              <!-- Estado vacío -->
+              <div id="sin-casos" class="hidden p-12 text-center">
+                <div class="max-w-sm mx-auto">
+                  <div
+                    class="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-fondo-borde/20 to-fondo-borde/10 flex items-center justify-center"
+                  >
+                    <Archive class="w-12 h-12 text-texto-secundario/30" />
+                  </div>
+
+                  <h3 class="text-xl font-serif text-texto-principal mb-3">
+                    Archivo vacío
+                  </h3>
+
+                  <p class="text-texto-secundario mb-8">
+                    Aún no has investigado ningún caso. Comienza una nueva
+                    investigación para llenar este archivo.
+                  </p>
+
+                  <a
+                    href="/nuevo-caso"
+                    class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal font-medium rounded-xl hover:opacity-90 transition-all duration-300 transform hover:scale-105"
+                  >
+                    <FileText class="w-5 h-5" />
+                    <span>Generar primer caso</span>
+                    <ChevronRight class="w-5 h-5" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Panel derecho - Estadísticas y acciones */}
+        <div class="space-y-8">
+          {/* Tarjeta de estadísticas */}
+          <div
+            class="bg-fondo-panel/30 backdrop-blur-sm border border-fondo-borde/50 rounded-2xl p-6"
+          >
+            <div class="flex items-center gap-3 mb-6">
+              <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-acento-azul/20 to-acento-turquesa/20 flex items-center justify-center"
+              >
+                <BarChart3 class="w-6 h-6 text-acento-azul" />
+              </div>
+              <h3 class="text-xl font-serif text-texto-principal">
+                Estadísticas
+              </h3>
+            </div>
+
+            <div class="space-y-5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <FileText class="w-5 h-5 text-texto-secundario" />
+                  <span class="text-texto-secundario">Casos totales</span>
+                </div>
+                <span
+                  class="text-2xl font-bold text-texto-principal"
+                  id="total-casos">0</span
+                >
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <CheckCircle class="w-5 h-5 text-green-400" />
+                  <span class="text-texto-secundario">Resueltos</span>
+                </div>
+                <span
+                  class="text-2xl font-bold text-green-400"
+                  id="casos-resueltos">0</span
+                >
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <Clock class="w-5 h-5 text-yellow-400" />
+                  <span class="text-texto-secundario">Pendientes</span>
+                </div>
+                <span
+                  class="text-2xl font-bold text-yellow-400"
+                  id="casos-pendientes">0</span
+                >
+              </div>
+
+              <div class="pt-4 border-t border-fondo-borde/30">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-3">
+                    <TrendingUp class="w-5 h-5 text-acento-turquesa" />
+                    <span class="text-texto-secundario">Tasa de éxito</span>
+                  </div>
+                  <span
+                    class="text-2xl font-bold text-acento-turquesa"
+                    id="tasa-exito">0%</span
+                  >
+                </div>
+                <div
+                  class="w-full h-2 bg-fondo-borde/50 rounded-full overflow-hidden"
+                >
+                  <div
+                    id="barra-exito"
+                    class="h-full bg-gradient-to-r from-acento-azul to-acento-turquesa rounded-full transition-all duration-1000"
+                    style="width: 0%"
+                  >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tarjeta de caso activo */}
+          <div
+            id="tarjeta-activo"
+            class="hidden bg-gradient-to-br from-acento-azul/10 to-acento-turquesa/10 border border-acento-azul/30 rounded-2xl p-6"
+          >
+            <div class="flex items-center gap-3 mb-4">
+              <div
+                class="w-10 h-10 rounded-lg bg-acento-azul/20 flex items-center justify-center"
+              >
+                <Target class="w-5 h-5 text-acento-azul" />
+              </div>
+              <h3 class="text-lg font-serif text-texto-principal">
+                Caso activo
+              </h3>
+            </div>
+
+            <div class="mb-4">
+              <h4
+                id="titulo-activo"
+                class="text-texto-principal font-medium mb-1"
+              >
+              </h4>
+              <p class="text-sm text-texto-secundario">
+                <span id="tiempo-activo"></span> de investigación
+              </p>
+            </div>
+
+            <a
+              href="/investigar"
+              class="block w-full py-3 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal text-center font-medium rounded-lg hover:opacity-90 transition-opacity"
+            >
+              Continuar investigación
+            </a>
+          </div>
+
+          {/* Tarjeta de acciones */}
+          <div
+            class="bg-fondo-panel/30 backdrop-blur-sm border border-fondo-borde/50 rounded-2xl p-6"
+          >
+            <h3 class="text-lg font-serif text-texto-principal mb-6">
+              Gestión del archivo
+            </h3>
+
+            <div class="space-y-4">
+              <button
+                onclick="exportarHistorial()"
+                class="w-full py-3.5 bg-fondo-secundario/50 border border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul/50 transition-all duration-300 flex items-center justify-center gap-3 group hover:bg-fondo-panel/30"
+              >
+                <Download
+                  class="w-5 h-5 text-texto-secundario group-hover:text-acento-azul transition-colors"
+                />
+                <span class="font-medium">Exportar historial</span>
+              </button>
+
+              <button
+                onclick="limpiarHistorial()"
+                class="w-full py-3.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 hover:bg-red-500/20 transition-all duration-300 flex items-center justify-center gap-3 group"
+              >
+                <Trash2
+                  class="w-5 h-5 group-hover:scale-110 transition-transform"
+                />
+                <span class="font-medium">Limpiar archivo</span>
+              </button>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-fondo-borde/30">
+              <div class="flex items-start gap-3">
+                <AlertCircle
+                  class="w-5 h-5 text-texto-secundario/60 flex-shrink-0 mt-0.5"
+                />
+                <p class="text-xs text-texto-secundario/60 leading-relaxed">
+                  El archivo se almacena localmente en tu navegador. Para
+                  respaldo permanente, exporta regularmente tu historial.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmación -->
+  <div
+    id="modal-confirmacion"
+    class="fixed inset-0 z-50 hidden transition-all duration-300 opacity-0 pointer-events-none"
+  >
+    <div
+      class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+      onclick="cerrarModal()"
+    >
+    </div>
+    <div
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-fondo-principal border border-fondo-borde rounded-2xl shadow-2xl scale-95 transition-all duration-300"
+      id="modal-content"
+    >
+      <div class="flex items-center gap-3 mb-4" id="modal-header">
+        <!-- Icono dinámico -->
+      </div>
+
+      <h3
+        id="modal-titulo"
+        class="text-xl font-serif text-texto-principal mb-2"
+      >
+      </h3>
+      <p id="modal-mensaje" class="text-texto-secundario mb-8 leading-relaxed">
+      </p>
+
+      <div class="flex justify-end gap-3">
+        <button
+          onclick="cerrarModal()"
+          class="px-5 py-2.5 rounded-xl border border-fondo-borde text-texto-secundario hover:text-texto-principal hover:bg-fondo-secundario transition-all duration-200 font-medium"
+        >
+          Cancelar
+        </button>
+        <button
+          id="modal-accion-btn"
+          class="px-5 py-2.5 rounded-xl text-fondo-principal font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+        >
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Animaciones */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    /* Clases para el modal activo */
+    #modal-confirmacion.activo {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #modal-confirmacion.activo #modal-content {
+      transform: translate(-50%, -50%) scale(100%);
+    }
+
+    /* Efectos hover para tarjetas */
+    .caso-card {
+      transition: all 0.3s ease;
+    }
+
+    .caso-card:hover {
+      background: linear-gradient(
+        90deg,
+        rgba(77, 163, 255, 0.05) 0%,
+        rgba(94, 234, 212, 0.02) 100%
+      );
+      border-color: rgba(77, 163, 255, 0.3);
+      transform: translateX(4px);
+    }
+  </style>
+
+  <script>
+    import {
+      Archive,
+      FileText,
+      Clock,
+      CheckCircle,
+      Search,
+      Download,
+      Trash2,
+      Filter,
+      BarChart3,
+      TrendingUp,
+      Target,
+      AlertCircle,
+      ChevronRight,
+      AlertTriangle,
+    } from "lucide-react";
+
+    // Variables globales
+    let historialOriginal = [];
+    let historialFiltrado = [];
+    let filtroActual = "todos";
+    let accionPendiente = null; // Para guardar la acción del modal
+
+    // Cargar historial de casos
+    function cargarHistorial() {
+      try {
+        historialOriginal = JSON.parse(
+          localStorage.getItem("historial-casos") || "[]"
+        );
+        aplicarFiltro();
+        mostrarCasoActivo();
+      } catch (error) {
+        console.error("Error cargando historial:", error);
+        historialOriginal = [];
+        mostrarSinCasos();
+      }
+    }
+
+    // Aplicar filtro actual
+    function aplicarFiltro() {
+      const contador = document.getElementById("contador-casos");
+
+      switch (filtroActual) {
+        case "resueltos":
+          historialFiltrado = historialOriginal.filter((c) => c.resuelto);
+          break;
+        case "pendientes":
+          historialFiltrado = historialOriginal.filter((c) => !c.resuelto);
+          break;
+        case "todos":
+        default:
+          historialFiltrado = [...historialOriginal];
+      }
+
+      // Aplicar búsqueda si existe
+      const busquedaInput = document.getElementById("buscar-casos");
+      if (busquedaInput && busquedaInput.value) {
+        const term = busquedaInput.value.toLowerCase();
+        historialFiltrado = historialFiltrado.filter(
+          (caso) =>
+            (caso.titulo && caso.titulo.toLowerCase().includes(term)) ||
+            (caso.casoId && caso.casoId.toLowerCase().includes(term)) ||
+            (caso.fecha &&
+              new Date(caso.fecha)
+                .toLocaleDateString()
+                .toLowerCase()
+                .includes(term))
+        );
+      }
+
+      // Aplicar orden
+      const ordenInput = document.getElementById("ordenar-casos");
+      if (ordenInput) {
+        ordenarCasos(ordenInput.value);
+      }
+
+      if (contador) contador.textContent = historialFiltrado.length;
+      actualizarEstadisticas();
+
+      if (historialFiltrado.length === 0) {
+        mostrarSinCasos();
+      } else {
+        mostrarCasos();
+      }
+    }
+
+    // Ordenar casos
+    function ordenarCasos(orden) {
+      historialFiltrado.sort((a, b) => {
+        switch (orden) {
+          case "antiguo":
+            return new Date(a.fecha) - new Date(b.fecha);
+          case "titulo":
+            return (a.titulo || "").localeCompare(b.titulo || "");
+          case "estado":
+            return (b.resuelto ? 1 : 0) - (a.resuelto ? 1 : 0);
+          case "reciente":
+          default:
+            return new Date(b.fecha) - new Date(a.fecha);
+        }
+      });
+    }
+
+    // Mostrar lista de casos
+    function mostrarCasos() {
+      const casosLista = document.getElementById("casos-lista");
+      const sinCasos = document.getElementById("sin-casos");
+
+      if (sinCasos) sinCasos.classList.add("hidden");
+      if (casosLista) {
+        casosLista.classList.remove("hidden");
+        casosLista.innerHTML = historialFiltrado
+          .map((caso, index) => {
+            const fecha = new Date(caso.fecha);
+            const fechaFormateada = fecha.toLocaleDateString("es-ES", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+            });
+
+            const tiempo = fecha.toLocaleTimeString("es-ES", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            return `
+            <div class="caso-card p-5 border-b border-fondo-borde/30 last:border-b-0 animate-fade-in-up group/card" 
+                 style="animation-delay: ${index * 0.05}s">
+              <div class="flex items-start justify-between">
+                <div class="flex-1 min-w-0 pr-4">
+                  <div class="flex items-center gap-3 mb-3">
+                    <div class="flex items-center gap-2">
+                      <div class="w-2 h-2 rounded-full ${caso.resuelto ? "bg-green-400" : "bg-yellow-400"}"></div>
+                      <span class="text-xs font-medium px-2.5 py-1 rounded-full ${caso.resuelto ? "bg-green-400/10 text-green-400" : "bg-yellow-400/10 text-yellow-400"}">
+                        ${caso.resuelto ? "Resuelto" : "Pendiente"}
+                      </span>
+                    </div>
+                    
+                    <span class="text-xs text-texto-secundario/70">
+                      ${fechaFormateada} • ${tiempo}
+                    </span>
+                  </div>
+                  
+                  <h3 class="text-lg font-medium text-texto-principal mb-2 truncate">
+                    ${caso.titulo || "Caso sin título"}
+                  </h3>
+                  
+                  <div class="flex items-center gap-4 text-sm text-texto-secundario">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                      <!-- FileText icon placeholder since we are inside a template literal without component context -->
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      <span class="truncate">ID: ${caso.casoId.substring(0, 8)}...</span>
+                    </div>
+                    
+                    ${
+                      caso.tiempo
+                        ? `
+                      <div class="flex items-center gap-1.5 whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>${caso.tiempo}</span>
+                      </div>
+                    `
+                        : ""
+                    }
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                   <button 
+                    onclick="confirmarEliminarCaso('${caso.casoId}')"
+                    class="p-2 text-texto-secundario hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover/card:opacity-100 focus:opacity-100"
+                    title="Eliminar caso"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                  </button>
+
+                  <button 
+                    onclick="verCaso('${caso.casoId}')"
+                    class="px-4 py-2 bg-fondo-borde/50 hover:bg-acento-azul/20 text-texto-principal hover:text-acento-azul rounded-lg transition-all duration-300 text-sm font-medium flex items-center gap-2 group"
+                  >
+                    <span>Ver</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          })
+          .join("");
+      }
+    }
+
+    // Mostrar estado vacío
+    function mostrarSinCasos() {
+      const casosLista = document.getElementById("casos-lista");
+      const sinCasos = document.getElementById("sin-casos");
+
+      if (casosLista) casosLista.classList.add("hidden");
+      if (sinCasos) sinCasos.classList.remove("hidden");
+    }
+
+    // Actualizar estadísticas
+    function actualizarEstadisticas() {
+      const total = historialOriginal.length;
+      const resueltos = historialOriginal.filter((c) => c.resuelto).length;
+      const pendientes = total - resueltos;
+      const tasa = total > 0 ? Math.round((resueltos / total) * 100) : 0;
+
+      // Actualizar números
+      const els = {
+        total: document.getElementById("total-casos"),
+        resueltos: document.getElementById("casos-resueltos"),
+        pendientes: document.getElementById("casos-pendientes"),
+        tasa: document.getElementById("tasa-exito"),
+        barra: document.getElementById("barra-exito"),
+      };
+
+      if (els.total) els.total.textContent = total;
+      if (els.resueltos) els.resueltos.textContent = resueltos;
+      if (els.pendientes) els.pendientes.textContent = pendientes;
+      if (els.tasa) els.tasa.textContent = `${tasa}%`;
+
+      // Animar barra de progreso
+      if (els.barra) {
+        els.barra.style.width = "0%";
+        setTimeout(() => {
+          els.barra.style.width = `${tasa}%`;
+        }, 100);
+      }
+    }
+
+    // Mostrar caso activo si existe
+    function mostrarCasoActivo() {
+      const tarjeta = document.getElementById("tarjeta-activo");
+      // Use the storage key that Zustand uses
+      const storeData = localStorage.getItem("yo-no-fui-storage");
+
+      if (tarjeta && storeData) {
+        try {
+          const parsedStore = JSON.parse(storeData);
+          const caso = parsedStore.state && parsedStore.state.casoActual;
+
+          // Verify if there is a real active case
+          if (caso && caso.titulo && caso.id) {
+            const tiempoInicio = parsedStore.state.tiempoInicio
+              ? new Date(parsedStore.state.tiempoInicio)
+              : new Date();
+            const ahora = new Date();
+            const diffHoras = Math.floor(
+              (ahora - tiempoInicio) / (1000 * 60 * 60)
+            );
+            const diffMinutos =
+              Math.floor((ahora - tiempoInicio) / (1000 * 60)) % 60;
+
+            const tituloEl = document.getElementById("titulo-activo");
+            const tiempoEl = document.getElementById("tiempo-activo");
+
+            if (tituloEl) tituloEl.textContent = caso.titulo;
+            if (tiempoEl)
+              tiempoEl.textContent =
+                diffHoras > 0
+                  ? `${diffHoras}h ${diffMinutos}m`
+                  : `${diffMinutos}m`;
+
+            tarjeta.classList.remove("hidden");
+          } else {
+            tarjeta.classList.add("hidden");
+          }
+        } catch (error) {
+          console.error("Error parsing game store:", error);
+          tarjeta.classList.add("hidden");
+        }
+      } else if (tarjeta) {
+        tarjeta.classList.add("hidden");
+      }
+    }
+
+    // Lógica del MODAL
+    function abrirModal(tipo, titulo, mensaje, accion) {
+      const modal = document.getElementById("modal-confirmacion");
+      const modalTitulo = document.getElementById("modal-titulo");
+      const modalMensaje = document.getElementById("modal-mensaje");
+      const modalBtn = document.getElementById("modal-accion-btn");
+      const modalHeader = document.getElementById("modal-header");
+
+      if (!modal) return;
+
+      modalTitulo.textContent = titulo;
+      modalMensaje.textContent = mensaje;
+
+      // Resetear clases del botón
+      modalBtn.className =
+        "px-5 py-2.5 rounded-xl font-medium shadow-lg transition-all duration-200 transform hover:scale-105";
+
+      // Remove old event listeners by cloning
+      const newBtn = modalBtn.cloneNode(true);
+      modalBtn.parentNode.replaceChild(newBtn, modalBtn);
+
+      // Add new listener
+      if (accion) {
+        newBtn.onclick = () => {
+          accion();
+          cerrarModal();
+        };
+      } else {
+        newBtn.onclick = cerrarModal;
+      }
+
+      if (tipo === "peligro") {
+        newBtn.classList.add(
+          "bg-gradient-to-r",
+          "from-red-500",
+          "to-red-600",
+          "text-white",
+          "hover:shadow-red-500/30"
+        );
+        newBtn.textContent = "Eliminar";
+        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></div>`;
+      } else {
+        newBtn.classList.add(
+          "bg-gradient-to-r",
+          "from-acento-azul",
+          "to-acento-turquesa",
+          "text-fondo-principal",
+          "hover:shadow-acento-azul/30"
+        );
+        newBtn.textContent = "Continuar";
+        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-acento-azul/20 flex items-center justify-center text-acento-azul"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>`;
+      }
+
+      modal.classList.remove("hidden");
+      setTimeout(() => modal.classList.add("activo"), 10);
+    }
+
+    function cerrarModal() {
+      const modal = document.getElementById("modal-confirmacion");
+      if (!modal) return;
+
+      modal.classList.remove("activo");
+      setTimeout(() => modal.classList.add("hidden"), 300);
+    }
+
+    // Funciones de filtro
+    function filtrarCasos(tipo) {
+      filtroActual = tipo;
+      aplicarFiltro();
+
+      document
+        .querySelectorAll('button[onclick^="filtrarCasos"]')
+        .forEach((btn) => {
+          btn.classList.remove("bg-acento-azul/10", "border-acento-azul/50");
+        });
+
+      const botonActual = document.querySelector(
+        `button[onclick="filtrarCasos('${tipo}')"]`
+      );
+      if (botonActual) {
+        botonActual.classList.add("bg-acento-azul/10", "border-acento-azul/50");
+      }
+    }
+
+    // ELIMINAR CASO INDIVIDUAL
+    function confirmarEliminarCaso(casoId) {
+      abrirModal(
+        "peligro",
+        "Eliminar expediente",
+        "¿Estás seguro de que quieres eliminar este caso permanentemente? Esta acción no se puede deshacer.",
+        () => eliminarCaso(casoId)
+      );
+    }
+
+    function eliminarCaso(casoId) {
+      // Filter out ONLY the case with the matching ID.
+      // If multiple cases have the same ID (bug), this might delete all of them.
+      // But assuming IDs are unique (uuids), this is correct.
+      // To be safer, we can delete only the first match or ensure IDs are unique.
+      // Here we filter by ID.
+
+      const indicesToRemove = [];
+      historialOriginal.forEach((c, index) => {
+        if (c.casoId === casoId) indicesToRemove.push(index);
+      });
+
+      if (indicesToRemove.length > 0) {
+        // Remove only the first match to avoid mass deletion if IDs somehow duplicated
+        // actually, if IDs are duplicated, we probably WANT to remove the duplicate
+        // but user complains about deleting "two cases".
+
+        // Let's rewrite strictly to remove by filtering the ID
+        historialOriginal = historialOriginal.filter(
+          (c) => c.casoId !== casoId
+        );
+
+        localStorage.setItem(
+          "historial-casos",
+          JSON.stringify(historialOriginal)
+        );
+        aplicarFiltro();
+      }
+    }
+
+    // Ver caso seleccionado
+    function verCaso(casoId) {
+      const caso = historialOriginal.find((c) => c.casoId === casoId);
+
+      if (caso && caso.data) {
+        abrirModal(
+          "info",
+          "Abrir Expediente",
+          "Esto reemplazará cualquier investigación que tengas activa en este momento. ¿Deseas continuar revisando este caso antiguo?",
+          () => cargarCasoEnJuego(caso)
+        );
+      } else if (caso) {
+        abrirModal(
+          "info",
+          "Datos Incompletos",
+          `RESUMEN DEL CASO (Modo Lectura Limitado)\n\n` +
+            `Título: ${caso.titulo || "Sin título"}\n` +
+            `Estado: ${caso.resuelto ? "Resuelto" : "Pendiente"}\n` +
+            `Tiempo: ${caso.tiempo || "N/A"}`,
+          () => {}
+        );
+      }
+    }
+
+    function cargarCasoEnJuego(caso) {
+      try {
+        const currentStore = JSON.parse(
+          localStorage.getItem("yo-no-fui-storage") ||
+            '{"state":{},"version":0}'
+        );
+
+        const newState = {
+          ...currentStore,
+          state: {
+            ...currentStore.state,
+            casoActual: caso.data,
+            pistasDescubiertas: [],
+            ayudasUsadas: [],
+            hipotesisActual: null,
+            errores: 0,
+            tiempoInicio: null,
+          },
+        };
+
+        localStorage.setItem("yo-no-fui-storage", JSON.stringify(newState));
+        window.location.href = "/investigar";
+      } catch (e) {
+        console.error("Error al cargar el caso:", e);
+        alert("Error crítico al cargar el expediente.");
+      }
+    }
+
+    // Exportar historial
+    function exportarHistorial() {
+      if (historialOriginal.length === 0) {
+        abrirModal(
+          "info",
+          "Archivo Vacío",
+          "No hay casos para exportar.",
+          null
+        );
+        return;
+      }
+
+      const datos = {
+        historial: historialOriginal,
+        exportadoEn: new Date().toISOString(),
+        totalCasos: historialOriginal.length,
+        casosResueltos: historialOriginal.filter((c) => c.resuelto).length,
+        version: "Yo no fui v1.0",
+      };
+
+      const dataStr = JSON.stringify(datos, null, 2);
+      const dataUri =
+        "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+
+      const nombreArchivo = `historial-casos-${new Date().toISOString().split("T")[0]}.json`;
+
+      const link = document.createElement("a");
+      link.setAttribute("href", dataUri);
+      link.setAttribute("download", nombreArchivo);
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Limpiar historial
+    function limpiarHistorial() {
+      if (historialOriginal.length === 0) {
+        abrirModal(
+          "info",
+          "Archivo Vacío",
+          "No tienes casos archivados para eliminar.",
+          null
+        );
+        return;
+      }
+
+      abrirModal(
+        "peligro",
+        "Eliminar TODO el historial",
+        `Esta acción eliminará permanentemente los ${historialOriginal.length} casos de tu archivo. ¿Estás absolutamente seguro?`,
+        () => {
+          localStorage.removeItem("historial-casos");
+          historialOriginal = [];
+          aplicarFiltro();
+        }
+      );
+    }
+
+    // Inicializar al cargar la página
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarHistorial();
+
+      // Configurar eventos
+      const buscarInput = document.getElementById("buscar-casos");
+      if (buscarInput) {
+        buscarInput.addEventListener("input", aplicarFiltro);
+      }
+
+      const ordenarSelect = document.getElementById("ordenar-casos");
+      if (ordenarSelect) {
+        ordenarSelect.addEventListener("change", aplicarFiltro);
+      }
+
+      // Aplicar filtro inicial
+      filtrarCasos("todos");
+    });
+
+    // Hacer funciones disponibles globalmente
+    window.verCaso = verCaso;
+    window.filtrarCasos = filtrarCasos;
+    window.exportarHistorial = exportarHistorial;
+    window.limpiarHistorial = limpiarHistorial;
+    window.confirmarEliminarCaso = confirmarEliminarCaso;
+    window.cerrarModal = cerrarModal;
+  </script>
+</MainLayout>

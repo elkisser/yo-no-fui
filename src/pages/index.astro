@@ -1,0 +1,337 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { FileText, Search, Users, Zap, Target, Clock } from "lucide-react";
+---
+
+<MainLayout>
+  <!-- Hero Section con efecto parallax -->
+  <div class="relative min-h-screen overflow-hidden">
+    <!-- Fondo con efectos -->
+    <div
+      class="absolute inset-0 bg-gradient-to-br from-fondo-principal via-fondo-secundario to-fondo-principal"
+    >
+    </div>
+
+    <!-- Elementos decorativos -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-acento-azul/5 rounded-full blur-3xl"
+      >
+      </div>
+      <div
+        class="absolute bottom-20 right-10 w-80 h-80 bg-acento-turquesa/5 rounded-full blur-3xl"
+      >
+      </div>
+      <div
+        class="absolute top-1/3 right-1/4 w-64 h-64 bg-purple-500/3 rounded-full blur-3xl"
+      >
+      </div>
+
+      <!-- Líneas de cuadrícula sutiles -->
+      <div
+        class="absolute inset-0"
+        style="
+        background-image: 
+          linear-gradient(to right, rgba(77, 163, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(77, 163, 255, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+      "
+      >
+      </div>
+    </div>
+
+    <div class="relative z-10">
+      <!-- Hero Principal -->
+      <section class="pt-24 pb-32 px-4">
+        <div class="max-w-6xl mx-auto">
+          <div class="text-center mb-16">
+            <div class="inline-block mb-8">
+              <div class="relative">
+                <div
+                  class="absolute -inset-1 bg-gradient-to-r from-acento-azul to-acento-turquesa rounded-full blur opacity-30 animate-pulse"
+                >
+                </div>
+                <img
+                  src="/logo.png"
+                  alt="Yo no fui"
+                  class="relative h-36 w-auto mx-auto"
+                />
+              </div>
+            </div>
+
+            <p
+              class="text-xl md:text-2xl text-texto-secundario max-w-3xl mx-auto mb-12 leading-relaxed"
+            >
+              Adéntrate en un mundo de misterios únicos. Cada caso es una
+              narrativa original generada por IA, desafiando tu capacidad
+              deductiva en cada partida.
+            </p>
+
+            <div
+              class="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            >
+              <a
+                href="/nuevo-caso"
+                class="group px-8 py-4 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal text-lg font-bold rounded-xl hover:shadow-2xl hover:shadow-acento-azul/30 transition-all duration-500 transform hover:scale-105 active:scale-95 flex items-center justify-center space-x-3"
+              >
+                <FileText
+                  class="w-6 h-6 group-hover:rotate-12 transition-transform"
+                />
+                <span>Iniciar Nueva Investigación</span>
+              </a>
+
+              <a
+                href="/investigar"
+                class="group px-8 py-4 bg-fondo-panel/50 border-2 border-fondo-borde text-texto-principal text-lg font-bold rounded-xl hover:border-acento-turquesa/50 hover:bg-fondo-panel transition-all duration-500 flex items-center justify-center space-x-3"
+              >
+                <Search
+                  class="w-6 h-6 group-hover:text-acento-turquesa transition-colors"
+                />
+                <span>Continuar Expediente</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Estadísticas Destacadas -->
+          <div
+            class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-20"
+          >
+            <div
+              class="text-center p-6 bg-fondo-panel/30 backdrop-blur-sm rounded-2xl border border-fondo-borde/50"
+            >
+              <Target class="w-10 h-10 text-acento-azul mx-auto mb-4" />
+              <div class="text-3xl font-bold text-texto-principal mb-2">∞</div>
+              <div class="text-texto-secundario text-sm">Casos Posibles</div>
+            </div>
+
+            <div
+              class="text-center p-6 bg-fondo-panel/30 backdrop-blur-sm rounded-2xl border border-fondo-borde/50"
+            >
+              <Clock class="w-10 h-10 text-acento-turquesa mx-auto mb-4" />
+              <div class="text-3xl font-bold text-texto-principal mb-2">
+                20-40
+              </div>
+              <div class="text-texto-secundario text-sm">Minutos por Caso</div>
+            </div>
+
+            <div
+              class="text-center p-6 bg-fondo-panel/30 backdrop-blur-sm rounded-2xl border border-fondo-borde/50"
+            >
+              <Users class="w-10 h-10 text-acento-azul mx-auto mb-4" />
+              <div class="text-3xl font-bold text-texto-principal mb-2">3+</div>
+              <div class="text-texto-secundario text-sm">
+                Sospechosos por Caso
+              </div>
+            </div>
+
+            <div
+              class="text-center p-6 bg-fondo-panel/30 backdrop-blur-sm rounded-2xl border border-fondo-borde/50"
+            >
+              <Zap class="w-10 h-10 text-acento-turquesa mx-auto mb-4" />
+              <div class="text-3xl font-bold text-texto-principal mb-2">AI</div>
+              <div class="text-texto-secundario text-sm">
+                Generación Dinámica
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Características -->
+      <section class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+          <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold mb-6">
+              <span
+                class="bg-gradient-to-r from-acento-azul via-acento-turquesa to-acento-azul bg-clip-text text-transparent"
+              >
+                Investigación de Élite
+              </span>
+            </h2>
+            <p class="text-xl text-texto-secundario max-w-3xl mx-auto">
+              Herramientas y características diseñadas para investigadores
+              exigentes
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-8">
+            <!-- Característica 1 -->
+            <div class="group relative">
+              <div
+                class="absolute -inset-0.5 bg-gradient-to-r from-acento-azul to-acento-turquesa rounded-2xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+              >
+              </div>
+              <div
+                class="relative bg-fondo-panel rounded-2xl p-8 border border-fondo-borde group-hover:border-acento-azul/50 transition-all duration-500"
+              >
+                <div
+                  class="w-16 h-16 mb-6 rounded-2xl bg-acento-azul/20 flex items-center justify-center group-hover:bg-acento-azul/30 transition-colors"
+                >
+                  <FileText class="w-8 h-8 text-acento-azul" />
+                </div>
+                <h3 class="text-2xl font-serif mb-4">Casos Únicos</h3>
+                <p class="text-texto-secundario leading-relaxed">
+                  Cada investigación es una narrativa original generada por IA
+                  avanzada. Sin casos repetidos, cada partida es una experiencia
+                  nueva.
+                </p>
+              </div>
+            </div>
+
+            <!-- Característica 2 -->
+            <div class="group relative">
+              <div
+                class="absolute -inset-0.5 bg-gradient-to-r from-acento-turquesa to-acento-azul rounded-2xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+              >
+              </div>
+              <div
+                class="relative bg-fondo-panel rounded-2xl p-8 border border-fondo-borde group-hover:border-acento-turquesa/50 transition-all duration-500"
+              >
+                <div
+                  class="w-16 h-16 mb-6 rounded-2xl bg-acento-turquesa/20 flex items-center justify-center group-hover:bg-acento-turquesa/30 transition-colors"
+                >
+                  <Search class="w-8 h-8 text-acento-turquesa" />
+                </div>
+                <h3 class="text-2xl font-serif mb-4">Pistas Inteligentes</h3>
+                <p class="text-texto-secundario leading-relaxed">
+                  Sistema de pistas reales y engañosas que desafían tu
+                  pensamiento crítico. Cada evidencia cuenta una parte de la
+                  historia.
+                </p>
+              </div>
+            </div>
+
+            <!-- Característica 3 -->
+            <div class="group relative">
+              <div
+                class="absolute -inset-0.5 bg-gradient-to-r from-acento-azul to-acento-turquesa rounded-2xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-500"
+              >
+              </div>
+              <div
+                class="relative bg-fondo-panel rounded-2xl p-8 border border-fondo-borde group-hover:border-acento-azul/50 transition-all duration-500"
+              >
+                <div
+                  class="w-16 h-16 mb-6 rounded-2xl bg-acento-azul/20 flex items-center justify-center group-hover:bg-acento-azul/30 transition-colors"
+                >
+                  <Users class="w-8 h-8 text-acento-azul" />
+                </div>
+                <h3 class="text-2xl font-serif mb-4">Sospechosos Complejos</h3>
+                <p class="text-texto-secundario leading-relaxed">
+                  Personajes con motivaciones, alibis y secretos. Descubre quién
+                  miente y quién dice la verdad en cada interacción.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Final -->
+      <section class="py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <div class="relative">
+            <div
+              class="absolute -inset-4 bg-gradient-to-r from-acento-azul/20 to-acento-turquesa/20 rounded-3xl blur-2xl"
+            >
+            </div>
+            <div
+              class="relative bg-fondo-panel/30 backdrop-blur-sm rounded-2xl border border-fondo-borde/50 p-12"
+            >
+              <h2 class="text-4xl md:text-5xl font-serif font-bold mb-8">
+                ¿Listo para resolver lo irresoluble?
+              </h2>
+              <p
+                class="text-xl text-texto-secundario mb-10 max-w-2xl mx-auto leading-relaxed"
+              >
+                Únete a la nueva era de investigación criminal. Cada decisión
+                importa, cada pista cuenta, cada caso es histórico.
+              </p>
+              <a
+                href="/nuevo-caso"
+                class="inline-flex items-center justify-center px-10 py-5 bg-gradient-to-r from-acento-azul via-acento-azul to-acento-turquesa text-fondo-principal text-xl font-bold rounded-xl hover:shadow-2xl hover:shadow-acento-azul/40 transition-all duration-500 transform hover:scale-105 active:scale-95 group"
+              >
+                <span>Generar Primer Expediente</span>
+                <svg
+                  class="w-6 h-6 ml-3 transform group-hover:translate-x-2 transition-transform"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </a>
+              <p class="text-texto-secundario/70 text-sm mt-6">
+                Sin registro requerido • Progreso guardado automáticamente •
+                Totalmente gratuito
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <style>
+    /* Animaciones personalizadas */
+    @keyframes float-slow {
+      0%,
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-20px) rotate(180deg);
+      }
+    }
+
+    @keyframes text-glow {
+      0%,
+      100% {
+        text-shadow: 0 0 20px rgba(77, 163, 255, 0.3);
+      }
+      50% {
+        text-shadow: 0 0 40px rgba(77, 163, 255, 0.6);
+      }
+    }
+
+    .animate-float-slow {
+      animation: float-slow 8s ease-in-out infinite;
+    }
+
+    .animate-text-glow {
+      animation: text-glow 4s ease-in-out infinite;
+    }
+
+    /* Efecto de máquina de escribir para títulos */
+    .typewriter {
+      overflow: hidden;
+      border-right: 2px solid #4da3ff;
+      white-space: nowrap;
+      animation:
+        typing 3.5s steps(40, end),
+        blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+      to {
+        width: 100%;
+      }
+    }
+
+    @keyframes blink-caret {
+      from,
+      to {
+        border-color: transparent;
+      }
+      50% {
+        border-color: #4da3ff;
+      }
+    }
+  </style>
+</MainLayout>
