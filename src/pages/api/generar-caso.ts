@@ -145,6 +145,14 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Validar y completar estructura
+    if (!casoGenerado || typeof casoGenerado !== 'object') {
+      throw new Error('Respuesta inválida del generador');
+    }
+
+    if (!casoGenerado.titulo || !casoGenerado.historia || !casoGenerado.ambientacion) {
+      throw new Error('Caso incompleto generado por IA');
+    }
+
     casoGenerado = {
       ...casoGenerado,
       id: `caso_${Date.now()}`,
@@ -161,9 +169,9 @@ export const POST: APIRoute = async ({ request }) => {
     };
 
     // Asegurar arrays
-    casoGenerado.sospechosos = casoGenerado.sospechosos || [];
-    casoGenerado.pistas = casoGenerado.pistas || [];
-    casoGenerado.ayudas = casoGenerado.ayudas || [];
+    casoGenerado.sospechosos = Array.isArray(casoGenerado.sospechosos) ? casoGenerado.sospechosos : [];
+    casoGenerado.pistas = Array.isArray(casoGenerado.pistas) ? casoGenerado.pistas : [];
+    casoGenerado.ayudas = Array.isArray(casoGenerado.ayudas) ? casoGenerado.ayudas : [];
 
     // Asignar IDs únicos
     casoGenerado.sospechosos.forEach((s: any, i: number) => {
@@ -173,6 +181,9 @@ export const POST: APIRoute = async ({ request }) => {
     casoGenerado.pistas.forEach((p: any, i: number) => {
       p.id = p.id || `pista_${i + 1}`;
       p.descubierta = false;
+      if (typeof p.confiable !== 'boolean') p.confiable = true;
+      if (!Array.isArray(p.sospechososVinculados)) p.sospechososVinculados = [];
+      if (!p.relevancia) p.relevancia = 'media';
     });
 
     casoGenerado.ayudas.forEach((a: any, i: number) => {

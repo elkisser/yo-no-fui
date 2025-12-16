@@ -50,7 +50,7 @@ interface GameStore {
   historialCasos: string[];
   errores: number;
   tiempoInicio: Date | null;
-  
+
   setCasoActual: (caso: Caso) => void;
   descubrirPista: (pistaId: string) => void;
   usarAyuda: (ayudaId: string) => boolean;
@@ -71,7 +71,7 @@ export const useGameStore = create<GameStore>()(
       historialCasos: [],
       errores: 0,
       tiempoInicio: null,
-      
+
       setCasoActual: (caso) => set({ 
         casoActual: caso,
         pistasDescubiertas: [],
@@ -80,11 +80,11 @@ export const useGameStore = create<GameStore>()(
         errores: 0,
         tiempoInicio: new Date()
       }),
-      
+
       descubrirPista: (pistaId) => set((state) => ({
         pistasDescubiertas: [...state.pistasDescubiertas, pistaId]
       })),
-      
+
       usarAyuda: (ayudaId) => {
         const state = get();
         if (state.ayudasUsadas.length >= 3 || state.ayudasUsadas.includes(ayudaId)) {
@@ -93,13 +93,13 @@ export const useGameStore = create<GameStore>()(
         set({ ayudasUsadas: [...state.ayudasUsadas, ayudaId] });
         return true;
       },
-      
+
       proponerCulpable: (sospechosoId) => {
         const state = get();
         if (!state.casoActual) return false;
-        
+
         const esCorrecto = sospechosoId === state.casoActual.culpableId;
-        
+
         if (esCorrecto) {
           set({
             casoActual: { ...state.casoActual, resuelto: true },
@@ -108,12 +108,12 @@ export const useGameStore = create<GameStore>()(
         } else {
           set({ errores: state.errores + 1 });
         }
-        
+
         return esCorrecto;
       },
-      
+
       setHipotesis: (hipotesis) => set({ hipotesisActual: hipotesis }),
-      
+
       reiniciarCaso: () => set({
         pistasDescubiertas: [],
         ayudasUsadas: [],
@@ -121,7 +121,7 @@ export const useGameStore = create<GameStore>()(
         errores: 0,
         tiempoInicio: new Date()
       }),
-      
+
       nuevoCaso: () => set({
         casoActual: null,
         pistasDescubiertas: [],
@@ -129,21 +129,21 @@ export const useGameStore = create<GameStore>()(
         hipotesisActual: null,
         tiempoInicio: null
       }),
-      
+
       getTiempoTranscurrido: () => {
         const state = get();
         if (!state.tiempoInicio) return '00:00';
-        
+
         const inicio = new Date(state.tiempoInicio);
         const diffMs = new Date().getTime() - inicio.getTime();
-        
+
         const totalSeconds = Math.floor(diffMs / 1000);
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
-        
+
         const pad = (num: number) => num.toString().padStart(2, '0');
-        
+
         if (hours > 0) {
           return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
         }

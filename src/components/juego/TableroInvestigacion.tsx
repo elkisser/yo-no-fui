@@ -336,12 +336,23 @@ const TableroInvestigacion: React.FC = () => {
     nuevoCaso
   } = useGameStore();
 
+  const [hydrated, setHydrated] = useState(useGameStore.persist.hasHydrated());
   const [panelActivo, setPanelActivo] = useState<'sospechosos' | 'pistas' | 'ayudas'>('sospechosos');
   const [notas, setNotas] = useState('');
   const [proponiendo, setProponiendo] = useState<string | null>(null);
   const [resultado, setResultado] = useState<{ correcto: boolean; mensaje: string } | null>(null);
-  const [tiempoVisual, setTiempoVisual] = useState(getTiempoTranscurrido());
   const [estadisticasFinales, setEstadisticasFinales] = useState<any>(null);
+  const [tiempoVisual, setTiempoVisual] = useState(getTiempoTranscurrido());
+
+  useEffect(() => {
+    if (hydrated) return;
+    const unsub = useGameStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+    });
+    return () => {
+      unsub();
+    };
+  }, [hydrated]);
 
   // Cargar notas guardadas al iniciar
   useEffect(() => {
@@ -353,15 +364,14 @@ const TableroInvestigacion: React.FC = () => {
 
   // Actualizar tiempo cada segundo
   useEffect(() => {
-    // Actualización inicial
     setTiempoVisual(getTiempoTranscurrido());
 
     const timer = setInterval(() => {
       if (casoActual) {
         setTiempoVisual(getTiempoTranscurrido());
       }
-    }, 1000); // Actualizar cada segundo
-    
+    }, 1000);
+
     return () => clearInterval(timer);
   }, [casoActual, getTiempoTranscurrido]);
 
@@ -369,6 +379,24 @@ const TableroInvestigacion: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('notas-investigacion', notas);
   }, [notas]);
+
+  if (!hydrated) {
+    return (
+      <div className="min-h-screen bg-fondo-principal flex flex-col items-center justify-center p-4">
+        <div className="text-center max-w-md animate-fade-in">
+          <div className="mx-auto mb-6 w-24 h-24 rounded-2xl bg-fondo-panel/40 border border-fondo-borde flex items-center justify-center">
+            <FileText className="w-10 h-10 text-acento-azul" />
+          </div>
+          <h2 className="text-3xl font-serif text-texto-principal mb-3">Abriendo expediente...</h2>
+          <p className="text-texto-secundario text-base mb-6 leading-relaxed">Cargando el caso y sincronizando evidencias.</p>
+          <div className="flex items-center justify-center gap-3 text-texto-secundario">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span className="text-sm font-mono tracking-wide">Procesando</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!casoActual) {
     return (
