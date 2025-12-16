@@ -244,7 +244,7 @@ import Logo from "../components/ui/Logo";
           </div>
 
           {/* Características del juego - Estilo perfil criminal */}
-          <div class="max-w-6xl mx-auto mb-20">
+          <div class="max-w-6xl mx-auto mb-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div
                 class="bg-gradient-to-br from-fondo-panel/50 to-fondo-panel/30 backdrop-blur-sm border border-fondo-borde/50 rounded-xl p-6 hover:border-acento-azul/50 transition-all duration-300"
@@ -352,7 +352,7 @@ import Logo from "../components/ui/Logo";
 
       {/* Cómo jugar - Estilo manual de detective */}
       <section
-        class="py-20 px-4 bg-gradient-to-b from-transparent to-fondo-secundario/30"
+        class="py-32 px-4 bg-gradient-to-b from-transparent to-fondo-secundario/30"
       >
         <div class="max-w-6xl mx-auto">
           <div class="text-center mb-16">
@@ -460,81 +460,6 @@ import Logo from "../components/ui/Logo";
                 <p class="text-texto-secundario text-sm leading-relaxed">
                   Propón al culpable y descubre si acertaste
                 </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Final - Estilo llamado a misión */}
-      <section class="py-24 px-4">
-        <div class="max-w-4xl mx-auto">
-          <div class="relative">
-            {/* Fondo de mesa de detective */}
-            <div
-              class="absolute inset-0 bg-gradient-to-br from-fondo-panel/40 to-fondo-secundario/20 backdrop-blur-sm rounded-2xl border-2 border-fondo-borde/50"
-            >
-            </div>
-
-            {/* Elementos de escritorio */}
-            <div
-              class="absolute top-6 left-6 w-12 h-1 bg-gradient-to-r from-acento-azul to-transparent rounded-full"
-            >
-            </div>
-            <div
-              class="absolute top-6 right-6 w-12 h-1 bg-gradient-to-l from-acento-turquesa to-transparent rounded-full"
-            >
-            </div>
-            <div
-              class="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-fondo-borde to-transparent"
-            >
-            </div>
-
-            <div class="relative p-12 text-center">
-              {/* Icono de misión */}
-              <div
-                class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-acento-azul/20 to-acento-turquesa/20 border-2 border-acento-azul/30 mb-8"
-              >
-                <Target class="w-10 h-10 text-acento-azul" />
-              </div>
-
-              <h2 class="text-4xl font-bold text-texto-principal mb-6">
-                <span
-                  class="bg-gradient-to-r from-acento-azul to-acento-turquesa bg-clip-text text-transparent"
-                >
-                  MISIÓN DISPONIBLE
-                </span>
-              </h2>
-
-              <p
-                class="text-xl text-texto-secundario mb-10 max-w-2xl mx-auto leading-relaxed"
-              >
-                Un nuevo caso requiere tu atención. La verdad espera ser
-                descubierta. ¿Aceptas el desafío?
-              </p>
-
-              {/* Botón de acción principal */}
-              <div class="relative inline-block group">
-                <div
-                  class="absolute -inset-3 bg-gradient-to-r from-acento-azul/20 to-acento-turquesa/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                >
-                </div>
-
-                <a
-                  href="/nuevo-caso"
-                  class="relative px-12 py-5 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal text-xl font-bold rounded-xl hover:shadow-2xl hover:shadow-acento-azul/30 transition-all duration-300 flex items-center justify-center gap-4"
-                >
-                  <Sparkles class="w-6 h-6" />
-                  <span>ACEPTAR MISIÓN</span>
-                  <ChevronRight class="w-6 h-6" />
-                </a>
-
-                {/* Nota de misión */}
-                <div
-                  class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm text-texto-secundario/60 whitespace-nowrap"
-                >
-                  Expediente confidencial • IA generativa • Sin registro
-                </div>
               </div>
             </div>
           </div>
