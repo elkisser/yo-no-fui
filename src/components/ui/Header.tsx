@@ -7,14 +7,23 @@ const Header: React.FC = () => {
   const [casoActivo, setCasoActivo] = useState<any>(null);
 
   useEffect(() => {
-    const casoGuardado = localStorage.getItem('caso-actual');
-    if (casoGuardado) {
+    const syncCasoActivo = () => {
+      const storeData = localStorage.getItem('yo-no-fui-storage');
+      if (!storeData) return setCasoActivo(null);
+
       try {
-        setCasoActivo(JSON.parse(casoGuardado));
-      } catch (error) {
-        console.error('Error parsing caso activo:', error);
+        const parsed = JSON.parse(storeData);
+        const caso = parsed?.state?.casoActual;
+        setCasoActivo(caso && !caso.resuelto ? caso : null);
+      } catch {
+        setCasoActivo(null);
       }
-    }
+    };
+
+    syncCasoActivo();
+    window.addEventListener('storage', syncCasoActivo);
+
+    return () => window.removeEventListener('storage', syncCasoActivo);
   }, []);
 
   return (
@@ -25,7 +34,7 @@ const Header: React.FC = () => {
           <Logo showText size="md" />
 
           {/* Navegación */}
-          <Navigation />
+          <Navigation casoActivo={!!casoActivo} />
 
           {/* Indicador de estado */}
           <div className="hidden lg:flex items-center gap-4">

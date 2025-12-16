@@ -4,16 +4,16 @@
 
 @layer base {
   :root {
-    --scrollbar-track: #101A2E;
-    --scrollbar-thumb: #1F2A44;
-    --scrollbar-thumb-hover: #4DA3FF;
+    --scrollbar-track: #101a2e;
+    --scrollbar-thumb: #1f2a44;
+    --scrollbar-thumb-hover: #4da3ff;
   }
 
   html {
     @apply scroll-smooth;
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply antialiased bg-fondo-principal text-texto-principal overflow-x-hidden;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
@@ -21,41 +21,46 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   /* Selección de texto */
   ::selection {
     @apply bg-acento-azul/40 text-texto-principal;
   }
-  
+
   ::-moz-selection {
     @apply bg-acento-azul/40 text-texto-principal;
   }
-  
+
   /* Scrollbar personalizada */
   ::-webkit-scrollbar {
     @apply w-3;
   }
-  
+
   ::-webkit-scrollbar-track {
     @apply bg-fondo-secundario;
   }
-  
+
   ::-webkit-scrollbar-thumb {
     @apply bg-gradient-to-b from-acento-azul/60 to-acento-turquesa/60 rounded-full 
            hover:from-acento-azul hover:to-acento-turquesa transition-all duration-300;
   }
-  
+
   /* Firefox scrollbar */
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   }
-  
+
   /* Mejorar tipografía */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     text-wrap: balance;
   }
-  
+
   p {
     text-wrap: pretty;
   }
@@ -66,7 +71,7 @@
   .container-padding {
     @apply px-4 sm:px-6 lg:px-8;
   }
-  
+
   /* Tarjetas con efectos */
   .card-neu {
     @apply bg-fondo-panel/40 backdrop-blur-sm border border-fondo-borde/50 
@@ -74,28 +79,28 @@
            hover:shadow-2xl hover:shadow-acento-azul/5 
            transition-all duration-500;
   }
-  
+
   .card-hover-glow {
     @apply relative overflow-hidden;
   }
-  
+
   .card-hover-glow::before {
     @apply content-[''] absolute inset-0 bg-gradient-to-r from-acento-azul/0 
            via-acento-azul/5 to-acento-azul/0 -translate-x-full 
            group-hover:translate-x-full transition-transform duration-1000;
   }
-  
+
   /* Botones mejorados */
   .btn-glow {
     @apply relative overflow-hidden;
   }
-  
+
   .btn-glow::before {
     @apply content-[''] absolute inset-0 bg-gradient-to-r from-acento-azul/0 
            via-white/10 to-acento-azul/0 -translate-x-full 
            hover:translate-x-full transition-transform duration-1000;
   }
-  
+
   /* Inputs */
   .input-modern {
     @apply w-full bg-fondo-secundario/50 border-2 border-fondo-borde/50 
@@ -105,23 +110,23 @@
            placeholder:text-texto-secundario/50 
            hover:border-acento-azul/30;
   }
-  
+
   /* Badges modernos */
   .badge-modern {
     @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs 
            font-medium tracking-wide border border-transparent;
   }
-  
+
   .badge-gradient {
     @apply bg-gradient-to-r from-acento-azul/20 to-acento-turquesa/20 
            text-acento-azul border-acento-azul/30;
   }
-  
+
   /* Tooltips */
   .tooltip {
     @apply invisible absolute;
   }
-  
+
   .has-tooltip:hover .tooltip {
     @apply visible z-50;
   }
@@ -133,70 +138,79 @@
     @apply bg-gradient-to-r from-acento-azul via-acento-turquesa to-acento-azul 
            bg-clip-text text-transparent bg-size-200 animate-gradient-x;
   }
-  
+
   .text-shadow-lg {
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
-  
+
   .text-shadow-glow {
     text-shadow: 0 0 30px rgba(77, 163, 255, 0.5);
   }
-  
+
   /* Gradientes de fondo */
   .bg-gradient-radial {
-    background-image: radial-gradient(circle at 50% 50%, var(--tw-gradient-stops));
+    background-image: radial-gradient(
+      circle at 50% 50%,
+      var(--tw-gradient-stops)
+    );
   }
-  
+
   .bg-grid-pattern {
-    background-image: 
-      linear-gradient(to right, rgba(77, 163, 255, 0.03) 1px, transparent 1px),
+    background-image: linear-gradient(
+        to right,
+        rgba(77, 163, 255, 0.03) 1px,
+        transparent 1px
+      ),
       linear-gradient(to bottom, rgba(77, 163, 255, 0.03) 1px, transparent 1px);
     background-size: 50px 50px;
   }
-  
+
   .bg-dot-pattern {
-    background-image: radial-gradient(rgba(77, 163, 255, 0.1) 1px, transparent 1px);
+    background-image: radial-gradient(
+      rgba(77, 163, 255, 0.1) 1px,
+      transparent 1px
+    );
     background-size: 20px 20px;
   }
-  
+
   /* Máscaras y efectos */
   .mask-gradient-bottom {
     mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
   }
-  
+
   .mask-gradient-top {
     mask-image: linear-gradient(to top, black 80%, transparent 100%);
   }
-  
+
   /* Animaciones */
   .animate-gradient-x {
     background-size: 200% 200%;
     animation: gradient-x 15s ease infinite;
   }
-  
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
-  
+
   .animate-pulse-slow {
     animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
-  
+
   .animate-spin-slow {
     animation: spin 8s linear infinite;
   }
-  
+
   /* Utilidades de layout */
   .full-bleed {
     width: 100vw;
     margin-left: calc(50% - 50vw);
   }
-  
+
   .aspect-w-16 {
     position: relative;
     padding-bottom: calc(var(--tw-aspect-h) / var(--tw-aspect-w) * 100%);
   }
-  
+
   .aspect-w-16 > * {
     position: absolute;
     height: 100%;
@@ -206,7 +220,7 @@
     bottom: 0;
     left: 0;
   }
-  
+
   /* Clases para caso activo */
   .caso-activo body {
     @apply bg-gradient-to-br from-fondo-principal via-fondo-secundario to-fondo-principal;
@@ -215,7 +229,8 @@
 
 /* Keyframes de animación */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
@@ -224,7 +239,8 @@
 }
 
 @keyframes gradient-x {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -254,11 +270,43 @@
 }
 
 @keyframes text-glow {
-  0%, 100% {
+  0%,
+  100% {
     text-shadow: 0 0 20px rgba(77, 163, 255, 0.3);
   }
   50% {
     text-shadow: 0 0 40px rgba(77, 163, 255, 0.6);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
@@ -287,6 +335,18 @@
   );
   background-size: 200% 100%;
   animation: border-flow 3s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out forwards;
 }
 
 /* Efectos hover avanzados */
@@ -318,6 +378,196 @@
   font-variant-numeric: lining-nums;
   font-feature-settings: "lnum", "kern", "liga";
   letter-spacing: -0.01em;
+}
+
+/* Estilos específicos para juego de investigación */
+.detective-desk {
+  background: linear-gradient(
+    145deg,
+    rgba(11, 18, 32, 0.95) 0%,
+    rgba(16, 26, 46, 0.9) 100%
+  );
+  border: 1px solid rgba(77, 163, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.detective-desk::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(77, 163, 255, 0.5),
+    transparent
+  );
+}
+
+.case-file-effect {
+  background: linear-gradient(
+    135deg,
+    rgba(16, 26, 46, 0.8) 0%,
+    rgba(11, 18, 32, 0.9) 100%
+  );
+  border: 2px solid;
+  border-image: linear-gradient(
+    135deg,
+    rgba(77, 163, 255, 0.3),
+    rgba(94, 234, 212, 0.2)
+  ) 1;
+  transition: all 0.3s ease;
+}
+
+.case-file-effect:hover {
+  border-image: linear-gradient(
+    135deg,
+    rgba(77, 163, 255, 0.6),
+    rgba(94, 234, 212, 0.4)
+  ) 1;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Botones de acción mejorados */
+.action-btn {
+  position: relative;
+  background: linear-gradient(
+    145deg,
+    rgba(16, 26, 46, 0.9) 0%,
+    rgba(11, 18, 32, 0.95) 100%
+  );
+  border: 2px solid rgba(77, 163, 255, 0.3);
+  color: #E6EAF2;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.action-btn:hover {
+  border-color: rgba(77, 163, 255, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(77, 163, 255, 0.2),
+    0 0 15px rgba(77, 163, 255, 0.1);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+.action-btn-primary {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 163, 255, 0.2) 0%,
+    rgba(94, 234, 212, 0.15) 100%
+  );
+  border-color: rgba(77, 163, 255, 0.4);
+}
+
+.action-btn-primary:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(77, 163, 255, 0.3) 0%,
+    rgba(94, 234, 212, 0.25) 100%
+  );
+  border-color: rgba(77, 163, 255, 0.6);
+}
+
+/* Efecto de sello oficial */
+.official-seal {
+  position: relative;
+  border: 3px double rgba(77, 163, 255, 0.4);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(11, 18, 32, 0.9) 0%,
+    rgba(16, 26, 46, 0.8) 100%
+  );
+}
+
+.official-seal::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  border: 2px solid rgba(94, 234, 212, 0.3);
+  border-radius: 50%;
+}
+
+/* Efectos de texto de máquina de escribir */
+.typewriter-container {
+  position: relative;
+  display: inline-block;
+}
+
+.typewriter-container::after {
+  content: '|';
+  position: absolute;
+  right: 0;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Efectos de evidencia/huellas */
+.evidence-mark {
+  position: relative;
+}
+
+.evidence-mark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(77, 163, 255, 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+/* Mejoras responsivas */
+@media (max-width: 640px) {
+  .detective-desk {
+    padding: 1.5rem;
+  }
+  
+  .action-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .official-seal {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* Efectos de foco mejorados para accesibilidad */
+.action-btn:focus-visible {
+  outline: 2px solid rgba(77, 163, 255, 0.6);
+  outline-offset: 2px;
+}
+
+/* Transiciones suaves */
+.transition-smooth {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Mejorar performance de animaciones */

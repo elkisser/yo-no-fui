@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Search, Archive, Home, Menu, X } from 'lucide-react';
+interface NavigationProps {
+  casoActivo: boolean;
+}
 
-const Navigation: React.FC = () => {
+const Navigation: React.FC<NavigationProps> = ({ casoActivo }) => {
   const [activePath, setActivePath] = useState('/');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -10,9 +13,13 @@ const Navigation: React.FC = () => {
   }, []);
 
   const navItems = [
-    { path: '/', label: 'Escritorio', icon: Home },
+    { path: '/', label: 'Inicio', icon: Home },
     { path: '/nuevo-caso', label: 'Nuevo Caso', icon: FileText },
-    { path: '/investigar', label: 'Investigar', icon: Search },
+
+    ...(casoActivo
+      ? [{ path: '/investigar', label: 'Investigar', icon: Search }]
+      : []),
+
     { path: '/archivo', label: 'Archivo', icon: Archive },
   ];
 

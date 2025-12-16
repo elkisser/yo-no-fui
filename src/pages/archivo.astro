@@ -14,66 +14,122 @@ import {
   Target,
   AlertCircle,
   ChevronRight,
+  Fingerprint,
+  Briefcase,
+  Users,
+  Puzzle,
+  Shield,
+  Lock,
+  X,
+  Eye,
 } from "lucide-react";
 ---
 
 <MainLayout>
-  <div class="min-h-screen bg-fondo-principal">
-    {/* Fondo decorativo sutil */}
+  <div class="min-h-screen bg-fondo-principal paper-texture">
+    {/* Fondo decorativo sutil - Estilo expediente */}
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
       <div
-        class="absolute top-20 -left-20 w-96 h-96 bg-acento-azul/3 rounded-full blur-3xl"
+        class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-acento-azul/10 to-transparent"
       >
       </div>
       <div
-        class="absolute bottom-20 -right-20 w-96 h-96 bg-acento-turquesa/3 rounded-full blur-3xl"
+        class="absolute top-20 -left-20 w-96 h-96 bg-acento-azul/2 rounded-full blur-3xl opacity-30"
       >
+      </div>
+      <div
+        class="absolute bottom-20 -right-20 w-96 h-96 bg-acento-turquesa/2 rounded-full blur-3xl opacity-30"
+      >
+      </div>
+
+      {/* Huellas digitales sutiles */}
+      <div class="absolute top-1/4 left-10 w-24 h-36 opacity-5">
+        <div
+          class="w-8 h-12 rounded-full border border-acento-azul transform rotate-12"
+        >
+        </div>
+      </div>
+      <div class="absolute bottom-1/4 right-10 w-24 h-36 opacity-5">
+        <div
+          class="w-8 h-12 rounded-full border border-acento-turquesa transform -rotate-12"
+        >
+        </div>
       </div>
     </div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 py-12">
-      {/* Header elegante */}
+      {/* Header elegante - Estilo expediente */}
       <div class="mb-12">
-        <div class="flex items-center gap-4 mb-6">
+        <div class="flex items-center gap-6 mb-8">
           <div class="relative">
+            {/* Expediente principal */}
             <div
-              class="absolute -inset-3 bg-gradient-to-r from-acento-azul/20 to-acento-turquesa/20 rounded-full blur-xl opacity-50"
+              class="relative w-16 h-16 rounded-xl bg-gradient-to-br from-fondo-panel to-fondo-secundario border-2 border-fondo-borde/60 flex items-center justify-center shadow-xl"
             >
+              {/* Clip de carpeta */}
+              <div
+                class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-10 h-4 bg-gradient-to-b from-gray-600 to-gray-800 rounded-t-lg"
+              >
+              </div>
+
+              {/* Contenido del expediente */}
+              <Archive class="w-8 h-8 text-acento-azul" />
+
+              {/* Tachuelas */}
+              <div
+                class="absolute -top-1 -left-1 w-3 h-3 rounded-full bg-gradient-to-br from-yellow-600 to-yellow-800"
+              >
+              </div>
+              <div
+                class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-gradient-to-br from-yellow-600 to-yellow-800"
+              >
+              </div>
             </div>
+
+            {/* Sello oficial */}
             <div
-              class="relative w-14 h-14 rounded-xl bg-gradient-to-br from-acento-azul to-acento-turquesa flex items-center justify-center"
+              class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center border-2 border-fondo-principal"
             >
-              <Archive class="w-7 h-7 text-fondo-principal" />
+              <div class="w-2 h-2 rounded-full bg-white"></div>
             </div>
           </div>
-          <div>
+
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-4 h-0.5 bg-acento-azul"></div>
+              <span
+                class="text-sm font-mono text-acento-azul/80 tracking-widest uppercase"
+              >
+                ARCHIVO CRIMINAL
+              </span>
+              <div class="w-4 h-0.5 bg-acento-azul"></div>
+            </div>
+
             <h1
-              class="text-4xl md:text-5xl font-serif font-bold text-texto-principal mb-2"
+              class="text-4xl md:text-5xl font-serif font-bold text-texto-principal mb-3"
             >
               Casos Archivados
             </h1>
             <p class="text-texto-secundario text-lg">
-              Historial completo de tus investigaciones criminales
+              Historial completo de investigaciones resueltas
             </p>
           </div>
         </div>
 
-        {/* Barra de búsqueda y filtros */}
+        {/* Barra de búsqueda y filtros - Estilo interfaz policial */}
         <div class="flex flex-col md:flex-row gap-4 mb-8">
           <div class="flex-1 relative group">
             <div
-              class="absolute inset-0 bg-gradient-to-r from-acento-azul/10 to-acento-turquesa/10 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              class="absolute inset-0 bg-gradient-to-r from-acento-azul/5 to-acento-turquesa/5 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             >
             </div>
-            <div class="relative">
-              <Search
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-texto-secundario"
-              />
+
+            <div class="relative h-12">
               <input
                 type="text"
-                placeholder="Buscar casos por título, ID o fecha..."
                 id="buscar-casos"
-                class="w-full pl-12 pr-4 py-3.5 bg-fondo-panel/50 border border-fondo-borde/50 rounded-xl text-texto-principal placeholder:text-texto-secundario/50 focus:outline-none focus:border-acento-azul transition-colors backdrop-blur-sm"
+                placeholder="🔎 Buscar casos por título, ID o fecha..."
+                class="h-12 w-full pl-11 pr-4 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal placeholder:text-texto-secundario/50 focus:outline-none focus:border-acento-azul focus:ring-2 focus:ring-acento-azul/20 transition-all duration-300"
               />
             </div>
           </div>
@@ -81,30 +137,30 @@ import {
           <div class="flex gap-3">
             <button
               onclick="filtrarCasos('todos')"
-              class="px-5 py-3 bg-fondo-panel/50 border border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul/50 transition-colors flex items-center gap-2 group"
+              class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 flex items-center gap-2 group action-btn"
             >
               <Filter
-                class="w-4 h-4 group-hover:text-acento-azul transition-colors"
+                class="w-4 h-4 text-texto-secundario group-hover:text-acento-azul transition-colors"
               />
               <span class="text-sm font-medium">Todos</span>
             </button>
 
             <button
               onclick="filtrarCasos('resueltos')"
-              class="px-5 py-3 bg-fondo-panel/50 border border-fondo-borde/50 rounded-xl text-texto-principal hover:border-green-500/50 transition-colors flex items-center gap-2 group"
+              class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-green-500 hover:bg-green-500/5 transition-all duration-300 flex items-center gap-2 group action-btn"
             >
               <CheckCircle
-                class="w-4 h-4 group-hover:text-green-400 transition-colors"
+                class="w-4 h-4 text-texto-secundario group-hover:text-green-400 transition-colors"
               />
               <span class="text-sm font-medium">Resueltos</span>
             </button>
 
             <button
               onclick="filtrarCasos('pendientes')"
-              class="px-5 py-3 bg-fondo-panel/50 border border-fondo-borde/50 rounded-xl text-texto-principal hover:border-yellow-500/50 transition-colors flex items-center gap-2 group"
+              class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-yellow-500 hover:bg-yellow-500/5 transition-all duration-300 flex items-center gap-2 group action-btn"
             >
               <Clock
-                class="w-4 h-4 group-hover:text-yellow-400 transition-colors"
+                class="w-4 h-4 text-texto-secundario group-hover:text-yellow-400 transition-colors"
               />
               <span class="text-sm font-medium">Pendientes</span>
             </button>
@@ -117,19 +173,28 @@ import {
         {/* Panel izquierdo - Lista de casos */}
         <div class="lg:col-span-2">
           <div
-            class="bg-fondo-panel/30 backdrop-blur-sm border border-fondo-borde/50 rounded-2xl overflow-hidden"
+            class="bg-fondo-panel/20 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-2xl overflow-hidden detective-desk"
           >
             {/* Header de la lista */}
             <div
-              class="p-6 border-b border-fondo-borde/30 bg-gradient-to-r from-fondo-panel/50 to-transparent"
+              class="p-6 border-b border-fondo-borde/30 bg-gradient-to-r from-fondo-panel/30 to-transparent"
             >
               <div class="flex items-center justify-between">
                 <div>
-                  <h2 class="text-2xl font-serif text-texto-principal mb-1">
-                    Expedientes
-                  </h2>
+                  <div class="flex items-center gap-3 mb-2">
+                    <div
+                      class="w-3 h-3 rounded-full bg-acento-azul animate-pulse"
+                    >
+                    </div>
+                    <h2 class="text-2xl font-serif text-texto-principal">
+                      Expedientes
+                    </h2>
+                  </div>
                   <p class="text-sm text-texto-secundario">
-                    <span id="contador-casos">0</span> casos encontrados
+                    <span
+                      id="contador-casos"
+                      class="font-bold text-texto-principal">0</span
+                    > casos encontrados
                   </p>
                 </div>
 
@@ -139,7 +204,7 @@ import {
                   </div>
                   <select
                     id="ordenar-casos"
-                    class="px-4 py-2 bg-fondo-secundario/50 border border-fondo-borde/50 rounded-lg text-texto-principal text-sm focus:outline-none focus:border-acento-azul"
+                    class="px-4 py-2.5 bg-fondo-secundario/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-lg text-texto-principal text-sm focus:outline-none focus:border-acento-azul focus:ring-2 focus:ring-acento-azul/20 transition-all duration-300"
                   >
                     <option value="reciente">Más reciente</option>
                     <option value="antiguo">Más antiguo</option>
@@ -170,16 +235,16 @@ import {
                   </h3>
 
                   <p class="text-texto-secundario mb-8">
-                    Aún no has investigado ningún caso. Comienza una nueva
-                    investigación para llenar este archivo.
+                    Aún no has resuelto ningún caso. ¡Comienza una investigación
+                    para llenar este archivo!
                   </p>
 
                   <a
                     href="/nuevo-caso"
-                    class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal font-medium rounded-xl hover:opacity-90 transition-all duration-300 transform hover:scale-105"
+                    class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal font-bold rounded-xl hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-acento-azul/30 action-btn"
                   >
                     <FileText class="w-5 h-5" />
-                    <span>Generar primer caso</span>
+                    <span>Nuevo caso</span>
                     <ChevronRight class="w-5 h-5" />
                   </a>
                 </div>
@@ -192,11 +257,11 @@ import {
         <div class="space-y-8">
           {/* Tarjeta de estadísticas */}
           <div
-            class="bg-fondo-panel/30 backdrop-blur-sm border border-fondo-borde/50 rounded-2xl p-6"
+            class="bg-fondo-panel/20 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-2xl p-6 detective-desk"
           >
             <div class="flex items-center gap-3 mb-6">
               <div
-                class="w-12 h-12 rounded-xl bg-gradient-to-br from-acento-azul/20 to-acento-turquesa/20 flex items-center justify-center"
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-acento-azul/20 to-acento-turquesa/20 border border-acento-azul/30 flex items-center justify-center"
               >
                 <BarChart3 class="w-6 h-6 text-acento-azul" />
               </div>
@@ -208,7 +273,7 @@ import {
             <div class="space-y-5">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <FileText class="w-5 h-5 text-texto-secundario" />
+                  <Fingerprint class="w-5 h-5 text-texto-secundario" />
                   <span class="text-texto-secundario">Casos totales</span>
                 </div>
                 <span
@@ -267,23 +332,27 @@ import {
           {/* Tarjeta de caso activo */}
           <div
             id="tarjeta-activo"
-            class="hidden bg-gradient-to-br from-acento-azul/10 to-acento-turquesa/10 border border-acento-azul/30 rounded-2xl p-6"
+            class="hidden bg-gradient-to-br from-acento-azul/10 to-acento-turquesa/10 border-2 border-acento-azul/30 rounded-2xl p-6 detective-desk"
           >
             <div class="flex items-center gap-3 mb-4">
               <div
-                class="w-10 h-10 rounded-lg bg-acento-azul/20 flex items-center justify-center"
+                class="w-10 h-10 rounded-lg bg-acento-azul/20 border border-acento-azul/30 flex items-center justify-center"
               >
                 <Target class="w-5 h-5 text-acento-azul" />
               </div>
               <h3 class="text-lg font-serif text-texto-principal">
                 Caso activo
               </h3>
+              <div
+                class="ml-auto w-3 h-3 rounded-full bg-green-400 animate-pulse"
+              >
+              </div>
             </div>
 
             <div class="mb-4">
               <h4
                 id="titulo-activo"
-                class="text-texto-principal font-medium mb-1"
+                class="text-texto-principal font-medium mb-1 truncate"
               >
               </h4>
               <p class="text-sm text-texto-secundario">
@@ -293,7 +362,7 @@ import {
 
             <a
               href="/investigar"
-              class="block w-full py-3 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal text-center font-medium rounded-lg hover:opacity-90 transition-opacity"
+              class="block w-full py-3 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal text-center font-bold rounded-lg hover:opacity-90 transition-opacity shadow-lg hover:shadow-acento-azul/30 action-btn"
             >
               Continuar investigación
             </a>
@@ -301,31 +370,34 @@ import {
 
           {/* Tarjeta de acciones */}
           <div
-            class="bg-fondo-panel/30 backdrop-blur-sm border border-fondo-borde/50 rounded-2xl p-6"
+            class="bg-fondo-panel/20 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-2xl p-6 detective-desk"
           >
-            <h3 class="text-lg font-serif text-texto-principal mb-6">
-              Gestión del archivo
-            </h3>
+            <div class="flex items-center gap-3 mb-6">
+              <Briefcase class="w-6 h-6 text-acento-azul" />
+              <h3 class="text-lg font-serif text-texto-principal">
+                Gestión del archivo
+              </h3>
+            </div>
 
             <div class="space-y-4">
               <button
                 onclick="exportarHistorial()"
-                class="w-full py-3.5 bg-fondo-secundario/50 border border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul/50 transition-all duration-300 flex items-center justify-center gap-3 group hover:bg-fondo-panel/30"
+                class="w-full py-3.5 bg-fondo-secundario/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 flex items-center justify-center gap-3 group action-btn"
               >
                 <Download
                   class="w-5 h-5 text-texto-secundario group-hover:text-acento-azul transition-colors"
                 />
-                <span class="font-medium">Exportar historial</span>
+                <span class="font-bold">Exportar historial</span>
               </button>
 
               <button
                 onclick="limpiarHistorial()"
-                class="w-full py-3.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 hover:bg-red-500/20 transition-all duration-300 flex items-center justify-center gap-3 group"
+                class="w-full py-3.5 bg-red-500/10 backdrop-blur-sm border-2 border-red-500/20 rounded-xl text-red-400 hover:bg-red-500/20 hover:border-red-500/40 transition-all duration-300 flex items-center justify-center gap-3 group action-btn"
               >
                 <Trash2
                   class="w-5 h-5 group-hover:scale-110 transition-transform"
                 />
-                <span class="font-medium">Limpiar archivo</span>
+                <span class="font-bold">Limpiar archivo</span>
               </button>
             </div>
 
@@ -357,7 +429,7 @@ import {
     >
     </div>
     <div
-      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-fondo-principal border border-fondo-borde rounded-2xl shadow-2xl scale-95 transition-all duration-300"
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-fondo-panel border-2 border-fondo-borde rounded-2xl shadow-2xl scale-95 transition-all duration-300 detective-desk"
       id="modal-content"
     >
       <div class="flex items-center gap-3 mb-4" id="modal-header">
@@ -375,13 +447,13 @@ import {
       <div class="flex justify-end gap-3">
         <button
           onclick="cerrarModal()"
-          class="px-5 py-2.5 rounded-xl border border-fondo-borde text-texto-secundario hover:text-texto-principal hover:bg-fondo-secundario transition-all duration-200 font-medium"
+          class="px-5 py-2.5 rounded-xl border-2 border-fondo-borde text-texto-secundario hover:text-texto-principal hover:bg-fondo-secundario/30 transition-all duration-200 font-medium action-btn"
         >
           Cancelar
         </button>
         <button
           id="modal-accion-btn"
-          class="px-5 py-2.5 rounded-xl text-fondo-principal font-medium shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          class="px-5 py-2.5 rounded-xl text-fondo-principal font-bold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 action-btn"
         >
           Confirmar
         </button>
@@ -419,6 +491,7 @@ import {
     /* Efectos hover para tarjetas */
     .caso-card {
       transition: all 0.3s ease;
+      position: relative;
     }
 
     .caso-card:hover {
@@ -430,31 +503,41 @@ import {
       border-color: rgba(77, 163, 255, 0.3);
       transform: translateX(4px);
     }
+
+    .caso-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--tw-gradient-stops),
+        transparent
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .caso-card:hover::before {
+      opacity: 1;
+      background: linear-gradient(to bottom, transparent, #4da3ff, transparent);
+    }
+
+    .action-btn.active {
+      border-color: var(--acento-azul);
+      background-color: rgba(0, 153, 255, 0.08);
+    }
   </style>
 
   <script>
-    import {
-      Archive,
-      FileText,
-      Clock,
-      CheckCircle,
-      Search,
-      Download,
-      Trash2,
-      Filter,
-      BarChart3,
-      TrendingUp,
-      Target,
-      AlertCircle,
-      ChevronRight,
-      AlertTriangle,
-    } from "lucide-react";
-
     // Variables globales
     let historialOriginal = [];
     let historialFiltrado = [];
     let filtroActual = "todos";
-    let accionPendiente = null; // Para guardar la acción del modal
+    let accionPendiente = null;
 
     // Cargar historial de casos
     function cargarHistorial() {
@@ -495,11 +578,7 @@ import {
           (caso) =>
             (caso.titulo && caso.titulo.toLowerCase().includes(term)) ||
             (caso.casoId && caso.casoId.toLowerCase().includes(term)) ||
-            (caso.fecha &&
-              new Date(caso.fecha)
-                .toLocaleDateString()
-                .toLowerCase()
-                .includes(term))
+            (caso.fecha && caso.fecha.toLowerCase().includes(term))
         );
       }
 
@@ -524,14 +603,20 @@ import {
       historialFiltrado.sort((a, b) => {
         switch (orden) {
           case "antiguo":
-            return new Date(a.fecha) - new Date(b.fecha);
+            return (
+              new Date(a.fechaCreacion || a.fecha) -
+              new Date(b.fechaCreacion || b.fecha)
+            );
           case "titulo":
             return (a.titulo || "").localeCompare(b.titulo || "");
           case "estado":
             return (b.resuelto ? 1 : 0) - (a.resuelto ? 1 : 0);
           case "reciente":
           default:
-            return new Date(b.fecha) - new Date(a.fecha);
+            return (
+              new Date(b.fechaCreacion || b.fecha) -
+              new Date(a.fechaCreacion || a.fecha)
+            );
         }
       });
     }
@@ -546,17 +631,29 @@ import {
         casosLista.classList.remove("hidden");
         casosLista.innerHTML = historialFiltrado
           .map((caso, index) => {
-            const fecha = new Date(caso.fecha);
-            const fechaFormateada = fecha.toLocaleDateString("es-ES", {
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-            });
+            // Formatear fecha correctamente
+            let fechaFormateada = "Fecha desconocida";
+            let tiempo = "";
 
-            const tiempo = fecha.toLocaleTimeString("es-ES", {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
+            if (caso.fechaCreacion) {
+              const fecha = new Date(caso.fechaCreacion);
+              fechaFormateada = fecha.toLocaleDateString("es-ES", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              });
+              tiempo = fecha.toLocaleTimeString("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+            } else if (caso.fecha) {
+              fechaFormateada = caso.fecha;
+            }
+
+            // Mostrar ID más corto para mejor visualización
+            const casoIdCorto = caso.casoId
+              ? `${caso.casoId.substring(0, 8)}...`
+              : "Sin ID";
 
             return `
             <div class="caso-card p-5 border-b border-fondo-borde/30 last:border-b-0 animate-fade-in-up group/card" 
@@ -565,56 +662,76 @@ import {
                 <div class="flex-1 min-w-0 pr-4">
                   <div class="flex items-center gap-3 mb-3">
                     <div class="flex items-center gap-2">
-                      <div class="w-2 h-2 rounded-full ${caso.resuelto ? "bg-green-400" : "bg-yellow-400"}"></div>
-                      <span class="text-xs font-medium px-2.5 py-1 rounded-full ${caso.resuelto ? "bg-green-400/10 text-green-400" : "bg-yellow-400/10 text-yellow-400"}">
-                        ${caso.resuelto ? "Resuelto" : "Pendiente"}
+                      <div class="w-2 h-2 rounded-full ${caso.resuelto ? "bg-green-400" : "bg-yellow-400"} animate-pulse"></div>
+                      <span class="text-xs font-bold px-3 py-1 rounded-full ${caso.resuelto ? "bg-green-400/10 text-green-400 border border-green-400/30" : "bg-yellow-400/10 text-yellow-400 border border-yellow-400/30"}">
+                        ${caso.resuelto ? "RESUELTO" : "PENDIENTE"}
                       </span>
                     </div>
                     
-                    <span class="text-xs text-texto-secundario/70">
-                      ${fechaFormateada} • ${tiempo}
+                    <span class="text-xs text-texto-secundario/70 font-mono">
+                      ${fechaFormateada} ${tiempo ? `• ${tiempo}` : ""}
                     </span>
                   </div>
                   
-                  <h3 class="text-lg font-medium text-texto-principal mb-2 truncate">
+                  <h3 class="text-lg font-bold text-texto-principal mb-2 truncate group-hover/card:text-acento-azul transition-colors">
                     ${caso.titulo || "Caso sin título"}
                   </h3>
                   
                   <div class="flex items-center gap-4 text-sm text-texto-secundario">
                     <div class="flex items-center gap-1.5 min-w-0">
-                      <!-- FileText icon placeholder since we are inside a template literal without component context -->
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      <span class="truncate">ID: ${caso.casoId.substring(0, 8)}...</span>
+                      <Fingerprint class="w-4 h-4" />
+                      <span class="truncate font-mono">ID: ${casoIdCorto}</span>
                     </div>
                     
                     ${
-                      caso.tiempo
+                      caso.tiempoResolucion
                         ? `
                       <div class="flex items-center gap-1.5 whitespace-nowrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        <span>${caso.tiempo}</span>
+                        <Clock class="w-4 h-4" />
+                        <span>${caso.tiempoResolucion}</span>
+                      </div>
+                    `
+                        : ""
+                    }
+                    
+                    ${
+                      caso.dificultad
+                        ? `
+                      <div class="flex items-center gap-1.5">
+                        <Shield class="w-4 h-4" />
+                        <span>${caso.dificultad}</span>
                       </div>
                     `
                         : ""
                     }
                   </div>
+                  
+                  ${
+                    caso.descripcion
+                      ? `
+                    <p class="mt-3 text-sm text-texto-secundario/80 line-clamp-2">
+                      ${caso.descripcion}
+                    </p>
+                  `
+                      : ""
+                  }
                 </div>
                 
-                <div class="flex items-center gap-2">
-                   <button 
-                    onclick="confirmarEliminarCaso('${caso.casoId}')"
-                    class="p-2 text-texto-secundario hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors opacity-0 group-hover/card:opacity-100 focus:opacity-100"
+                <div class="flex flex-col items-center gap-2 ml-4">
+                  <button 
+                    onclick="verCasoDetalles('${caso.casoId}')"
+                    class="p-2 text-texto-secundario hover:text-acento-azul hover:bg-acento-azul/10 rounded-lg transition-all duration-300 opacity-0 group-hover/card:opacity-100 focus:opacity-100 flex items-center gap-1"
+                    title="Ver detalles"
+                  >
+                    <Eye class="w-4 h-4" />
+                  </button>
+                  
+                  <button 
+                    onclick="confirmarEliminarCaso('${caso.casoId}', '${caso.titulo || "este caso"}')"
+                    class="p-2 text-texto-secundario hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-300 opacity-0 group-hover/card:opacity-100 focus:opacity-100"
                     title="Eliminar caso"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                  </button>
-
-                  <button 
-                    onclick="verCaso('${caso.casoId}')"
-                    class="px-4 py-2 bg-fondo-borde/50 hover:bg-acento-azul/20 text-texto-principal hover:text-acento-azul rounded-lg transition-all duration-300 text-sm font-medium flex items-center gap-2 group"
-                  >
-                    <span>Ver</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"><polyline points="9 18 15 12 9 6"/></svg>
+                    <X class="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -667,35 +784,39 @@ import {
     // Mostrar caso activo si existe
     function mostrarCasoActivo() {
       const tarjeta = document.getElementById("tarjeta-activo");
-      // Use the storage key that Zustand uses
       const storeData = localStorage.getItem("yo-no-fui-storage");
 
       if (tarjeta && storeData) {
         try {
           const parsedStore = JSON.parse(storeData);
-          const caso = parsedStore.state && parsedStore.state.casoActual;
+          const caso = parsedStore.state?.casoActual;
 
-          // Verify if there is a real active case
-          if (caso && caso.titulo && caso.id) {
+          // Verificar que sea un caso activo real (no resuelto)
+          const casoEnHistorial = historialOriginal.find(
+            (c) => c.casoId === caso?.id
+          );
+          const estaResuelto = casoEnHistorial?.resuelto || caso?.resuelto;
+
+          if (caso && caso.titulo && caso.id && !estaResuelto) {
             const tiempoInicio = parsedStore.state.tiempoInicio
               ? new Date(parsedStore.state.tiempoInicio)
               : new Date();
             const ahora = new Date();
-            const diffHoras = Math.floor(
-              (ahora - tiempoInicio) / (1000 * 60 * 60)
-            );
-            const diffMinutos =
-              Math.floor((ahora - tiempoInicio) / (1000 * 60)) % 60;
+            const diffMs = ahora - tiempoInicio;
+            const diffMinutos = Math.floor(diffMs / (1000 * 60));
+            const diffHoras = Math.floor(diffMinutos / 60);
+            const minutosRestantes = diffMinutos % 60;
 
             const tituloEl = document.getElementById("titulo-activo");
             const tiempoEl = document.getElementById("tiempo-activo");
 
             if (tituloEl) tituloEl.textContent = caso.titulo;
-            if (tiempoEl)
+            if (tiempoEl) {
               tiempoEl.textContent =
                 diffHoras > 0
-                  ? `${diffHoras}h ${diffMinutos}m`
-                  : `${diffMinutos}m`;
+                  ? `${diffHoras}h ${minutosRestantes}m`
+                  : `${minutosRestantes}m`;
+            }
 
             tarjeta.classList.remove("hidden");
           } else {
@@ -725,7 +846,7 @@ import {
 
       // Resetear clases del botón
       modalBtn.className =
-        "px-5 py-2.5 rounded-xl font-medium shadow-lg transition-all duration-200 transform hover:scale-105";
+        "px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all duration-200 transform hover:scale-105 action-btn";
 
       // Remove old event listeners by cloning
       const newBtn = modalBtn.cloneNode(true);
@@ -750,8 +871,10 @@ import {
           "hover:shadow-red-500/30"
         );
         newBtn.textContent = "Eliminar";
-        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></div>`;
-      } else {
+        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 border-2 border-red-500/30">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+        </div>`;
+      } else if (tipo === "info") {
         newBtn.classList.add(
           "bg-gradient-to-r",
           "from-acento-azul",
@@ -760,7 +883,21 @@ import {
           "hover:shadow-acento-azul/30"
         );
         newBtn.textContent = "Continuar";
-        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-acento-azul/20 flex items-center justify-center text-acento-azul"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>`;
+        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-acento-azul/20 flex items-center justify-center text-acento-azul border-2 border-acento-azul/30">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>`;
+      } else {
+        newBtn.classList.add(
+          "bg-gradient-to-r",
+          "from-acento-azul",
+          "to-acento-turquesa",
+          "text-fondo-principal",
+          "hover:shadow-acento-azul/30"
+        );
+        newBtn.textContent = "Aceptar";
+        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-acento-azul/20 flex items-center justify-center text-acento-azul border-2 border-acento-azul/30">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </div>`;
       }
 
       modal.classList.remove("hidden");
@@ -780,86 +917,137 @@ import {
       filtroActual = tipo;
       aplicarFiltro();
 
+      // Remover clase activa de todos los botones
       document
         .querySelectorAll('button[onclick^="filtrarCasos"]')
         .forEach((btn) => {
-          btn.classList.remove("bg-acento-azul/10", "border-acento-azul/50");
+          btn.classList.remove(
+            "bg-acento-azul/10",
+            "border-acento-azul",
+            "bg-green-500/10",
+            "border-green-500",
+            "bg-yellow-500/10",
+            "border-yellow-500"
+          );
         });
 
+      // Agregar clase activa al botón seleccionado
       const botonActual = document.querySelector(
         `button[onclick="filtrarCasos('${tipo}')"]`
       );
       if (botonActual) {
-        botonActual.classList.add("bg-acento-azul/10", "border-acento-azul/50");
+        if (tipo === "todos") {
+          botonActual.classList.add("bg-acento-azul/10", "border-acento-azul");
+        } else if (tipo === "resueltos") {
+          botonActual.classList.add("bg-green-500/10", "border-green-500");
+        } else if (tipo === "pendientes") {
+          botonActual.classList.add("bg-yellow-500/10", "border-yellow-500");
+        }
       }
     }
 
-    // ELIMINAR CASO INDIVIDUAL
-    function confirmarEliminarCaso(casoId) {
+    // ELIMINAR CASO INDIVIDUAL - CORREGIDO
+    function confirmarEliminarCaso(casoId, tituloCaso) {
       abrirModal(
         "peligro",
-        "Eliminar expediente",
-        "¿Estás seguro de que quieres eliminar este caso permanentemente? Esta acción no se puede deshacer.",
-        () => eliminarCaso(casoId)
+        "Eliminar Expediente",
+        `¿Estás seguro de que quieres eliminar el caso "${tituloCaso}" permanentemente? Esta acción no se puede deshacer.`,
+        () => eliminarCasoIndividual(casoId)
       );
     }
 
-    function eliminarCaso(casoId) {
-      // Filter out ONLY the case with the matching ID.
-      // If multiple cases have the same ID (bug), this might delete all of them.
-      // But assuming IDs are unique (uuids), this is correct.
-      // To be safer, we can delete only the first match or ensure IDs are unique.
-      // Here we filter by ID.
+    function eliminarCasoIndividual(casoId) {
+      // Encontrar el índice del caso específico (usando el primer caso con ese ID)
+      const casoIndex = historialOriginal.findIndex((c) => c.casoId === casoId);
 
-      const indicesToRemove = [];
-      historialOriginal.forEach((c, index) => {
-        if (c.casoId === casoId) indicesToRemove.push(index);
-      });
+      if (casoIndex !== -1) {
+        // Eliminar solo ese caso del array
+        historialOriginal.splice(casoIndex, 1);
 
-      if (indicesToRemove.length > 0) {
-        // Remove only the first match to avoid mass deletion if IDs somehow duplicated
-        // actually, if IDs are duplicated, we probably WANT to remove the duplicate
-        // but user complains about deleting "two cases".
-
-        // Let's rewrite strictly to remove by filtering the ID
-        historialOriginal = historialOriginal.filter(
-          (c) => c.casoId !== casoId
-        );
-
+        // Actualizar localStorage
         localStorage.setItem(
           "historial-casos",
           JSON.stringify(historialOriginal)
         );
+
+        // Recargar la vista
         aplicarFiltro();
+
+        // Mostrar confirmación
+        setTimeout(() => {
+          abrirModal(
+            "info",
+            "Caso Eliminado",
+            "El caso ha sido eliminado exitosamente del archivo.",
+            null
+          );
+        }, 300);
+      } else {
+        abrirModal(
+          "info",
+          "Caso No Encontrado",
+          "No se pudo encontrar el caso especificado. Puede que ya haya sido eliminado.",
+          null
+        );
       }
     }
 
-    // Ver caso seleccionado
-    function verCaso(casoId) {
+    // Ver detalles del caso
+    function verCasoDetalles(casoId) {
       const caso = historialOriginal.find((c) => c.casoId === casoId);
 
-      if (caso && caso.data) {
+      if (!caso) {
         abrirModal(
           "info",
-          "Abrir Expediente",
-          "Esto reemplazará cualquier investigación que tengas activa en este momento. ¿Deseas continuar revisando este caso antiguo?",
-          () => cargarCasoEnJuego(caso)
+          "Caso No Encontrado",
+          "No se pudo encontrar la información del caso.",
+          null
         );
-      } else if (caso) {
-        abrirModal(
-          "info",
-          "Datos Incompletos",
-          `RESUMEN DEL CASO (Modo Lectura Limitado)\n\n` +
-            `Título: ${caso.titulo || "Sin título"}\n` +
-            `Estado: ${caso.resuelto ? "Resuelto" : "Pendiente"}\n` +
-            `Tiempo: ${caso.tiempo || "N/A"}`,
-          () => {}
-        );
+        return;
       }
+
+      let detalles = `Título: ${caso.titulo || "Sin título"}\n`;
+      detalles += `Estado: ${caso.resuelto ? "✅ Resuelto" : "⏳ Pendiente"}\n`;
+      detalles += `ID: ${caso.casoId || "Sin ID"}\n`;
+
+      if (caso.fechaCreacion) {
+        const fecha = new Date(caso.fechaCreacion);
+        detalles += `Fecha: ${fecha.toLocaleDateString("es-ES")}\n`;
+      }
+
+      if (caso.tiempoResolucion) {
+        detalles += `Tiempo de resolución: ${caso.tiempoResolucion}\n`;
+      }
+
+      if (caso.dificultad) {
+        detalles += `Dificultad: ${caso.dificultad}\n`;
+      }
+
+      if (caso.descripcion) {
+        detalles += `\nDescripción:\n${caso.descripcion}\n`;
+      }
+
+      if (caso.culpable) {
+        detalles += `\nCulpable: ${caso.culpable}\n`;
+      }
+
+      abrirModal("info", "Detalles del Caso", detalles, null);
     }
 
+    // Cargar caso para continuar investigación (SOLO casos pendientes)
     function cargarCasoEnJuego(caso) {
       try {
+        // Verificar que el caso no esté resuelto
+        if (caso.resuelto) {
+          abrirModal(
+            "info",
+            "Caso Ya Resuelto",
+            "Este caso ya ha sido resuelto y no puede ser reabierto. ¡Excelente trabajo detective!",
+            null
+          );
+          return;
+        }
+
         const currentStore = JSON.parse(
           localStorage.getItem("yo-no-fui-storage") ||
             '{"state":{},"version":0}'
@@ -869,12 +1057,17 @@ import {
           ...currentStore,
           state: {
             ...currentStore.state,
-            casoActual: caso.data,
-            pistasDescubiertas: [],
-            ayudasUsadas: [],
-            hipotesisActual: null,
-            errores: 0,
-            tiempoInicio: null,
+            casoActual: {
+              id: caso.casoId,
+              titulo: caso.titulo,
+              ...caso.data,
+              resuelto: false,
+            },
+            pistasDescubiertas: caso.pistasDescubiertas || [],
+            ayudasUsadas: caso.ayudasUsadas || [],
+            hipotesisActual: caso.hipotesisActual || null,
+            errores: caso.errores || 0,
+            tiempoInicio: caso.tiempoInicio || Date.now(),
           },
         };
 
@@ -882,7 +1075,12 @@ import {
         window.location.href = "/investigar";
       } catch (e) {
         console.error("Error al cargar el caso:", e);
-        alert("Error crítico al cargar el expediente.");
+        abrirModal(
+          "info",
+          "Error Crítico",
+          "No se pudo cargar el expediente. Inténtalo de nuevo.",
+          null
+        );
       }
     }
 
@@ -903,14 +1101,15 @@ import {
         exportadoEn: new Date().toISOString(),
         totalCasos: historialOriginal.length,
         casosResueltos: historialOriginal.filter((c) => c.resuelto).length,
-        version: "Yo no fui v1.0",
+        version: "Yo no fui - Expediente Criminal v1.0",
+        notas: "Archivo de casos generados por IA - Confidencial",
       };
 
       const dataStr = JSON.stringify(datos, null, 2);
       const dataUri =
         "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
 
-      const nombreArchivo = `historial-casos-${new Date().toISOString().split("T")[0]}.json`;
+      const nombreArchivo = `expedientes-criminales-${new Date().toISOString().split("T")[0]}.json`;
 
       const link = document.createElement("a");
       link.setAttribute("href", dataUri);
@@ -919,9 +1118,16 @@ import {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+
+      abrirModal(
+        "info",
+        "Exportación Exitosa",
+        `Se han exportado ${historialOriginal.length} casos exitosamente.`,
+        null
+      );
     }
 
-    // Limpiar historial
+    // Limpiar historial COMPLETO
     function limpiarHistorial() {
       if (historialOriginal.length === 0) {
         abrirModal(
@@ -935,12 +1141,19 @@ import {
 
       abrirModal(
         "peligro",
-        "Eliminar TODO el historial",
-        `Esta acción eliminará permanentemente los ${historialOriginal.length} casos de tu archivo. ¿Estás absolutamente seguro?`,
+        "⚠️ ALERTA: Eliminar TODO el historial",
+        `Esta acción eliminará permanentemente los ${historialOriginal.length} casos de tu archivo. Esta acción NO se puede deshacer. ¿Estás absolutamente seguro?`,
         () => {
           localStorage.removeItem("historial-casos");
           historialOriginal = [];
           aplicarFiltro();
+
+          abrirModal(
+            "info",
+            "Archivo Limpiado",
+            "Todos los casos han sido eliminados del archivo.",
+            null
+          );
         }
       );
     }
@@ -952,7 +1165,9 @@ import {
       // Configurar eventos
       const buscarInput = document.getElementById("buscar-casos");
       if (buscarInput) {
-        buscarInput.addEventListener("input", aplicarFiltro);
+        buscarInput.addEventListener("input", () => {
+          setTimeout(aplicarFiltro, 300);
+        });
       }
 
       const ordenarSelect = document.getElementById("ordenar-casos");
@@ -962,14 +1177,32 @@ import {
 
       // Aplicar filtro inicial
       filtrarCasos("todos");
+
+      // Efecto de escritura en el título
+      const title = document.querySelector("h1");
+      if (title) {
+        const text = title.textContent;
+        title.textContent = "";
+
+        let i = 0;
+        const typeWriter = () => {
+          if (i < text.length) {
+            title.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeWriter, 50);
+          }
+        };
+
+        setTimeout(typeWriter, 500);
+      }
     });
 
     // Hacer funciones disponibles globalmente
-    window.verCaso = verCaso;
     window.filtrarCasos = filtrarCasos;
     window.exportarHistorial = exportarHistorial;
     window.limpiarHistorial = limpiarHistorial;
     window.confirmarEliminarCaso = confirmarEliminarCaso;
+    window.verCasoDetalles = verCasoDetalles;
     window.cerrarModal = cerrarModal;
   </script>
 </MainLayout>

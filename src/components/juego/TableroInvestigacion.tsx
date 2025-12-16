@@ -20,6 +20,307 @@ import {
   Download
 } from 'lucide-react';
 
+const PanelSospechosos: React.FC<{
+  proponiendo: string | null;
+  onProponer: (id: string) => void;
+}> = ({ proponiendo, onProponer }) => {
+  const { casoActual } = useGameStore();
+  
+  if (!casoActual) return null;
+
+  return (
+    <div className="space-y-6 animate-slide-up">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
+          <Users className="w-6 h-6 text-acento-azul" />
+          Perfiles de Sospechosos
+        </h3>
+        <span className="text-sm text-texto-secundario bg-fondo-borde/50 backdrop-blur-sm px-3 py-1 rounded-full border border-fondo-borde/30">
+          {casoActual.sospechosos.length} registros
+        </span>
+      </div>
+      
+      <div className="grid gap-6">
+        {casoActual.sospechosos.map((sospechoso, index) => (
+          <div 
+            key={sospechoso.id} 
+            className="card-neu p-6 group relative overflow-hidden"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-acento-azul/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            
+            <div className="flex items-start justify-between relative z-10">
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-fondo-secundario flex items-center justify-center border border-fondo-borde group-hover:border-acento-azul/50 transition-colors">
+                      <span className="text-acento-azul font-bold text-lg">{index + 1}</span>
+                    </div>
+                    <h4 className="text-xl font-bold text-texto-principal group-hover:text-acento-azul transition-colors">
+                      {sospechoso.nombre}
+                    </h4>
+                  </div>
+                  
+                  <button
+                    onClick={() => onProponer(sospechoso.id)}
+                    disabled={proponiendo !== null || casoActual.resuelto}
+                    className={`btn-glow px-5 py-2.5 rounded-xl text-sm font-bold tracking-wide transition-all shadow-lg ${
+                      proponiendo === sospechoso.id
+                        ? 'bg-acento-azul/20 text-acento-azul ring-2 ring-acento-azul/20'
+                        : 'bg-fondo-secundario text-texto-secundario hover:bg-acento-azul hover:text-white hover:shadow-acento-azul/20'
+                    } ${casoActual.resuelto ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {proponiendo === sospechoso.id ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>ANALIZANDO...</span>
+                      </div>
+                    ) : (
+                      'ACUSAR SUJETO'
+                    )}
+                  </button>
+                </div>
+                
+                <p className="text-texto-secundario text-base mb-6 leading-relaxed bg-fondo-panel/30 p-4 rounded-lg border border-fondo-borde/30">
+                  {sospechoso.descripcion}
+                </p>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  {sospechoso.motivacion && (
+                    <div className="p-4 bg-fondo-secundario/30 rounded-xl border border-fondo-borde/30 hover:border-acento-azul/20 transition-colors">
+                      <div className="flex items-center gap-2 text-xs font-bold text-acento-turquesa mb-2 uppercase tracking-wider">
+                        <Target className="w-3 h-3" /> Motivación
+                      </div>
+                      <div className="text-sm text-texto-principal/90">{sospechoso.motivacion}</div>
+                    </div>
+                  )}
+                  
+                  {sospechoso.alibi && (
+                    <div className="p-4 bg-fondo-secundario/30 rounded-xl border border-fondo-borde/30 hover:border-acento-azul/20 transition-colors">
+                      <div className="flex items-center gap-2 text-xs font-bold text-acento-azul mb-2 uppercase tracking-wider">
+                        <Clock className="w-3 h-3" /> Coartada
+                      </div>
+                      <div className="text-sm text-texto-principal/90">{sospechoso.alibi}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const PanelPistas: React.FC = () => {
+  const { casoActual, pistasDescubiertas, descubrirPista } = useGameStore();
+  
+  if (!casoActual) return null;
+
+  const pistasDisponibles = casoActual.pistas.filter(p => 
+    pistasDescubiertas.includes(p.id) || p.relevancia === 'alta'
+  );
+
+  return (
+    <div className="space-y-6 animate-slide-up">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
+          <Search className="w-6 h-6 text-acento-turquesa" />
+          Evidencias Recolectadas
+        </h3>
+        <span className="text-sm text-texto-secundario bg-fondo-borde/50 backdrop-blur-sm px-3 py-1 rounded-full border border-fondo-borde/30">
+          {pistasDisponibles.length}/{casoActual.pistas.length} disponibles
+        </span>
+      </div>
+      
+      <div className="grid md:grid-cols-2 gap-4">
+        {casoActual.pistas.map((pista, index) => {
+          const descubierta = pistasDescubiertas.includes(pista.id);
+          const disponible = descubierta || pista.relevancia === 'alta';
+          
+          return (
+            <div 
+              key={pista.id}
+              style={{ animationDelay: `${index * 50}ms` }}
+              className={`p-5 rounded-xl transition-all duration-500 border relative overflow-hidden ${
+                descubierta 
+                  ? 'bg-acento-azul/5 border-acento-azul/30 shadow-lg shadow-acento-azul/5' 
+                  : disponible
+                  ? 'bg-fondo-panel/40 border-fondo-borde hover:border-acento-turquesa/40 hover:bg-fondo-panel/60 cursor-pointer group'
+                  : 'bg-fondo-panel/20 border-fondo-borde/30 opacity-60 grayscale'
+              }`}
+            >
+              <div className="flex items-start justify-between mb-3 relative z-10">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`w-2 h-2 rounded-full shadow-[0_0_8px] ${
+                      pista.relevancia === 'alta' ? 'bg-red-500 shadow-red-500/50' :
+                      pista.relevancia === 'media' ? 'bg-yellow-500 shadow-yellow-500/50' :
+                      'bg-green-500 shadow-green-500/50'
+                    }`} />
+                    <span className={`text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full ${
+                      pista.relevancia === 'alta' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                      pista.relevancia === 'media' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
+                      'bg-green-500/10 text-green-400 border border-green-500/20'
+                    }`}>
+                      {pista.relevancia.toUpperCase()}
+                    </span>
+                    {!pista.confiable && (
+                      <span className="text-[10px] font-bold tracking-wider bg-orange-500/10 text-orange-400 px-2 py-0.5 rounded-full border border-orange-500/20">
+                        DUDOSA
+                      </span>
+                    )}
+                  </div>
+                  
+                  <h4 className={`text-lg font-bold mb-2 transition-colors ${
+                    descubierta ? 'text-texto-principal' : 'text-texto-principal/70 group-hover:text-acento-turquesa'
+                  }`}>
+                    {pista.titulo}
+                  </h4>
+                </div>
+                
+                {!descubierta && disponible && (
+                  <button
+                    onClick={() => descubrirPista(pista.id)}
+                    className="px-3 py-1.5 text-xs font-bold bg-acento-azul/10 text-acento-azul rounded-lg hover:bg-acento-azul hover:text-white transition-all shadow-lg shadow-acento-azul/10 active:scale-95"
+                  >
+                    EXAMINAR
+                  </button>
+                )}
+              </div>
+              
+              {descubierta ? (
+                <p className="text-texto-secundario text-sm leading-relaxed animate-fade-in">
+                  {pista.descripcion}
+                </p>
+              ) : disponible ? (
+                <p className="text-texto-secundario/50 text-sm italic flex items-center gap-2 group-hover:text-acento-turquesa/70 transition-colors">
+                  <Search className="w-3 h-3" />
+                  Pista disponible para análisis...
+                </p>
+              ) : (
+                <p className="text-texto-secundario/30 text-sm italic flex items-center gap-2">
+                  <AlertCircle className="w-3 h-3" />
+                  Datos insuficientes
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      
+      <div className="p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl flex items-center gap-3 backdrop-blur-sm">
+        <div className="p-2 bg-yellow-500/10 rounded-lg">
+          <AlertCircle className="w-5 h-5 text-yellow-400" />
+        </div>
+        <div>
+          <p className="text-yellow-400 text-sm font-bold tracking-wide">ADVERTENCIA DE INTELIGENCIA</p>
+          <p className="text-yellow-400/70 text-xs mt-0.5">
+            La información puede ser manipulada. Verifique las fuentes antes de sacar conclusiones.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PanelAyudas: React.FC = () => {
+  const { casoActual, ayudasUsadas, usarAyuda } = useGameStore();
+
+  if (!casoActual) return null;
+
+  return (
+    <div className="space-y-6 animate-slide-up">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
+          <HelpCircle className="w-6 h-6 text-acento-turquesa" />
+          Herramientas de Investigación
+        </h3>
+        <span className="text-sm text-texto-secundario bg-fondo-borde/50 backdrop-blur-sm px-3 py-1 rounded-full border border-fondo-borde/30">
+          {ayudasUsadas.length}/3 usadas
+        </span>
+      </div>
+      
+      <div className="grid gap-6">
+        {(casoActual.ayudas || []).map((ayuda, index) => {
+          const usada = ayudasUsadas.includes(ayuda.id);
+          
+          return (
+            <div 
+              key={ayuda.id}
+              style={{ animationDelay: `${index * 100}ms` }}
+              className={`p-6 rounded-xl transition-all duration-300 border relative overflow-hidden ${
+                usada
+                  ? 'bg-fondo-panel/40 border-green-500/30 shadow-lg shadow-green-500/5'
+                  : 'card-neu hover:border-acento-turquesa/50'
+              }`}
+            >
+              {usada && <div className="absolute top-0 right-0 p-2 opacity-50"><CheckCircle className="w-16 h-16 text-green-500/10" /></div>}
+              
+              <div className="flex items-start justify-between relative z-10">
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ${
+                      usada 
+                        ? 'bg-green-500/20 text-green-400 shadow-green-500/10' 
+                        : 'bg-acento-turquesa/20 text-acento-turquesa shadow-acento-turquesa/10'
+                    }`}>
+                      <Zap className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-texto-principal">
+                        {ayuda.nombre}
+                      </h4>
+                      <p className="text-texto-secundario text-sm mt-0.5">
+                        {ayuda.descripcion}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {!usada && ayudasUsadas.length < 3 && (
+                    <button
+                      onClick={() => usarAyuda(ayuda.id)}
+                      className="mt-2 w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-acento-turquesa to-acento-azul text-fondo-principal font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-acento-azul/20 active:scale-95"
+                    >
+                      ACTIVAR HERRAMIENTA
+                    </button>
+                  )}
+                  
+                  {usada && (
+                    <div className="mt-4 p-4 bg-green-500/5 border border-green-500/20 rounded-xl animate-fade-in relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-green-500/50" />
+                      <div className="flex items-center gap-2 mb-2 text-green-400 text-sm font-bold tracking-wide uppercase">
+                        <CheckCircle className="w-4 h-4" />
+                        Resultado del análisis
+                      </div>
+                      <p className="text-texto-principal text-sm leading-relaxed font-medium">
+                        {ayuda.resultado || "Análisis completado sin nueva información relevante."}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl backdrop-blur-sm">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-blue-400 text-sm font-bold">RECURSOS LIMITADOS</p>
+            <p className="text-blue-400/80 text-xs mt-1">
+              Solo puedes usar 3 ayudas por caso. Elige sabiamente cuándo utilizarlas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const TableroInvestigacion: React.FC = () => {
   const {
     casoActual,
@@ -124,107 +425,141 @@ const TableroInvestigacion: React.FC = () => {
       doc.text(`Página ${pagina}`, pageWidth / 2, pageHeight - 10, { align: "center" });
     };
 
+    // Helper para verificar salto de página
+    let yPos = 40;
+    
+    const checkPageBreak = (heightNeeded: number = 20) => {
+      if (yPos + heightNeeded > pageHeight - 20) {
+        agregarMarcaDeAgua(doc.getNumberOfPages());
+        doc.addPage();
+        yPos = 30;
+      }
+    };
+
+    const addText = (text: string, fontSize: number = 11, fontStyle: string = "normal", indent: number = 20) => {
+       doc.setFont("helvetica", fontStyle);
+       doc.setFontSize(fontSize);
+       doc.setTextColor(0, 0, 0);
+       
+       const lines = doc.splitTextToSize(text, pageWidth - (indent * 2));
+       const lineHeight = fontSize * 0.5; // Aproximado
+       
+       lines.forEach((line: string) => {
+         checkPageBreak(lineHeight);
+         doc.text(line, indent, yPos);
+         yPos += lineHeight + 2;
+       });
+       
+       yPos += 5; // Margen extra después del bloque
+    };
+
     // --- PÁGINA 1: PORTADA Y RESUMEN ---
     
     // Título Principal
     doc.setFont("times", "bold");
     doc.setFontSize(24);
     doc.setTextColor(0, 0, 0);
-    doc.text(casoActual.titulo, pageWidth / 2, 40, { align: "center" });
+    doc.text(casoActual.titulo, pageWidth / 2, yPos, { align: "center" });
+    yPos += 15;
     
     // Sello Top Secret
     doc.setTextColor(200, 0, 0);
     doc.setFontSize(14);
-    doc.text("[ TOP SECRET ]", pageWidth / 2, 50, { align: "center" });
+    doc.text("[ TOP SECRET ]", pageWidth / 2, yPos, { align: "center" });
     doc.setDrawColor(200, 0, 0);
     doc.setLineWidth(0.5);
-    doc.rect(pageWidth / 2 - 20, 45, 40, 7);
+    doc.rect(pageWidth / 2 - 20, yPos - 5, 40, 7);
+    yPos += 20;
     
     // Detalles del Caso
     doc.setTextColor(0, 0, 0);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
     
-    let yPos = 70;
-    doc.text("RESUMEN DE LOS HECHOS:", 20, yPos);
+    addText("RESUMEN DE LOS HECHOS:", 12, "bold", 20);
+    addText(casoActual.historia, 11, "normal", 20);
+    
+    yPos += 5;
+    addText("AMBIENTACION:", 12, "bold", 20);
+    addText(casoActual.ambientacion, 11, "normal", 20);
+    
     yPos += 10;
-    
-    doc.setFontSize(11);
-    const splitHistoria = doc.splitTextToSize(casoActual.historia, pageWidth - 40);
-    doc.text(splitHistoria, 20, yPos);
-    
-    yPos += (splitHistoria.length * 7) + 15;
-    
-    doc.setFont("helvetica", "bold");
-    doc.text("AMBIENTACION:", 20, yPos);
-    doc.setFont("helvetica", "normal");
-    const splitAmbientacion = doc.splitTextToSize(casoActual.ambientacion, pageWidth - 80);
-    doc.text(splitAmbientacion, 60, yPos);
-    
-    yPos += 30;
-    
-    doc.setFont("helvetica", "bold");
-    doc.text("INSTRUCCIONES PARA LOS AGENTES:", 20, yPos);
-    yPos += 10;
-    doc.setFont("helvetica", "normal");
-    doc.text("1. Analicen los perfiles de los sospechosos en la siguiente página.", 25, yPos);
-    yPos += 7;
-    doc.text("2. Utilicen la app web para solicitar análisis forenses (Ayudas).", 25, yPos);
-    yPos += 7;
-    doc.text("3. Verifiquen coartadas y motiven sus conclusiones.", 25, yPos);
+    checkPageBreak(40);
+    addText("INSTRUCCIONES PARA LOS AGENTES:", 12, "bold", 20);
+    addText("1. Analicen los perfiles de los sospechosos y sus coartadas.", 11, "normal", 25);
+    addText("2. Utilicen la interfaz táctica para revisar evidencias y solicitar análisis.", 11, "normal", 25);
+    addText("3. Identifiquen al culpable basándose en hechos y contradicciones.", 11, "normal", 25);
     
     agregarMarcaDeAgua(1);
 
-    // --- PÁGINA 2: SOSPECHOSOS ---
+    // --- PÁGINA 2+: SOSPECHOSOS ---
     doc.addPage();
     yPos = 30;
     
     doc.setFont("times", "bold");
     doc.setFontSize(18);
     doc.text("PERFILES DE SOSPECHOSOS", 20, yPos);
-    yPos += 15;
+    yPos += 20;
     
     casoActual.sospechosos.forEach((sospechoso, index) => {
-      // Verificar espacio en página
-      if (yPos > pageHeight - 50) {
-    agregarMarcaDeAgua(doc.getNumberOfPages());
-        doc.addPage();
-        yPos = 30;
-      }
+      // Estimar altura necesaria para cada sospechoso (simplificado)
+      const descLines = doc.splitTextToSize(sospechoso.descripcion, pageWidth - 50).length;
+      const heightNeeded = 50 + (descLines * 7);
       
+      checkPageBreak(heightNeeded);
+      
+      // Dibujar caja
+      const startY = yPos;
       doc.setDrawColor(0, 0, 0);
       doc.setLineWidth(0.1);
-      doc.rect(20, yPos, pageWidth - 40, 45);
+      // No dibujamos el rect hasta saber la altura real final, o lo hacemos simple
       
       doc.setFont("helvetica", "bold");
       doc.setFontSize(12);
-      doc.text(`SUJETO #${index + 1}: ${sospechoso.nombre.toUpperCase()}`, 25, yPos + 10);
+      doc.text(`SUJETO #${index + 1}: ${sospechoso.nombre.toUpperCase()}`, 25, yPos + 5);
+      yPos += 15;
       
+      addText(`Descripción:`, 10, "bold", 25);
+      // Retrocedemos un poco para que la descripción quede alineada o seguimos abajo
+      // Simplificado: title then text
+      // doc.text was handled by addText but it adds newlines.
+      // Re-implementing specific layout for suspects safely:
+      
+      const descSplit = doc.splitTextToSize(sospechoso.descripcion, pageWidth - 60);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
+      descSplit.forEach((line: string) => {
+        checkPageBreak(5);
+        doc.text(line, 25, yPos);
+        yPos += 5;
+      });
       
-      doc.text(`Descripción:`, 25, yPos + 20);
-      const descSplit = doc.splitTextToSize(sospechoso.descripcion, pageWidth - 70);
-      doc.text(descSplit, 50, yPos + 20);
-      
-      const nextLine = yPos + 20 + (descSplit.length * 5);
+      yPos += 5;
       
       if (sospechoso.motivacion) {
-        doc.text(`Motivo Potencial:`, 25, nextLine);
-        doc.text(sospechoso.motivacion, 55, nextLine);
+        checkPageBreak(10);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Motivo Potencial:`, 25, yPos);
+        doc.setFont("helvetica", "normal");
+        doc.text(sospechoso.motivacion, 56, yPos); // Offset x
+        yPos += 7;
       }
       
       if (sospechoso.alibi) {
-        doc.text(`Coartada:`, 25, nextLine + 7);
-        doc.text(sospechoso.alibi, 55, nextLine + 7);
+        checkPageBreak(10);
+        doc.setFont("helvetica", "bold");
+        doc.text(`Coartada:`, 25, yPos);
+        doc.setFont("helvetica", "normal");
+        doc.text(sospechoso.alibi, 56, yPos);
+        yPos += 7;
       }
       
-      yPos += 55;
+      // Rectángulo alrededor (approximado al final)
+      doc.rect(20, startY, pageWidth - 40, yPos - startY + 2);
+      yPos += 10;
     });
     
     agregarMarcaDeAgua(doc.getNumberOfPages());
     
-    // --- PÁGINA 3: EVIDENCIA INICIAL ---
+    // --- PÁGINA 3+: EVIDENCIA ---
     doc.addPage();
     yPos = 30;
     
@@ -233,19 +568,26 @@ const TableroInvestigacion: React.FC = () => {
     doc.text("EVIDENCIA INICIAL RECOLECTADA", 20, yPos);
     yPos += 15;
     
-    // Filtrar solo evidencia inicial (descubierta o alta relevancia)
     const evidenciasIniciales = casoActual.pistas.filter(p => p.relevancia === 'alta' || pistasDescubiertas.includes(p.id));
     
     evidenciasIniciales.forEach((pista, index) => {
+       checkPageBreak(30); // Min height
+       
        doc.setFont("helvetica", "bold");
        doc.setFontSize(11);
        doc.text(`EVIDENCIA #${index + 1}: ${pista.titulo}`, 20, yPos);
+       yPos += 7;
        
        doc.setFont("helvetica", "normal"); 
        const descPista = doc.splitTextToSize(pista.descripcion, pageWidth - 50);
-       doc.text(descPista, 20, yPos + 7);
        
-       yPos += 20 + (descPista.length * 5);
+       descPista.forEach((line: string) => {
+         checkPageBreak(5);
+         doc.text(line, 20, yPos);
+         yPos += 5;
+       });
+       
+       yPos += 10;
     });
     
     agregarMarcaDeAgua(doc.getNumberOfPages());
@@ -305,275 +647,28 @@ const TableroInvestigacion: React.FC = () => {
     }, 1500);
   };
 
-  const PanelSospechosos = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
-          <Users className="w-6 h-6 text-acento-azul" />
-          Perfiles de Sospechosos
-        </h3>
-        <span className="text-sm text-texto-secundario bg-fondo-borde px-3 py-1 rounded-full">
-          {casoActual.sospechosos.length} registros
-        </span>
-      </div>
-      
-      <div className="space-y-4">
-        {casoActual.sospechosos.map((sospechoso) => (
-          <div 
-            key={sospechoso.id} 
-            className="bg-fondo-panel/50 border border-fondo-borde rounded-xl p-5 hover:border-acento-azul/30 transition-all duration-300 group"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-xl font-semibold text-texto-principal group-hover:text-acento-azul transition-colors">
-                    {sospechoso.nombre}
-                  </h4>
-                  <button
-                    onClick={() => handleProponerCulpable(sospechoso.id)}
-                    disabled={proponiendo !== null || casoActual.resuelto}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      proponiendo === sospechoso.id
-                        ? 'bg-acento-azul/20 text-acento-azul'
-                        : 'bg-fondo-borde text-texto-secundario hover:bg-acento-azul/10 hover:text-acento-azul'
-                    } ${casoActual.resuelto ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    {proponiendo === sospechoso.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      'Proponer como culpable'
-                    )}
-                  </button>
-                </div>
-                
-                <p className="text-texto-secundario text-sm mb-3 leading-relaxed">
-                  {sospechoso.descripcion}
-                </p>
-                
-                <div className="grid md:grid-cols-2 gap-4 mt-4">
-                  {sospechoso.motivacion && (
-                    <div className="p-3 bg-fondo-secundario/30 rounded-lg">
-                      <div className="text-xs text-texto-secundario mb-1">Motivación</div>
-                      <div className="text-sm text-texto-principal">{sospechoso.motivacion}</div>
-                    </div>
-                  )}
-                  
-                  {sospechoso.alibi && (
-                    <div className="p-3 bg-fondo-secundario/30 rounded-lg">
-                      <div className="text-xs text-texto-secundario mb-1">Coartada</div>
-                      <div className="text-sm text-texto-principal">{sospechoso.alibi}</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 
-  const PanelPistas = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
-          <Search className="w-6 h-6 text-acento-turquesa" />
-          Evidencias Recolectadas
-        </h3>
-        <span className="text-sm text-texto-secundario bg-fondo-borde px-3 py-1 rounded-full">
-          {pistasDisponibles.length}/{casoActual.pistas.length} disponibles
-        </span>
-      </div>
-      
-      <div className="grid md:grid-cols-2 gap-4">
-        {casoActual.pistas.map((pista) => {
-          const descubierta = pistasDescubiertas.includes(pista.id);
-          const disponible = descubierta || pista.relevancia === 'alta';
-          
-          return (
-            <div 
-              key={pista.id}
-              className={`border rounded-xl p-4 transition-all duration-300 ${
-                descubierta 
-                  ? 'border-acento-azul/50 bg-acento-azul/5' 
-                  : disponible
-                  ? 'border-fondo-borde bg-fondo-panel/30 hover:border-acento-turquesa/30'
-                  : 'border-fondo-borde/50 bg-fondo-panel/10 opacity-60'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className={`w-2 h-2 rounded-full ${
-                      pista.relevancia === 'alta' ? 'bg-red-400' :
-                      pista.relevancia === 'media' ? 'bg-yellow-400' :
-                      'bg-green-400'
-                    }`} />
-                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                      pista.relevancia === 'alta' ? 'bg-red-400/10 text-red-400' :
-                      pista.relevancia === 'media' ? 'bg-yellow-400/10 text-yellow-400' :
-                      'bg-green-400/10 text-green-400'
-                    }`}>
-                      {pista.relevancia.toUpperCase()}
-                    </span>
-                    {!pista.confiable && (
-                      <span className="text-xs bg-orange-400/10 text-orange-400 px-2 py-1 rounded-full">
-                        Dudosa
-                      </span>
-                    )}
-                  </div>
-                  
-                  <h4 className="text-lg font-semibold text-texto-principal mb-1">
-                    {pista.titulo}
-                  </h4>
-                </div>
-                
-                {!descubierta && disponible && (
-                  <button
-                    onClick={() => descubrirPista(pista.id)}
-                    className="px-3 py-1.5 text-xs bg-acento-azul/10 text-acento-azul rounded-lg hover:bg-acento-azul/20 transition-colors"
-                  >
-                    Examinar
-                  </button>
-                )}
-              </div>
-              
-              {descubierta ? (
-                <p className="text-texto-secundario text-sm leading-relaxed">
-                  {pista.descripcion}
-                </p>
-              ) : disponible ? (
-                <p className="text-texto-secundario/60 text-sm italic">
-                  Pista disponible para examinar...
-                </p>
-              ) : (
-                <p className="text-texto-secundario/40 text-sm italic">
-                  Pista aún no disponible
-                </p>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      
-      <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-yellow-400 text-sm font-medium">Nota importante</p>
-            <p className="text-yellow-400/80 text-xs mt-1">
-              No todas las pistas son confiables. Algunas pueden ser engañosas o contener información errónea.
-              Analiza cada evidencia cuidadosamente y verifica su consistencia.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const PanelAyudas = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
-          <HelpCircle className="w-6 h-6 text-acento-turquesa" />
-          Herramientas de Investigación
-        </h3>
-        <span className="text-sm text-texto-secundario bg-fondo-borde px-3 py-1 rounded-full">
-          {ayudasUsadas.length}/3 usadas
-        </span>
-      </div>
-      
-      <div className="space-y-4">
-        {(casoActual.ayudas || []).map((ayuda) => {
-          const usada = ayudasUsadas.includes(ayuda.id);
-          
-          return (
-            <div 
-              key={ayuda.id}
-              className={`border rounded-xl p-5 transition-all duration-300 ${
-                usada
-                  ? 'border-green-500/30 bg-green-500/5'
-                  : 'border-fondo-borde bg-fondo-panel/30 hover:border-acento-turquesa/30'
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      usada 
-                        ? 'bg-green-500/20 text-green-400' 
-                        : 'bg-acento-turquesa/20 text-acento-turquesa'
-                    }`}>
-                      <Zap className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-semibold text-texto-principal">
-                        {ayuda.nombre}
-                      </h4>
-                      <p className="text-texto-secundario text-sm mt-1">
-                        {ayuda.descripcion}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {!usada && ayudasUsadas.length < 3 && (
-                    <button
-                      onClick={() => usarAyuda(ayuda.id)}
-                      className="mt-3 px-4 py-2 bg-gradient-to-r from-acento-turquesa to-acento-azul text-fondo-principal text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
-                    >
-                      Usar herramienta
-                    </button>
-                  )}
-                  
-                  {usada && (
-                    <div className="mt-3 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2 text-green-400 text-sm font-medium">
-                        <CheckCircle className="w-4 h-4" />
-                        Resultado del análisis
-                      </div>
-                      <p className="text-texto-principal text-sm leading-relaxed">
-                        {ayuda.resultado || "Análisis completado sin nueva información relevante."}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="text-blue-400 text-sm font-medium">Recursos limitados</p>
-            <p className="text-blue-400/80 text-xs mt-1">
-              Solo puedes usar 3 ayudas por caso. Elige sabiamente cuándo utilizarlas.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
-    <div className="min-h-screen bg-fondo-principal">
+    <div className="min-h-screen bg-fondo-principal bg-grid-pattern relative overflow-hidden animate-fade-in">
+       <div className="absolute inset-0 bg-gradient-radial from-transparent to-fondo-principal/90 pointer-events-none" />
+       
       {/* Header */}
-      <div className="bg-fondo-principal/80 backdrop-blur-md border-b border-fondo-borde/50 sticky top-0 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className="bg-fondo-principal/80 backdrop-blur-xl border-b border-fondo-borde/50 sticky top-0 z-50 transition-all duration-300 shadow-2xl shadow-black/20">
+        <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-acento-azul/50 to-transparent animate-pulse" />
+        <div className="max-w-7xl mx-auto px-6 py-4 relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <div className="flex items-center gap-3">
-                 <div className="bg-gradient-to-br from-acento-azul to-acento-turquesa p-2 rounded-lg text-fondo-principal shadow-lg shadow-acento-azul/20">
+              <div className="flex items-center gap-3 group">
+                 <div className="bg-gradient-to-br from-acento-azul to-acento-turquesa p-2 rounded-xl text-fondo-principal shadow-lg shadow-acento-azul/20 group-hover:scale-110 transition-transform duration-300">
                     <FileText className="w-6 h-6" />
                  </div>
                  <div>
-                    <h1 className="text-2xl md:text-3xl font-serif font-bold text-texto-principal tracking-tight">
+                    <h1 className="text-2xl md:text-3xl font-serif font-bold text-texto-principal tracking-tight group-hover:text-acento-turquesa transition-colors">
                       {casoActual.titulo}
                     </h1>
                      <p className="text-sm text-texto-secundario italic flex items-center gap-2">
-                       <span className="w-1.5 h-1.5 rounded-full bg-acento-turquesa"></span>
+                       <span className="w-2 h-2 rounded-full bg-acento-turquesa animate-pulse"></span>
                        {casoActual.ambientacion}
                      </p>
                  </div>
@@ -581,22 +676,22 @@ const TableroInvestigacion: React.FC = () => {
             </div>
             
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-fondo-panel border border-fondo-borde rounded-md shadow-sm">
-                <Clock className="w-4 h-4 text-acento-turquesa" />
-                <span className="font-mono text-texto-principal font-medium">{tiempoTranscurrido}</span>
+              <div className="flex items-center gap-2 px-4 py-2 bg-fondo-panel/50 border border-fondo-borde rounded-lg shadow-inner backdrop-blur-sm">
+                <Clock className="w-4 h-4 text-acento-turquesa animate-spin-slow" />
+                <span className="font-mono text-texto-principal font-bold tracking-widest">{tiempoTranscurrido}</span>
               </div>
               
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-fondo-panel border border-fondo-borde rounded-md shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 bg-fondo-panel/50 border border-fondo-borde rounded-lg shadow-inner backdrop-blur-sm">
                 <Search className="w-4 h-4 text-acento-azul" />
-                <span className="font-mono text-texto-principal font-medium">{pistasDescubiertas.length}/{casoActual.pistas.length}</span>
+                <span className="font-mono text-texto-principal font-bold">{pistasDescubiertas.length}/{casoActual.pistas.length}</span>
               </div>
 
                <button
                 onClick={generarPDF}
-                className="flex items-center gap-2 px-4 py-2 bg-fondo-secundario hover:bg-acento-azul/10 border border-fondo-borde hover:border-acento-azul/30 rounded-lg text-texto-secundario hover:text-acento-azul transition-all duration-300 group ml-2"
+                className="flex items-center gap-2 px-4 py-2 bg-fondo-secundario hover:bg-acento-azul/10 border border-fondo-borde hover:border-acento-azul/30 rounded-lg text-texto-secundario hover:text-acento-azul transition-all duration-300 group ml-2 active:scale-95"
                 title="Descargar Expediente"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-4 h-4 group-hover:-translate-y-1 transition-transform" />
                 <span className="text-sm font-medium hidden sm:inline">Expediente PDF</span>
               </button>
             </div>
@@ -608,18 +703,18 @@ const TableroInvestigacion: React.FC = () => {
                <button
                   key={tab}
                   onClick={() => setPanelActivo(tab as any)}
-                  className={`pb-3 flex items-center gap-2 transition-all text-sm font-medium border-b-2 whitespace-nowrap px-1 ${
+                  className={`pb-3 flex items-center gap-2 transition-all text-sm font-medium border-b-2 whitespace-nowrap px-4 py-2 rounded-t-lg ${
                     panelActivo === tab
-                      ? 'text-acento-azul border-acento-azul'
-                      : 'text-texto-secundario border-transparent hover:text-texto-principal hover:border-texto-secundario/30'
+                      ? 'text-acento-azul border-acento-azul bg-acento-azul/5'
+                      : 'text-texto-secundario border-transparent hover:text-texto-principal hover:bg-white/5'
                   }`}
                 >
                   {tab === 'sospechosos' && <Users className="w-4 h-4" />}
                   {tab === 'pistas' && <Search className="w-4 h-4" />}
                   {tab === 'ayudas' && <HelpCircle className="w-4 h-4" />}
-                  <span className="capitalize">{tab}</span>
+                  <span className="capitalize tracking-wide">{tab}</span>
                   {tab !== 'sospechosos' && (
-                    <span className={`ml-1 text-xs px-1.5 py-0.5 rounded-full ${panelActivo === tab ? 'bg-acento-azul/10' : 'bg-fondo-borde'}`}>
+                    <span className={`ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${panelActivo === tab ? 'bg-acento-azul/20 text-acento-azul' : 'bg-fondo-borde text-texto-secundario'}`}>
                         {tab === 'pistas' ? pistasDisponibles.length : `${ayudasUsadas.length}/3`}
                     </span>
                   )}
@@ -630,69 +725,77 @@ const TableroInvestigacion: React.FC = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
+      <div className="max-w-7xl mx-auto px-6 py-10 relative z-10">
         <div className="grid lg:grid-cols-3 gap-10">
           {/* Panel izquierdo - Historia y contenido dinámico */}
           <div className="lg:col-span-2 space-y-8">
             {/* Resumen del caso */}
-            <div className="bg-fondo-panel/30 border border-fondo-borde rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <BookOpen className="w-6 h-6 text-acento-turquesa" />
-                <h2 className="text-xl font-serif text-texto-principal">
+            <div className="card-neu p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                 <FileText className="w-32 h-32 text-acento-turquesa transformer -rotate-12" />
+              </div>
+              <div className="flex items-center gap-3 mb-6 relative z-10">
+                <div className="p-2 bg-acento-turquesa/10 rounded-lg">
+                    <BookOpen className="w-6 h-6 text-acento-turquesa" />
+                </div>
+                <h2 className="text-xl font-serif text-texto-principal tracking-wide">
                   Resumen del Caso
                 </h2>
               </div>
-              <div className="prose prose-invert max-w-none">
-                <p className="text-texto-secundario leading-relaxed text-sm md:text-base">
+              <div className="prose prose-invert max-w-none relative z-10">
+                <p className="text-texto-secundario leading-relaxed text-lg font-light">
                   {casoActual.historia}
                 </p>
               </div>
             </div>
 
             {/* Panel dinámico */}
-            <div className="bg-fondo-panel/30 border border-fondo-borde rounded-xl p-6">
-              {panelActivo === 'sospechosos' && <PanelSospechosos />}
+            <div className="min-h-[500px]">
+              {panelActivo === 'sospechosos' && <PanelSospechosos proponiendo={proponiendo} onProponer={handleProponerCulpable} />}
               {panelActivo === 'pistas' && <PanelPistas />}
               {panelActivo === 'ayudas' && <PanelAyudas />}
             </div>
           </div>
 
           {/* Panel derecho - Herramientas y progreso - Sticky */}
-          <div className="space-y-8 lg:sticky lg:top-28 self-start">
+          <div className="space-y-8 lg:sticky lg:top-32 self-start animate-fade-in" style={{ animationDelay: '300ms' }}>
             {/* Progreso */}
-            <div className="bg-fondo-panel/30 border border-fondo-borde rounded-xl p-6">
-              <h3 className="text-lg font-serif text-texto-principal mb-4">
-                Progreso de la Investigación
+            <div className="card-neu p-6">
+              <h3 className="text-lg font-serif text-texto-principal mb-6 flex items-center gap-2">
+                 <Target className="w-5 h-5 text-acento-azul" />
+                 Estado de la Misión
               </h3>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-texto-secundario">Completitud</span>
-                    <span className="text-acento-azul font-medium">
+                  <div className="flex justify-between text-sm mb-2 font-medium">
+                    <span className="text-texto-secundario">Progreso de Investigación</span>
+                    <span className="text-acento-azul">
                       {Math.round(porcentajeProgreso)}%
                     </span>
                   </div>
-                  <div className="w-full h-2 bg-fondo-borde rounded-full overflow-hidden">
+                  <div className="w-full h-3 bg-fondo-borde/50 rounded-full overflow-hidden backdrop-blur-sm border border-fondo-borde/30">
                     <div 
-                      className="h-full bg-gradient-to-r from-acento-azul to-acento-turquesa rounded-full transition-all duration-500"
-                      style={{ width: `${porcentajeProgreso}%` }}
-                    />
+                      className="h-full bg-gradient-to-r from-acento-azul via-acento-turquesa to-acento-azul background-animate rounded-full transition-all duration-1000 ease-out relative"
+                      style={{ width: `${porcentajeProgreso}%`, backgroundSize: '200% 100%' }}
+                    >
+                        <div className="absolute top-0 right-0 bottom-0 w-1 bg-white/50 blur-[2px]" />
+                    </div>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 bg-fondo-secundario/30 rounded-lg">
-                    <div className="text-xs text-texto-secundario mb-1">Errores</div>
-                    <div className="text-lg text-texto-principal font-medium">
+                  <div className="p-4 bg-fondo-secundario/40 rounded-xl border border-fondo-borde/50 text-center hover:border-red-400/30 transition-colors">
+                    <div className="text-xs text-texto-secundario mb-1 uppercase tracking-wider">Errores</div>
+                    <div className="text-2xl text-texto-principal font-bold font-mono">
                       {errores}
                     </div>
                   </div>
                   
-                  <div className="p-3 bg-fondo-secundario/30 rounded-lg">
-                    <div className="text-xs text-texto-secundario mb-1">Ayudas usadas</div>
-                    <div className="text-lg text-texto-principal font-medium">
-                      {ayudasUsadas.length}/3
+                  <div className="p-4 bg-fondo-secundario/40 rounded-xl border border-fondo-borde/50 text-center hover:border-blue-400/30 transition-colors">
+                    <div className="text-xs text-texto-secundario mb-1 uppercase tracking-wider">Ayudas</div>
+                    <div className="text-2xl text-texto-principal font-bold font-mono">
+                      {ayudasUsadas.length}<span className="text-sm text-texto-secundario font-normal">/3</span>
                     </div>
                   </div>
                 </div>
@@ -700,77 +803,74 @@ const TableroInvestigacion: React.FC = () => {
             </div>
 
             {/* Hipótesis */}
-            <div className="bg-fondo-panel/30 border border-fondo-borde rounded-xl p-6">
-              <h3 className="text-lg font-serif text-texto-principal mb-4 flex items-center gap-2">
-                <MessageSquare className="w-5 h-5" />
-                Hipótesis Actual
+            <div className="card-neu p-6 relative group overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-acento-azul via-acento-turquesa to-acento-azul animate-slide-up opacity-50" />
+              
+              <h3 className="text-lg font-serif text-texto-principal mb-4 flex items-center gap-2 relative z-10">
+                <MessageSquare className="w-5 h-5 text-acento-turquesa" />
+                Hipótesis
               </h3>
               
               <textarea
                 value={hipotesisActual || ''}
                 onChange={(e) => setHipotesis(e.target.value)}
-                placeholder="Escribe tu teoría sobre quién es el culpable y por qué..."
-                className="w-full h-32 bg-fondo-secundario/30 border border-fondo-borde rounded-lg p-4 text-texto-principal text-sm focus:outline-none focus:border-acento-azul resize-none placeholder:text-texto-secundario/50"
+                placeholder="Escribe tu teoría aquí... (Documento Confidencial)"
+                className="w-full h-32 bg-fondo-secundario/50 border border-fondo-borde rounded-xl p-4 text-texto-principal text-sm focus:outline-none focus:border-acento-azul resize-none placeholder:text-texto-secundario/30 transition-all focus:ring-2 focus:ring-acento-azul/10 relative z-10"
               />
               
-              <div className="mt-4 text-xs text-texto-secundario/70">
-                Basa tu hipótesis en las pistas descubiertas y las relaciones entre sospechosos.
+              <div className="mt-4 text-[10px] text-texto-secundario/50 uppercase tracking-widest text-center flex items-center justify-center gap-2">
+                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                 SOLO OJOS AUTORIZADOS
               </div>
             </div>
 
             {/* Notas */}
-            <div className="bg-fondo-panel/30 border border-fondo-borde rounded-xl p-6">
+            <div className="card-neu p-6">
               <h3 className="text-lg font-serif text-texto-principal mb-4 flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Notas del Investigador
+                <FileText className="w-5 h-5 text-acento-azul" />
+                Notas de Campo
               </h3>
               
               <textarea
                 value={notas}
                 onChange={(e) => setNotas(e.target.value)}
-                placeholder="Registra observaciones, conexiones, dudas..."
-                className="w-full h-40 bg-fondo-secundario/30 border border-fondo-borde rounded-lg p-4 text-texto-principal text-sm focus:outline-none focus:border-acento-azul resize-none placeholder:text-texto-secundario/50"
+                placeholder="Observaciones..."
+                className="w-full h-40 bg-fondo-secundario/50 border border-fondo-borde rounded-xl p-4 text-texto-principal text-sm focus:outline-none focus:border-acento-azul resize-none placeholder:text-texto-secundario/30 transition-all focus:ring-2 focus:ring-acento-azul/10"
               />
             </div>
 
             {/* Acciones */}
-            <div className="bg-fondo-panel/30 border border-fondo-borde rounded-xl p-6">
-              <h3 className="text-lg font-serif text-texto-principal mb-4">
-                Acciones
-              </h3>
+            <div className="card-neu p-6 space-y-4">
+              <a 
+                href="/nuevo-caso"
+                className="block w-full py-3 bg-fondo-secundario/50 border border-fondo-borde rounded-xl text-texto-principal text-center hover:border-acento-azul/50 hover:bg-fondo-secundario transition-all duration-300 font-medium text-sm group"
+              >
+                <span className="group-hover:text-acento-azul transition-colors">Generar Nuevo Caso</span>
+              </a>
               
-              <div className="space-y-3">
-                <a 
-                  href="/nuevo-caso"
-                  className="block w-full py-3 bg-fondo-secundario/50 border border-fondo-borde rounded-lg text-texto-principal text-center hover:border-acento-azul/50 transition-colors"
-                >
-                  Nuevo caso
-                </a>
-                
-                <button
-                  onClick={() => {
-                   if (confirm('¿Seguro que quieres abandonar? El caso quedará registrado como no resuelto.')) {
-                      const historialActual = JSON.parse(localStorage.getItem('historial-casos') || '[]');
-                      const nuevoRegistro = {
-                        casoId: casoActual.id,
-                        titulo: casoActual.titulo,
-                        fecha: new Date().toISOString(),
-                        resuelto: false,
-                        tiempo: getTiempoTranscurrido(),
-                        stats: { puntaje: 0, abandono: true },
-                        data: casoActual
-                      };
-                      localStorage.setItem('historial-casos', JSON.stringify([...historialActual, nuevoRegistro]));
-                      
-                      nuevoCaso();
-                      window.location.href = '/';
-                    }
-                  }}
-                  className="block w-full py-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/20 transition-colors"
-                >
-                  Abandonar investigación
-                </button>
-              </div>
+              <button
+                onClick={() => {
+                 if (confirm('¿Seguro que quieres abandonar? El caso quedará registrado como no resuelto.')) {
+                    const historialActual = JSON.parse(localStorage.getItem('historial-casos') || '[]');
+                    const nuevoRegistro = {
+                      casoId: casoActual.id,
+                      titulo: casoActual.titulo,
+                      fecha: new Date().toISOString(),
+                      resuelto: false,
+                      tiempo: getTiempoTranscurrido(),
+                      stats: { puntaje: 0, abandono: true },
+                      data: casoActual
+                    };
+                    localStorage.setItem('historial-casos', JSON.stringify([...historialActual, nuevoRegistro]));
+                    
+                    nuevoCaso();
+                    window.location.href = '/';
+                  }
+                }}
+                className="block w-full py-3 bg-red-500/5 border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500/10 hover:border-red-500/40 transition-all duration-300 font-medium text-sm"
+              >
+                Abandonar Investigación
+              </button>
             </div>
           </div>
         </div>
@@ -778,68 +878,80 @@ const TableroInvestigacion: React.FC = () => {
 
       {/* Resultado de propuesta */}
       {resultado && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
-          <div className={`max-w-md w-full rounded-xl p-6 transform transition-all duration-500 ${
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4 backdrop-blur-lg animate-fade-in">
+          <div className={`max-w-md w-full rounded-2xl p-8 transform transition-all duration-500 animate-scale-in relative overflow-hidden ${
             resultado.correcto 
-              ? 'bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/30 shadow-2xl shadow-green-500/20' 
-              : 'bg-gradient-to-br from-red-500/10 to-red-500/5 border border-red-500/30 shadow-2xl shadow-red-500/20'
-          } bg-fondo-panel`}>
-            <div className="text-center">
-              <div className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${
+              ? 'bg-gradient-to-br from-fondo-panel via-fondo-panel to-green-900/10 border border-green-500/30' 
+              : 'bg-gradient-to-br from-fondo-panel via-fondo-panel to-red-900/10 border border-red-500/30'
+          } shadow-2xl`}>
+            
+            {/* Background effects in modal */}
+            <div className={`absolute top-0 left-0 w-full h-1 ${resultado.correcto ? 'bg-green-500' : 'bg-red-500'}`} />
+            <div className={`absolute -top-20 -right-20 w-40 h-40 rounded-full blur-3xl opacity-20 ${resultado.correcto ? 'bg-green-500' : 'bg-red-500'}`} />
+
+            <div className="text-center relative z-10">
+              <div className={`w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center border-4 ${
                 resultado.correcto 
-                  ? 'bg-green-500/20 text-green-400' 
-                  : 'bg-red-500/20 text-red-400'
+                  ? 'bg-green-500/10 text-green-400 border-green-500/20 shadow-[0_0_30px_rgba(34,197,94,0.3)]' 
+                  : 'bg-red-500/10 text-red-400 border-red-500/20 shadow-[0_0_30px_rgba(239,68,68,0.3)]'
               }`}>
                 {resultado.correcto ? (
-                  <CheckCircle className="w-8 h-8" />
+                  <CheckCircle className="w-12 h-12 animate-pulse-slow" />
                 ) : (
-                  <XCircle className="w-8 h-8" />
+                  <XCircle className="w-12 h-12" />
                 )}
               </div>
               
-              <h3 className="text-2xl font-serif text-texto-principal mb-2">
-                {resultado.correcto ? '¡Caso Resuelto!' : 'Hipótesis Incorrecta'}
+              <h3 className={`text-3xl font-serif font-bold mb-3 ${resultado.correcto ? 'text-green-400' : 'text-red-400'}`}>
+                {resultado.correcto ? '¡MISION CUMPLIDA!' : 'FALLO DE ANALISIS'}
               </h3>
               
-              <p className="text-texto-secundario mb-6">
+              <p className="text-texto-secundario mb-8 text-lg font-light leading-relaxed">
                 {resultado.mensaje}
               </p>
 
               {resultado.correcto && estadisticasFinales && (
-                  <div className="mb-6 bg-fondo-secundario/50 rounded-lg p-4 border border-fondo-borde">
-                    <h4 className="text-sm font-bold text-texto-principal mb-3 uppercase tracking-wider">Estadísticas del Detective</h4>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="text-left">
-                        <span className="text-texto-secundario block text-xs">Tiempo</span>
-                        <span className="font-mono text-texto-principal">{estadisticasFinales.tiempoTotal}</span>
-                      </div>
-                      <div className="text-left">
-                         <span className="text-texto-secundario block text-xs">Puntaje</span>
-                         <span className="font-mono text-acento-turquesa font-bold">{estadisticasFinales.puntaje}/100</span>
-                      </div>
-                       <div className="text-left">
-                        <span className="text-texto-secundario block text-xs">Errores</span>
-                        <span className="font-mono text-red-400">{estadisticasFinales.erroresCometidos}</span>
-                      </div>
-                      <div className="text-left">
-                        <span className="text-texto-secundario block text-xs">Ayudas</span>
-                        <span className="font-mono text-blue-400">{estadisticasFinales.ayudasUtilizadas}/3</span>
-                      </div>
+                  <div className="mb-8 bg-fondo-secundario/50 rounded-xl p-5 border border-fondo-borde/50">
+                    <h4 className="text-xs font-bold text-texto-secundario mb-4 uppercase tracking-[0.2em] border-b border-white/5 pb-2">Reporte Final</h4>
+                    <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+                       <div className="flex flex-col items-start">
+                         <span className="text-[10px] text-texto-secundario uppercase">Tiempo Op.</span>
+                         <span className="text-lg font-mono text-texto-principal">{estadisticasFinales.tiempoTotal}</span>
+                       </div>
+                       <div className="flex flex-col items-end">
+                         <span className="text-[10px] text-texto-secundario uppercase">Puntaje</span>
+                         <span className="text-2xl font-mono text-acento-turquesa font-bold drop-shadow-glow">{estadisticasFinales.puntaje}</span>
+                       </div>
+                       <div className="flex flex-col items-start">
+                         <span className="text-[10px] text-texto-secundario uppercase">Errores</span>
+                         <span className="text-base font-mono text-red-400">{estadisticasFinales.erroresCometidos}</span>
+                       </div>
+                       <div className="flex flex-col items-end">
+                         <span className="text-[10px] text-texto-secundario uppercase">Ayudas</span>
+                         <span className="text-base font-mono text-blue-400">{estadisticasFinales.ayudasUtilizadas}/3</span>
+                       </div>
                     </div>
                   </div>
               )}
               
               {resultado.correcto && (
-                <p className="text-sm text-green-400/80 mb-4 animate-pulse">
-                  Redirigiendo al escritorio en 10 segundos...
-                </p>
+                <div className="w-full bg-fondo-secundario/30 h-1 mb-6 rounded-full overflow-hidden">
+                   <div className="h-full bg-green-500 animate-[width_10s_linear] w-full origin-left" />
+                </div>
+              )}
+              {resultado.correcto && (
+                 <p className="text-xs text-green-400/60 mb-6 font-mono">AUTODESTRUCCIÓN DE MENSAJE EN 10 SEGUNDOS</p>
               )}
               
               <button
                 onClick={() => setResultado(null)}
-                className="px-6 py-2 bg-fondo-borde/80 text-texto-principal rounded-lg hover:bg-fondo-secundario transition-colors border border-fondo-borde w-full"
+                className={`w-full py-4 text-white font-bold rounded-xl transition-all shadow-lg hover:translate-y-[-2px] active:translate-y-[1px] ${
+                    resultado.correcto 
+                    ? 'bg-gradient-to-r from-green-600 to-green-500 shadow-green-500/20' 
+                    : 'bg-fondo-secundario border border-white/5 hover:bg-white/5'
+                }`}
               >
-                {resultado.correcto ? 'Continuar analizando' : 'Entendido'}
+                {resultado.correcto ? 'ARCHIVAR CASO' : 'REANUDAR INVESTIGACIÓN'}
               </button>
             </div>
           </div>
@@ -848,5 +960,6 @@ const TableroInvestigacion: React.FC = () => {
     </div>
   );
 };
+
 
 export default TableroInvestigacion;

@@ -105,68 +105,82 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full animate-fade-in">
       {/* Panel de configuración */}
-      <div className="bg-fondo-panel/50 border border-fondo-borde rounded-xl p-6 mb-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="card-neu p-8 mb-8 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+           <Settings className="w-24 h-24 text-acento-azul transformer rotate-45" />
+        </div>
+        
+        <div className="flex items-center justify-between mb-8 relative z-10">
           <div className="flex items-center gap-3">
-            <Settings className="w-5 h-5 text-acento-azul" />
-            <h2 className="text-xl font-serif text-texto-principal">
-              Configurar caso
+            <div className="p-2 bg-acento-azul/10 rounded-lg">
+              <Settings className="w-6 h-6 text-acento-azul" />
+            </div>
+            <h2 className="text-2xl font-serif text-texto-principal tracking-wide">
+              Configurar Misión
             </h2>
           </div>
-          <div className="text-sm text-texto-secundario">
-            Paso 1 de 2
+          <div className="text-sm font-mono text-acento-turquesa bg-acento-turquesa/10 px-3 py-1 rounded-full border border-acento-turquesa/20">
+            FASE 1 - PREPARACIÓN
           </div>
         </div>
 
         {/* Selector de tema */}
-        <div className="mb-6">
-          <label className="block text-texto-principal mb-2 text-sm font-medium">
-            Tema preferido (Solo IA)
+        <div className="mb-8 relative z-10">
+          <label className="block text-texto-principal mb-3 text-sm font-bold uppercase tracking-wider">
+            Tema de Investigación (IA)
           </label>
-          <select 
-            value={tema}
-            onChange={(e) => setTema(e.target.value)}
-            className="w-full bg-fondo-secundario border border-fondo-borde rounded-lg px-4 py-3 text-texto-principal text-sm focus:outline-none focus:border-acento-azul transition-colors hover:border-acento-azul/50"
-          >
-            <option value="">Sorpréndeme - Tema aleatorio</option>
-            <option value="asesinato">Asesinato misterioso</option>
-            <option value="robo">Robo de alto perfil</option>
-            <option value="desaparicion">Desaparición inexplicable</option>
-            <option value="corporativo">Crimen corporativo</option>
-            <option value="historico">Misterio histórico</option>
-          </select>
+          <div className="relative">
+            <select 
+              value={tema}
+              onChange={(e) => setTema(e.target.value)}
+              className="w-full bg-fondo-secundario/50 border border-fondo-borde rounded-xl px-5 py-4 text-texto-principal text-base focus:outline-none focus:border-acento-azul focus:ring-2 focus:ring-acento-azul/20 transition-all appearance-none cursor-pointer hover:bg-fondo-secundario hover:border-acento-azul/50"
+            >
+              <option value="">Sorpréndeme - Tema aleatorio</option>
+              <option value="asesinato">Asesinato misterioso</option>
+              <option value="robo">Robo de alto perfil</option>
+              <option value="desaparicion">Desaparición inexplicable</option>
+              <option value="corporativo">Crimen corporativo</option>
+              <option value="historico">Misterio histórico</option>
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-texto-secundario">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+          </div>
         </div>
 
         {/* Selector de complejidad */}
-        <div className="mb-6">
-          <label className="block text-texto-principal mb-3 text-sm font-medium">
-            Dificultad
+        <div className="mb-8 relative z-10">
+          <label className="block text-texto-principal mb-4 text-sm font-bold uppercase tracking-wider">
+            Nivel de Amenaza
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { id: 'baja', label: 'Fácil', desc: 'Pistas claras', color: 'from-green-500/20 to-green-500' },
-              { id: 'media', label: 'Media', desc: 'Desafío normal', color: 'from-acento-azul/20 to-acento-azul' },
-              { id: 'alta', label: 'Difícil', desc: 'Misterio complejo', color: 'from-red-500/20 to-red-500' }
+              { id: 'baja', label: 'Baja', desc: 'Para reclutas', color: 'from-green-500/20 to-green-500', icon: '🟢' },
+              { id: 'media', label: 'Media', desc: 'Agente de campo', color: 'from-acento-azul/20 to-acento-azul', icon: '🔵' },
+              { id: 'alta', label: 'Alta', desc: 'Detective veterano', color: 'from-red-500/20 to-red-500', icon: '🔴' }
             ].map((nivel) => (
               <button
                 key={nivel.id}
                 onClick={() => setComplejidad(nivel.id)}
-                className={`p-4 rounded-lg border transition-all duration-300 ${
+                className={`p-5 rounded-xl border transition-all duration-300 relative overflow-hidden group/btn ${
                   complejidad === nivel.id
-                    ? `border-${nivel.color.split(' ')[1].split('/')[0]} bg-gradient-to-b ${nivel.color}/10`
-                    : 'border-fondo-borde bg-fondo-secundario hover:border-acento-azul/30'
+                    ? `border-${nivel.color.split(' ')[1].split('/')[0]} bg-gradient-to-b ${nivel.color}/10 shadow-lg`
+                    : 'border-fondo-borde bg-fondo-secundario/30 hover:border-acento-azul/50 hover:bg-fondo-secundario'
                 }`}
               >
-                <div className={`text-sm font-medium mb-1 ${
+                <div className={`text-base font-bold mb-1 flex items-center gap-2 ${
                   complejidad === nivel.id ? 'text-texto-principal' : 'text-texto-secundario'
                 }`}>
-                  {nivel.label}
+                  <span>{nivel.icon}</span> {nivel.label}
                 </div>
-                <div className="text-xs text-texto-secundario">
+                <div className="text-xs text-texto-secundario font-mono opacity-80">
                   {nivel.desc}
                 </div>
+                {complejidad === nivel.id && (
+                  <div className="absolute inset-0 border-2 border-current opacity-20 rounded-xl" />
+                )}
               </button>
             ))}
           </div>
@@ -174,11 +188,11 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
 
         {/* Mensaje de error */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl animate-fade-in">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
               <div>
-                <p className="text-red-400 text-sm font-medium">Error al generar</p>
+                <p className="text-red-400 text-sm font-bold">ERROR DE SISTEMA</p>
                 <p className="text-red-400/80 text-xs mt-1">{error}</p>
               </div>
             </div>
@@ -186,44 +200,43 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
         )}
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {/* Botón de generación con IA */}
         <button
           onClick={() => generarCaso()}
           disabled={cargando}
-          className="w-full py-4 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal font-medium rounded-lg hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 relative overflow-hidden group"
+          className="w-full py-5 bg-gradient-to-r from-acento-azul via-acento-turquesa to-acento-azul background-animate bg-[length:200%_auto] text-fondo-principal font-bold text-lg rounded-xl hover:shadow-[0_0_30px_rgba(77,163,255,0.4)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 relative overflow-hidden group shadow-xl active:scale-[0.99]"
         >
           {cargando ? (
             <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Conectando con la Central...</span>
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span className="animate-pulse">ESTABLECIENDO ENLACE SEGURO...</span>
             </>
           ) : (
             <>
-              <FileText className="w-5 h-5" />
-              <span>Generar Nuevo Caso (IA)</span>
+              <FileText className="w-6 h-6 group-hover:rotate-12 transition-transform duration-500" />
+              <span className="tracking-wide">INICIAR GENERACIÓN IA</span>
             </>
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
         </button>
 
         {/* Botón de generación Offline */}
         <button
           onClick={() => generarCaso('offline')}
           disabled={cargando}
-          className="w-full py-3 bg-fondo-secundario border border-fondo-borde text-texto-secundario hover:text-texto-principal hover:border-acento-azul/50 font-medium rounded-lg transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-4 bg-fondo-secundario border border-fondo-borde/50 text-texto-secundario hover:text-texto-principal hover:border-white/20 hover:bg-fondo-panel font-medium rounded-xl transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 group"
         >
-          <WifiOff className="w-4 h-4" />
-          <span>Jugar sin conexión (Caso Aleatorio)</span>
+          <WifiOff className="w-4 h-4 group-hover:scale-110 transition-transform" />
+          <span>Acceder en Modo Offline (Simulación)</span>
         </button>
       </div>
 
       {/* Nota de advertencia */}
-      <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+      <div className="mt-6 p-4 bg-yellow-500/5 border border-yellow-500/10 rounded-xl backdrop-blur-sm">
         <div className="flex items-start gap-3">
           <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-          <p className="text-yellow-400 text-xs leading-relaxed">
-            La generación con IA requiere conexión. Si falla o no tienes internet, usa el modo "Sin conexión" para jugar casos predefinidos de la dificultad seleccionada.
+          <p className="text-yellow-400/80 text-xs leading-relaxed font-mono">
+            NOTA: La generación neural (IA) requiere enlace de red activo. En caso de fallo de conexión, utilice el modo Offline para simulaciones pre-cargadas.
           </p>
         </div>
       </div>

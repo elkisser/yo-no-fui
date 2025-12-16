@@ -93,7 +93,7 @@ const Logo: React.FC<LogoProps> = ({ showText = true, size = 'md' }) => {
         <div className="flex flex-col">
           <span className={`font-serif font-bold leading-tight ${textSizes[size]}`}>
             <span className="bg-gradient-to-r from-acento-azul to-acento-turquesa bg-clip-text text-transparent">
-              Yo no fui
+              YO NO FUI
             </span>
           </span>
           <span className="text-xs text-texto-secundario tracking-wider font-mono mt-0.5">
