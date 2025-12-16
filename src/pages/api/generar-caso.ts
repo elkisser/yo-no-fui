@@ -42,7 +42,9 @@ export const POST: APIRoute = async ({ request }) => {
     const body = await request.json().catch(() => ({}));
     const { 
       tema = '', 
-      jugadores = 2 
+      jugadores = 2,
+      tono = 'policial-realista',
+      longitud = 'larga'
     } = body;
     
     // Actualizamos la dificultad si viene en el body
@@ -59,8 +61,33 @@ export const POST: APIRoute = async ({ request }) => {
         messages: [
           {
             role: "system",
-            content: `Eres un escritor de misterios. Genera un caso criminal en español en formato JSON. 
-            Estructura requerida:
+            content: `Eres un escritor de misterios y un guionista policial. Genera un caso criminal en español en formato JSON.
+
+            OBJETIVO DE CALIDAD (muy importante):
+            - La historia debe sentirse como un caso "real" y llevadero, con buen ritmo, tensión y detalles, similar a un relato corto policial.
+            - "historia" debe ser LARGA (mínimo 6 párrafos si longitud="larga"). Incluir: disparador del caso, contexto social/político si aplica, rutinas/horarios, y pequeñas contradicciones.
+            - Evita genéricos. Usa nombres y detalles concretos (lugares, objetos, gestos, sonidos, clima, etc.).
+            - La solución debe ser razonable: que las pistas + ayudas permitan inferir al culpable sin magia.
+            - No uses meta-texto (no digas "como IA"), no incluyas markdown, no incluyas texto fuera del JSON.
+
+            RECURSOS NARRATIVOS (para que sea más "llevadero"):
+            - Incluye 2 a 4 líneas de diálogo muy cortas dentro de la historia (entre comillas), repartidas en la historia (no seguidas).
+            - Incluye al menos 1 escena sensorial: sonido/olor/temperatura/luz.
+            - Incluye una referencia a horarios (ej: 22:10, 23:45) para que el jugador pueda reconstruir la secuencia.
+
+            COMPLEJIDAD CONTROLADA (para que sea más inteligente):
+            - Incluye 1 señuelo (red herring) que parezca incriminar a un sospechoso distinto del culpable, pero que tenga explicación.
+            - En dificultad "difícil" agrega además una contradicción menor en una coartada que se explica con una ayuda.
+
+            REGLAS DE JUEGO:
+            - Exactamente 3 sospechosos.
+            - Exactamente 3 pistas (cada pista debe ser accionable y específica; no abstracta).
+            - Exactamente 3 ayudas, y cada ayuda debe devolver un "resultado" realmente útil (no genérico).
+            - El culpable debe ser UNO de los sospechosos y su "culpableId" debe coincidir con el id de ese sospechoso.
+            - Incluye un giro final satisfactorio ("giroFinal") que conecte motivación + oportunidad + método.
+            - Dificultad afecta: claridad de pistas (fácil), ambigüedad razonable (media), señuelos/contradicciones (difícil).
+
+            ESTRUCTURA REQUERIDA (JSON):
             {
               "titulo": "string",
               "historia": "string",
@@ -80,28 +107,28 @@ export const POST: APIRoute = async ({ request }) => {
                 "descripcion": "string",
                 "relevancia": "alta|media|baja",
                 "descubierta": false,
-                "tipo": "física|testimonio|digital"
+                "tipo": "física|testimonio|digital|documento"
               }],
               "ayudas": [{
                 "id": "string",
-                "nombre": "string (ej: Análisis Forense)",
-                "descripcion": "string (ej: Buscar huellas)",
-                "resultado": "string (La información revelada al usar esta ayuda)"
+                "nombre": "string",
+                "descripcion": "string",
+                "resultado": "string"
               }],
               "giroFinal": "string",
               "culpableId": "string",
               "maxPistas": 3
             }
-            Asegúrate de generar al menos 3 pistas y exactamente 3 ayudas que revelen información crucial.`
+            }`,
           },
           {
             role: "user",
-            content: `Genera un misterio para ${jugadores} jugadores con dificultad ${dificultad}. ${tema ? `Tema: ${tema}` : ''} Responde SOLAMENTE con el JSON raw.`
+            content: `Genera un misterio para ${jugadores} jugadores con dificultad ${dificultad}. ${tema ? `Tema: ${tema}` : ''} Tono: ${tono}. Longitud: ${longitud}. Responde SOLAMENTE con el JSON raw.`
           }
         ],
         response_format: { type: "json_object" },
-        temperature: 0.8,
-        max_tokens: 2500,
+        temperature: 0.85,
+        max_tokens: 3500,
       });
 
       const content = completion.choices[0].message.content || '{}';
