@@ -4,7 +4,8 @@ import { casosFaciles } from '../../data/casos/casosFaciles';
 import { casosMedios } from '../../data/casos/casosMedios';
 import { casosDificiles } from '../../data/casos/casosDificiles';
 
-const apiKey = import.meta.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY;
+const apiKey = process.env.OPENAI_API_KEY;
+const openAIModel = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const hasOpenAIKey = !!apiKey;
 
 console.log(`Configuración OpenAI: ${hasOpenAIKey ? 'Key encontrada' : 'Key NO encontrada'}`);
@@ -33,6 +34,9 @@ const getCasosPorDificultad = (dificultad: string) => {
 export const POST: APIRoute = async ({ request }) => {
   // Inicializamos variables fuera del try para usarlas en el catch
   let dificultad = 'media';
+  let aiAttempted = false;
+  let aiUsed = false;
+  let aiError: string | null = null;
 
   try {
     const body = await request.json().catch(() => ({}));
@@ -48,9 +52,10 @@ export const POST: APIRoute = async ({ request }) => {
 
     // INTENTO DE GENERAR CON AI (Solo si hay key y no es petición explícita de offline)
     if (openai && hasOpenAIKey && tema !== 'offline') {
+      aiAttempted = true;
       console.log("Generando caso con OpenAI...");
       const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: openAIModel,
         messages: [
           {
             role: "system",
@@ -94,16 +99,16 @@ export const POST: APIRoute = async ({ request }) => {
             content: `Genera un misterio para ${jugadores} jugadores con dificultad ${dificultad}. ${tema ? `Tema: ${tema}` : ''} Responde SOLAMENTE con el JSON raw.`
           }
         ],
+        response_format: { type: "json_object" },
         temperature: 0.8,
         max_tokens: 2500,
       });
 
       const content = completion.choices[0].message.content || '{}';
-      // Limpiar markdown si existe
-      const jsonStr = content.replace(/```json\n?|\n?```/g, '').trim();
-      
-      casoGenerado = JSON.parse(jsonStr);
+
+      casoGenerado = JSON.parse(content);
       casoGenerado.source = 'openai';
+      aiUsed = true;
     } else {
       // MODO OFFLINE / FALLBACK MANUAL
       console.log(`Modo offline: seleccionando caso ${dificultad}`);
@@ -121,7 +126,11 @@ export const POST: APIRoute = async ({ request }) => {
       pistasSolicitadas: 0,
       maxPistas: 3,
       resuelto: false,
-      creadoEn: new Date().toISOString()
+      creadoEn: new Date().toISOString(),
+      aiUsed,
+      aiAttempted,
+      aiModel: openAIModel,
+      aiHasKey: hasOpenAIKey
     };
 
     // Asegurar arrays
@@ -156,7 +165,8 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
   } catch (error: any) {
-    console.error('Error detallado OpenAI:', error.message || error);
+    aiError = error?.message || String(error);
+    console.error('Error detallado OpenAI:', aiError);
     
     // Fallback en caso de error de API
     const casosDisponibles = getCasosPorDificultad(dificultad);
@@ -168,10 +178,14 @@ export const POST: APIRoute = async ({ request }) => {
         resuelto: false,
         esFallback: true,
         source: 'fallback',
-        errorOriginal: error.message || 'Error desconocido',
+        errorOriginal: aiError || 'Error desconocido',
         creadoEn: new Date().toISOString(),
         jugadores: 2,
-        dificultad: dificultad // Asegurar que coincida
+        dificultad: dificultad, // Asegurar que coincida
+        aiUsed: false,
+        aiAttempted,
+        aiModel: openAIModel,
+        aiHasKey: hasOpenAIKey
     };
     
     return new Response(JSON.stringify(casoFallback), {
