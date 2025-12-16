@@ -17,6 +17,19 @@ if (hasOpenAIKey) {
   console.warn("⚠️ Ejecutando en modo OFFLINE/DEMO. Configura OPENAI_API_KEY en .env para generar casos con IA.");
 }
 
+const withTimeout = async <T,>(promise: Promise<T>, ms: number, message: string): Promise<T> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<T>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(message)), ms);
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+};
+
 const getCasosPorDificultad = (dificultad: string) => {
   switch (dificultad.toLowerCase()) {
     case 'fácil':
@@ -56,7 +69,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (openai && hasOpenAIKey && tema !== 'offline') {
       aiAttempted = true;
       console.log("Generando caso con OpenAI...");
-      const completion = await openai.chat.completions.create({
+      const completion = await withTimeout(openai.chat.completions.create({
         model: openAIModel,
         messages: [
           {
@@ -64,6 +77,9 @@ export const POST: APIRoute = async ({ request }) => {
             content: `Eres un escritor de misterios y un guionista policial. Genera un caso criminal en español en formato JSON.
 
             OBJETIVO DE CALIDAD (muy importante):
+            - La historia debe sentirse como un caso "real" y llevadero, con buen ritmo, tensión y detalles, similar a un relato corto policial.
+            - "historia" debe ser LARGA (mínimo 6 párrafos si longitud="larga"). Incluir: disparador del caso, contexto social/político si aplica, rutinas/horarios, y pequeñas contradicciones.
+            - Evita genéricos. Usa nombres y detalles concretos (lugares, objetos, gestos, sonidos, clima, etc.).
             - La historia debe sentirse como un caso "real" y llevadero, con buen ritmo, tensión y detalles, similar a un relato corto policial.
             - "historia" debe ser LARGA (mínimo 6 párrafos si longitud="larga"). Incluir: disparador del caso, contexto social/político si aplica, rutinas/horarios, y pequeñas contradicciones.
             - Evita genéricos. Usa nombres y detalles concretos (lugares, objetos, gestos, sonidos, clima, etc.).
@@ -128,8 +144,8 @@ export const POST: APIRoute = async ({ request }) => {
         ],
         response_format: { type: "json_object" },
         temperature: 0.85,
-        max_tokens: 3500,
-      });
+        max_tokens: 1800,
+      }), 25000, 'Timeout generando caso con IA');
 
       const content = completion.choices[0].message.content || '{}';
 
