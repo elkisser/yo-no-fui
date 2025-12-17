@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Logo from './Logo';
 import Navigation from './Navigation';
-import { Clock, Target } from 'lucide-react';
+import { Clock, HelpCircle, Target } from 'lucide-react';
+
+const LS_GUIDE_REQUEST = 'yo-no-fui-guide-request';
+const GUIDE_EVENT = 'yo-no-fui:guide';
 
 const Header: React.FC = () => {
   const [casoActivo, setCasoActivo] = useState<any>(null);
@@ -38,6 +41,33 @@ const Header: React.FC = () => {
 
           {/* Indicador de estado */}
           <div className="hidden lg:flex items-center gap-4">
+            <button
+              onClick={() => {
+                const path = window.location.pathname;
+                const guideId = path.startsWith('/archivo')
+                  ? 'archivo'
+                  : path.startsWith('/nuevo-caso')
+                    ? 'nuevo-caso'
+                    : path.startsWith('/investigar')
+                      ? 'investigar'
+                      : 'home';
+                window.dispatchEvent(
+                  new CustomEvent(GUIDE_EVENT, {
+                    detail: { type: 'start', guideId, scope: 'full' },
+                  })
+                );
+                localStorage.setItem(
+                  LS_GUIDE_REQUEST,
+                  JSON.stringify({ type: 'start', guideId, scope: 'full' })
+                );
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 bg-fondo-panel/30 border border-fondo-borde rounded-lg hover:border-acento-azul/50 hover:bg-acento-azul/5 transition-colors"
+              title="Abrir guía"
+            >
+              <HelpCircle className="w-4 h-4 text-acento-azul" />
+              <span className="text-xs font-medium text-texto-principal">Guía</span>
+            </button>
+
             {casoActivo ? (
               <a 
                 href="/investigar" 

@@ -26,7 +26,7 @@ import {
 ---
 
 <MainLayout>
-  <div class="min-h-screen bg-fondo-principal paper-texture">
+  <div class="min-h-screen bg-fondo-principal paper-texture" data-guide="archivo-root">
     {/* Fondo decorativo sutil - Estilo expediente */}
     <div class="absolute inset-0 overflow-hidden pointer-events-none">
       <div
@@ -73,7 +73,7 @@ import {
               </div>
 
               {/* Contenido del expediente */}
-              <Archive class="w-8 h-8 text-acento-azul" />
+              <Archive className="w-8 h-8 text-acento-azul" />
 
               {/* Tachuelas */}
               <div
@@ -114,6 +114,19 @@ import {
               Historial completo de investigaciones resueltas
             </p>
           </div>
+
+          <div class="flex items-center">
+            <button
+              id="btn-guia-archivo"
+              type="button"
+              onclick="(window.__yoNoFuiGuide && window.__yoNoFuiGuide.start) ? window.__yoNoFuiGuide.start('archivo') : console.warn('GuideHost no montado: window.__yoNoFuiGuide no disponible')"
+              class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 flex items-center gap-2 group action-btn"
+              title="Abrir guía del Archivo"
+            >
+              <Shield className="w-4 h-4 text-texto-secundario group-hover:text-acento-azul transition-colors" />
+              <span class="text-sm font-medium">Guía</span>
+            </button>
+          </div>
         </div>
 
         {/* Barra de búsqueda y filtros - Estilo interfaz policial */}
@@ -140,7 +153,7 @@ import {
               class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 flex items-center gap-2 group action-btn"
             >
               <Filter
-                class="w-4 h-4 text-texto-secundario group-hover:text-acento-azul transition-colors"
+                className="w-4 h-4 text-texto-secundario group-hover:text-acento-azul transition-colors"
               />
               <span class="text-sm font-medium">Todos</span>
             </button>
@@ -150,7 +163,7 @@ import {
               class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-green-500 hover:bg-green-500/5 transition-all duration-300 flex items-center gap-2 group action-btn"
             >
               <CheckCircle
-                class="w-4 h-4 text-texto-secundario group-hover:text-green-400 transition-colors"
+                className="w-4 h-4 text-texto-secundario group-hover:text-green-400 transition-colors"
               />
               <span class="text-sm font-medium">Resueltos</span>
             </button>
@@ -160,9 +173,29 @@ import {
               class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-yellow-500 hover:bg-yellow-500/5 transition-all duration-300 flex items-center gap-2 group action-btn"
             >
               <Clock
-                class="w-4 h-4 text-texto-secundario group-hover:text-yellow-400 transition-colors"
+                className="w-4 h-4 text-texto-secundario group-hover:text-yellow-400 transition-colors"
               />
               <span class="text-sm font-medium">Pendientes</span>
+            </button>
+
+            <button
+              onclick="filtrarCasos('fallidos')"
+              class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-red-500 hover:bg-red-500/5 transition-all duration-300 flex items-center gap-2 group action-btn"
+            >
+              <AlertCircle
+                className="w-4 h-4 text-texto-secundario group-hover:text-red-400 transition-colors"
+              />
+              <span class="text-sm font-medium">Fallidos</span>
+            </button>
+
+            <button
+              onclick="filtrarCasos('abandonados')"
+              class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-turquesa hover:bg-acento-turquesa/5 transition-all duration-300 flex items-center gap-2 group action-btn"
+            >
+              <Lock
+                className="w-4 h-4 text-texto-secundario group-hover:text-acento-turquesa transition-colors"
+              />
+              <span class="text-sm font-medium">Abandonados</span>
             </button>
           </div>
         </div>
@@ -227,7 +260,7 @@ import {
                   <div
                     class="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-fondo-borde/20 to-fondo-borde/10 flex items-center justify-center"
                   >
-                    <Archive class="w-12 h-12 text-texto-secundario/30" />
+                    <Archive className="w-12 h-12 text-texto-secundario/30" />
                   </div>
 
                   <h3 class="text-xl font-serif text-texto-principal mb-3">
@@ -243,9 +276,9 @@ import {
                     href="/nuevo-caso"
                     class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-acento-azul to-acento-turquesa text-fondo-principal font-bold rounded-xl hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-acento-azul/30 action-btn"
                   >
-                    <FileText class="w-5 h-5" />
+                    <FileText className="w-5 h-5" />
                     <span>Nuevo caso</span>
-                    <ChevronRight class="w-5 h-5" />
+                    <ChevronRight className="w-5 h-5" />
                   </a>
                 </div>
               </div>
@@ -263,7 +296,7 @@ import {
               <div
                 class="w-12 h-12 rounded-xl bg-gradient-to-br from-acento-azul/20 to-acento-turquesa/20 border border-acento-azul/30 flex items-center justify-center"
               >
-                <BarChart3 class="w-6 h-6 text-acento-azul" />
+                <BarChart3 className="w-6 h-6 text-acento-azul" />
               </div>
               <h3 class="text-xl font-serif text-texto-principal">
                 Estadísticas
@@ -273,7 +306,7 @@ import {
             <div class="space-y-5">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <Fingerprint class="w-5 h-5 text-texto-secundario" />
+                  <Fingerprint className="w-5 h-5 text-texto-secundario" />
                   <span class="text-texto-secundario">Casos totales</span>
                 </div>
                 <span
@@ -284,7 +317,7 @@ import {
 
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <CheckCircle class="w-5 h-5 text-green-400" />
+                  <CheckCircle className="w-5 h-5 text-green-400" />
                   <span class="text-texto-secundario">Resueltos</span>
                 </div>
                 <span
@@ -295,7 +328,7 @@ import {
 
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <Clock class="w-5 h-5 text-yellow-400" />
+                  <Clock className="w-5 h-5 text-yellow-400" />
                   <span class="text-texto-secundario">Pendientes</span>
                 </div>
                 <span
@@ -304,10 +337,32 @@ import {
                 >
               </div>
 
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-400" />
+                  <span class="text-texto-secundario">Fallidos</span>
+                </div>
+                <span
+                  class="text-2xl font-bold text-red-400"
+                  id="casos-fallidos">0</span
+                >
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <Lock className="w-5 h-5 text-blue-400" />
+                  <span class="text-texto-secundario">Abandonados</span>
+                </div>
+                <span
+                  class="text-2xl font-bold text-blue-400"
+                  id="casos-abandonados">0</span
+                >
+              </div>
+
               <div class="pt-4 border-t border-fondo-borde/30">
                 <div class="flex items-center justify-between mb-2">
                   <div class="flex items-center gap-3">
-                    <TrendingUp class="w-5 h-5 text-acento-turquesa" />
+                    <TrendingUp className="w-5 h-5 text-acento-turquesa" />
                     <span class="text-texto-secundario">Tasa de éxito</span>
                   </div>
                   <span
@@ -338,7 +393,7 @@ import {
               <div
                 class="w-10 h-10 rounded-lg bg-acento-azul/20 border border-acento-azul/30 flex items-center justify-center"
               >
-                <Target class="w-5 h-5 text-acento-azul" />
+                <Target className="w-5 h-5 text-acento-azul" />
               </div>
               <h3 class="text-lg font-serif text-texto-principal">
                 Caso activo
@@ -373,7 +428,7 @@ import {
             class="bg-fondo-panel/20 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-2xl p-6 detective-desk"
           >
             <div class="flex items-center gap-3 mb-6">
-              <Briefcase class="w-6 h-6 text-acento-azul" />
+              <Briefcase className="w-6 h-6 text-acento-azul" />
               <h3 class="text-lg font-serif text-texto-principal">
                 Gestión del archivo
               </h3>
@@ -385,7 +440,7 @@ import {
                 class="w-full py-3.5 bg-fondo-secundario/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 flex items-center justify-center gap-3 group action-btn"
               >
                 <Download
-                  class="w-5 h-5 text-texto-secundario group-hover:text-acento-azul transition-colors"
+                  className="w-5 h-5 text-texto-secundario group-hover:text-acento-azul transition-colors"
                 />
                 <span class="font-bold">Exportar historial</span>
               </button>
@@ -395,7 +450,7 @@ import {
                 class="w-full py-3.5 bg-red-500/10 backdrop-blur-sm border-2 border-red-500/20 rounded-xl text-red-400 hover:bg-red-500/20 hover:border-red-500/40 transition-all duration-300 flex items-center justify-center gap-3 group action-btn"
               >
                 <Trash2
-                  class="w-5 h-5 group-hover:scale-110 transition-transform"
+                  className="w-5 h-5 group-hover:scale-110 transition-transform"
                 />
                 <span class="font-bold">Limpiar archivo</span>
               </button>
@@ -404,11 +459,10 @@ import {
             <div class="mt-6 pt-6 border-t border-fondo-borde/30">
               <div class="flex items-start gap-3">
                 <AlertCircle
-                  class="w-5 h-5 text-texto-secundario/60 flex-shrink-0 mt-0.5"
+                  className="w-5 h-5 text-texto-secundario/60 flex-shrink-0 mt-0.5"
                 />
                 <p class="text-xs text-texto-secundario/60 leading-relaxed">
-                  El archivo se almacena localmente en tu navegador. Para
-                  respaldo permanente, exporta regularmente tu historial.
+                  Los casos se guardan localmente en tu dispositivo. Puedes exportarlos para respaldarlos.
                 </p>
               </div>
             </div>
@@ -534,8 +588,11 @@ import {
 
   <script>
     // Variables globales
-    let historialOriginal = [];
-    let historialFiltrado = [];
+    let historialOriginal: any[] = [];
+    let historialFiltrado: any[] = [];
+
+    const LS_GUIDE_REQUEST = 'yo-no-fui-guide-request';
+    const GUIDE_EVENT = 'yo-no-fui:guide';
     let filtroActual = "todos";
     let accionPendiente = null;
 
@@ -560,10 +617,20 @@ import {
 
       switch (filtroActual) {
         case "resueltos":
-          historialFiltrado = historialOriginal.filter((c) => c.resuelto);
+          historialFiltrado = historialOriginal.filter((c) => c.resuelto || c.estado === 'resuelto');
           break;
         case "pendientes":
-          historialFiltrado = historialOriginal.filter((c) => !c.resuelto);
+          historialFiltrado = historialOriginal.filter((c) => {
+            const estado = c.estado;
+            if (estado) return estado === 'pendiente';
+            return !c.resuelto;
+          });
+          break;
+        case "fallidos":
+          historialFiltrado = historialOriginal.filter((c) => c.estado === 'fallido');
+          break;
+        case "abandonados":
+          historialFiltrado = historialOriginal.filter((c) => c.estado === 'abandonado');
           break;
         case "todos":
         default:
@@ -572,8 +639,8 @@ import {
 
       // Aplicar búsqueda si existe
       const busquedaInput = document.getElementById("buscar-casos");
-      if (busquedaInput && busquedaInput.value) {
-        const term = busquedaInput.value.toLowerCase();
+      if (busquedaInput && (busquedaInput as HTMLInputElement).value) {
+        const term = (busquedaInput as HTMLInputElement).value.toLowerCase();
         historialFiltrado = historialFiltrado.filter(
           (caso) =>
             (caso.titulo && caso.titulo.toLowerCase().includes(term)) ||
@@ -585,10 +652,10 @@ import {
       // Aplicar orden
       const ordenInput = document.getElementById("ordenar-casos");
       if (ordenInput) {
-        ordenarCasos(ordenInput.value);
+        ordenarCasos((ordenInput as HTMLSelectElement).value);
       }
 
-      if (contador) contador.textContent = historialFiltrado.length;
+      if (contador) contador.textContent = String(historialFiltrado.length);
       actualizarEstadisticas();
 
       if (historialFiltrado.length === 0) {
@@ -599,13 +666,13 @@ import {
     }
 
     // Ordenar casos
-    function ordenarCasos(orden) {
+    function ordenarCasos(orden: string) {
       historialFiltrado.sort((a, b) => {
         switch (orden) {
           case "antiguo":
             return (
-              new Date(a.fechaCreacion || a.fecha) -
-              new Date(b.fechaCreacion || b.fecha)
+              new Date(a.fechaCreacion || a.fecha).getTime() -
+              new Date(b.fechaCreacion || b.fecha).getTime()
             );
           case "titulo":
             return (a.titulo || "").localeCompare(b.titulo || "");
@@ -614,8 +681,8 @@ import {
           case "reciente":
           default:
             return (
-              new Date(b.fechaCreacion || b.fecha) -
-              new Date(a.fechaCreacion || a.fecha)
+              new Date(b.fechaCreacion || b.fecha).getTime() -
+              new Date(a.fechaCreacion || a.fecha).getTime()
             );
         }
       });
@@ -631,6 +698,35 @@ import {
         casosLista.classList.remove("hidden");
         casosLista.innerHTML = historialFiltrado
           .map((caso, index) => {
+            const estado = (caso.estado || (caso.resuelto ? 'resuelto' : 'pendiente')) as string;
+            const badgeMap = {
+              resuelto: {
+                dot: 'bg-green-400',
+                pill: 'bg-green-400/10 text-green-400 border border-green-400/30',
+                label: 'RESUELTO'
+              },
+              pendiente: {
+                dot: 'bg-yellow-400',
+                pill: 'bg-yellow-400/10 text-yellow-400 border border-yellow-400/30',
+                label: 'PENDIENTE'
+              },
+              fallido: {
+                dot: 'bg-red-400',
+                pill: 'bg-red-400/10 text-red-400 border border-red-400/30',
+                label: 'FALLIDO'
+              },
+              abandonado: {
+                dot: 'bg-blue-400',
+                pill: 'bg-blue-400/10 text-blue-400 border border-blue-400/30',
+                label: 'ABANDONADO'
+              }
+            } as const;
+            const badge = (badgeMap as any)[estado] || {
+              dot: 'bg-yellow-400',
+              pill: 'bg-yellow-400/10 text-yellow-400 border border-yellow-400/30',
+              label: 'PENDIENTE'
+            };
+
             // Formatear fecha correctamente
             let fechaFormateada = "Fecha desconocida";
             let tiempo = "";
@@ -662,9 +758,9 @@ import {
                 <div class="flex-1 min-w-0 pr-4">
                   <div class="flex items-center gap-3 mb-3">
                     <div class="flex items-center gap-2">
-                      <div class="w-2 h-2 rounded-full ${caso.resuelto ? "bg-green-400" : "bg-yellow-400"} animate-pulse"></div>
-                      <span class="text-xs font-bold px-3 py-1 rounded-full ${caso.resuelto ? "bg-green-400/10 text-green-400 border border-green-400/30" : "bg-yellow-400/10 text-yellow-400 border border-yellow-400/30"}">
-                        ${caso.resuelto ? "RESUELTO" : "PENDIENTE"}
+                      <div class="w-2 h-2 rounded-full ${badge.dot} animate-pulse"></div>
+                      <span class="text-xs font-bold px-3 py-1 rounded-full ${badge.pill}">
+                        ${badge.label}
                       </span>
                     </div>
                     
@@ -754,8 +850,14 @@ import {
     // Actualizar estadísticas
     function actualizarEstadisticas() {
       const total = historialOriginal.length;
-      const resueltos = historialOriginal.filter((c) => c.resuelto).length;
-      const pendientes = total - resueltos;
+      const resueltos = historialOriginal.filter((c) => c.resuelto || c.estado === 'resuelto').length;
+      const fallidos = historialOriginal.filter((c) => c.estado === 'fallido').length;
+      const abandonados = historialOriginal.filter((c) => c.estado === 'abandonado').length;
+      const pendientes = historialOriginal.filter((c) => {
+        const estado = c.estado;
+        if (estado) return estado === 'pendiente';
+        return !c.resuelto;
+      }).length;
       const tasa = total > 0 ? Math.round((resueltos / total) * 100) : 0;
 
       // Actualizar números
@@ -763,20 +865,24 @@ import {
         total: document.getElementById("total-casos"),
         resueltos: document.getElementById("casos-resueltos"),
         pendientes: document.getElementById("casos-pendientes"),
+        fallidos: document.getElementById("casos-fallidos"),
+        abandonados: document.getElementById("casos-abandonados"),
         tasa: document.getElementById("tasa-exito"),
         barra: document.getElementById("barra-exito"),
       };
 
-      if (els.total) els.total.textContent = total;
-      if (els.resueltos) els.resueltos.textContent = resueltos;
-      if (els.pendientes) els.pendientes.textContent = pendientes;
+      if (els.total) els.total.textContent = String(total);
+      if (els.resueltos) els.resueltos.textContent = String(resueltos);
+      if (els.pendientes) els.pendientes.textContent = String(pendientes);
+      if (els.fallidos) els.fallidos.textContent = String(fallidos);
+      if (els.abandonados) els.abandonados.textContent = String(abandonados);
       if (els.tasa) els.tasa.textContent = `${tasa}%`;
 
       // Animar barra de progreso
       if (els.barra) {
-        els.barra.style.width = "0%";
+        (els.barra as HTMLElement).style.width = "0%";
         setTimeout(() => {
-          els.barra.style.width = `${tasa}%`;
+          (els.barra as HTMLElement).style.width = `${tasa}%`;
         }, 100);
       }
     }
@@ -802,7 +908,7 @@ import {
               ? new Date(parsedStore.state.tiempoInicio)
               : new Date();
             const ahora = new Date();
-            const diffMs = ahora - tiempoInicio;
+            const diffMs = ahora.getTime() - tiempoInicio.getTime();
             const diffMinutos = Math.floor(diffMs / (1000 * 60));
             const diffHoras = Math.floor(diffMinutos / 60);
             const minutosRestantes = diffMinutos % 60;
@@ -832,7 +938,7 @@ import {
     }
 
     // Lógica del MODAL
-    function abrirModal(tipo, titulo, mensaje, accion) {
+    function abrirModal(tipo: string, titulo: string, mensaje: string, accion: null | (() => void)) {
       const modal = document.getElementById("modal-confirmacion");
       const modalTitulo = document.getElementById("modal-titulo");
       const modalMensaje = document.getElementById("modal-mensaje");
@@ -841,16 +947,20 @@ import {
 
       if (!modal) return;
 
+      if (!modalTitulo || !modalMensaje || !modalBtn || !modalHeader) return;
+
       modalTitulo.textContent = titulo;
       modalMensaje.textContent = mensaje;
 
       // Resetear clases del botón
-      modalBtn.className =
+      (modalBtn as HTMLElement).className =
         "px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all duration-200 transform hover:scale-105 action-btn";
 
       // Remove old event listeners by cloning
-      const newBtn = modalBtn.cloneNode(true);
-      modalBtn.parentNode.replaceChild(newBtn, modalBtn);
+      const newBtn = (modalBtn as HTMLElement).cloneNode(true) as HTMLButtonElement;
+      if ((modalBtn as HTMLElement).parentNode) {
+        (modalBtn as HTMLElement).parentNode!.replaceChild(newBtn, modalBtn);
+      }
 
       // Add new listener
       if (accion) {
@@ -871,7 +981,7 @@ import {
           "hover:shadow-red-500/30"
         );
         newBtn.textContent = "Eliminar";
-        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 border-2 border-red-500/30">
+        (modalHeader as HTMLElement).innerHTML = `<div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 border-2 border-red-500/30">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
         </div>`;
       } else if (tipo === "info") {
@@ -883,7 +993,7 @@ import {
           "hover:shadow-acento-azul/30"
         );
         newBtn.textContent = "Continuar";
-        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-acento-azul/20 flex items-center justify-center text-acento-azul border-2 border-acento-azul/30">
+        (modalHeader as HTMLElement).innerHTML = `<div class="w-10 h-10 rounded-full bg-acento-azul/20 flex items-center justify-center text-acento-azul border-2 border-acento-azul/30">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>`;
       } else {
@@ -895,7 +1005,7 @@ import {
           "hover:shadow-acento-azul/30"
         );
         newBtn.textContent = "Aceptar";
-        modalHeader.innerHTML = `<div class="w-10 h-10 rounded-full bg-acento-azul/20 flex items-center justify-center text-acento-azul border-2 border-acento-azul/30">
+        (modalHeader as HTMLElement).innerHTML = `<div class="w-10 h-10 rounded-full bg-acento-azul/20 flex items-center justify-center text-acento-azul border-2 border-acento-azul/30">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
         </div>`;
       }
@@ -913,7 +1023,7 @@ import {
     }
 
     // Funciones de filtro
-    function filtrarCasos(tipo) {
+    function filtrarCasos(tipo: string) {
       filtroActual = tipo;
       aplicarFiltro();
 
@@ -921,7 +1031,7 @@ import {
       document
         .querySelectorAll('button[onclick^="filtrarCasos"]')
         .forEach((btn) => {
-          btn.classList.remove(
+          (btn as HTMLElement).classList.remove(
             "bg-acento-azul/10",
             "border-acento-azul",
             "bg-green-500/10",
@@ -937,17 +1047,17 @@ import {
       );
       if (botonActual) {
         if (tipo === "todos") {
-          botonActual.classList.add("bg-acento-azul/10", "border-acento-azul");
+          (botonActual as HTMLElement).classList.add("bg-acento-azul/10", "border-acento-azul");
         } else if (tipo === "resueltos") {
-          botonActual.classList.add("bg-green-500/10", "border-green-500");
+          (botonActual as HTMLElement).classList.add("bg-green-500/10", "border-green-500");
         } else if (tipo === "pendientes") {
-          botonActual.classList.add("bg-yellow-500/10", "border-yellow-500");
+          (botonActual as HTMLElement).classList.add("bg-yellow-500/10", "border-yellow-500");
         }
       }
     }
 
     // ELIMINAR CASO INDIVIDUAL - CORREGIDO
-    function confirmarEliminarCaso(casoId, tituloCaso) {
+    function confirmarEliminarCaso(casoId: string, tituloCaso: string) {
       abrirModal(
         "peligro",
         "Eliminar Expediente",
@@ -956,7 +1066,7 @@ import {
       );
     }
 
-    function eliminarCasoIndividual(casoId) {
+    function eliminarCasoIndividual(casoId: string) {
       // Encontrar el índice del caso específico (usando el primer caso con ese ID)
       const casoIndex = historialOriginal.findIndex((c) => c.casoId === casoId);
 
@@ -993,7 +1103,7 @@ import {
     }
 
     // Ver detalles del caso
-    function verCasoDetalles(casoId) {
+    function verCasoDetalles(casoId: string) {
       const caso = historialOriginal.find((c) => c.casoId === casoId);
 
       if (!caso) {
@@ -1007,7 +1117,15 @@ import {
       }
 
       let detalles = `Título: ${caso.titulo || "Sin título"}\n`;
-      detalles += `Estado: ${caso.resuelto ? "✅ Resuelto" : "⏳ Pendiente"}\n`;
+      const estado = caso.estado || (caso.resuelto ? 'resuelto' : 'pendiente');
+      const estadoEtiquetaMap = {
+        resuelto: '✅ Resuelto',
+        pendiente: '⏳ Pendiente',
+        fallido: '❌ Fallido',
+        abandonado: '📁 Abandonado'
+      } as const;
+      const estadoEtiqueta = (estadoEtiquetaMap as any)[estado] || '⏳ Pendiente';
+      detalles += `Estado: ${estadoEtiqueta}\n`;
       detalles += `ID: ${caso.casoId || "Sin ID"}\n`;
 
       if (caso.fechaCreacion) {
@@ -1035,14 +1153,15 @@ import {
     }
 
     // Cargar caso para continuar investigación (SOLO casos pendientes)
-    function cargarCasoEnJuego(caso) {
+    function cargarCasoEnJuego(caso: any) {
       try {
-        // Verificar que el caso no esté resuelto
-        if (caso.resuelto) {
+        const estado = caso.estado || (caso.resuelto ? 'resuelto' : 'pendiente');
+        // Verificar que el caso sea reanudable
+        if (estado !== 'pendiente') {
           abrirModal(
             "info",
             "Caso Ya Resuelto",
-            "Este caso ya ha sido resuelto y no puede ser reabierto. ¡Excelente trabajo detective!",
+            "Este expediente ya está cerrado y no puede ser reabierto.",
             null
           );
           return;
@@ -1159,7 +1278,7 @@ import {
     }
 
     // Inicializar al cargar la página
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", function () {
       cargarHistorial();
 
       // Configurar eventos
@@ -1198,11 +1317,11 @@ import {
     });
 
     // Hacer funciones disponibles globalmente
-    window.filtrarCasos = filtrarCasos;
-    window.exportarHistorial = exportarHistorial;
-    window.limpiarHistorial = limpiarHistorial;
-    window.confirmarEliminarCaso = confirmarEliminarCaso;
-    window.verCasoDetalles = verCasoDetalles;
-    window.cerrarModal = cerrarModal;
+    (window as any).filtrarCasos = filtrarCasos;
+    (window as any).exportarHistorial = exportarHistorial;
+    (window as any).limpiarHistorial = limpiarHistorial;
+    (window as any).confirmarEliminarCaso = confirmarEliminarCaso;
+    (window as any).verCasoDetalles = verCasoDetalles;
+    (window as any).cerrarModal = cerrarModal;
   </script>
 </MainLayout>

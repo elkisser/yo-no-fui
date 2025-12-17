@@ -5,7 +5,7 @@ import { ArrowLeft, Sparkles, Shield, Zap, Lock } from "lucide-react";
 ---
 
 <MainLayout>
-  <div class="min-h-screen bg-fondo-principal">
+  <div class="min-h-screen bg-fondo-principal" data-guide="nuevo-caso-root">
     {/* Header minimalista */}
     <div class="relative overflow-hidden">
       <div class="max-w-6xl mx-auto px-4 pt-12 pb-8">
@@ -18,7 +18,7 @@ import { ArrowLeft, Sparkles, Shield, Zap, Lock } from "lucide-react";
             <div
               class="flex items-center gap-2 p-2 rounded-lg hover:bg-fondo-panel/30 transition-colors"
             >
-              <ArrowLeft class="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" />
               <span class="text-sm font-medium">Volver al inicio</span>
             </div>
           </a>
@@ -53,7 +53,7 @@ import { ArrowLeft, Sparkles, Shield, Zap, Lock } from "lucide-react";
             <h3
               class="text-lg font-serif text-texto-principal mb-4 flex items-center gap-2"
             >
-              <Sparkles class="w-5 h-5 text-acento-azul" />
+              <Sparkles className="w-5 h-5 text-acento-azul" />
               Características
             </h3>
 
@@ -62,7 +62,7 @@ import { ArrowLeft, Sparkles, Shield, Zap, Lock } from "lucide-react";
                 <div
                   class="w-6 h-6 rounded-full bg-acento-azul/20 flex items-center justify-center flex-shrink-0 mt-0.5"
                 >
-                  <Zap class="w-3 h-3 text-acento-azul" />
+                  <Zap className="w-3 h-3 text-acento-azul" />
                 </div>
                 <div>
                   <p class="text-sm font-medium text-texto-principal">
@@ -78,7 +78,7 @@ import { ArrowLeft, Sparkles, Shield, Zap, Lock } from "lucide-react";
                 <div
                   class="w-6 h-6 rounded-full bg-acento-turquesa/20 flex items-center justify-center flex-shrink-0 mt-0.5"
                 >
-                  <Lock class="w-3 h-3 text-acento-turquesa" />
+                  <Lock className="w-3 h-3 text-acento-turquesa" />
                 </div>
                 <div>
                   <p class="text-sm font-medium text-texto-principal">
@@ -94,7 +94,7 @@ import { ArrowLeft, Sparkles, Shield, Zap, Lock } from "lucide-react";
                 <div
                   class="w-6 h-6 rounded-full bg-acento-azul/20 flex items-center justify-center flex-shrink-0 mt-0.5"
                 >
-                  <Shield class="w-3 h-3 text-acento-azul" />
+                  <Shield className="w-3 h-3 text-acento-azul" />
                 </div>
                 <div>
                   <p class="text-sm font-medium text-texto-principal">
@@ -183,7 +183,7 @@ import { ArrowLeft, Sparkles, Shield, Zap, Lock } from "lucide-react";
                     desc: "Encuentra al culpable",
                   },
                 ].map((item) => (
-                  <div key={item.step} class="text-center">
+                  <div class="text-center">
                     <div class="w-10 h-10 mx-auto mb-2 rounded-full bg-fondo-panel border border-fondo-borde flex items-center justify-center text-texto-principal font-medium">
                       {item.step}
                     </div>

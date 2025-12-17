@@ -343,6 +343,9 @@ const TableroInvestigacion: React.FC = () => {
   const [resultado, setResultado] = useState<{ correcto: boolean; mensaje: string } | null>(null);
   const [estadisticasFinales, setEstadisticasFinales] = useState<any>(null);
   const [tiempoVisual, setTiempoVisual] = useState(getTiempoTranscurrido());
+  const [cerrandoResultado, setCerrandoResultado] = useState(false);
+  const [redirectPendiente, setRedirectPendiente] = useState<string | null>(null);
+  const [confirmarCierreCaso, setConfirmarCierreCaso] = useState<null | 'abandonar'>(null);
 
   useEffect(() => {
     if (casoActual) {
@@ -382,6 +385,29 @@ const TableroInvestigacion: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('notas-investigacion', notas);
   }, [notas]);
+
+  const cerrarResultadoYRedirigir = (url: string) => {
+    setCerrandoResultado(true);
+    setRedirectPendiente(url);
+    setTimeout(() => {
+      window.location.href = url;
+    }, 260);
+  };
+
+  const marcarCasoComoCerradoEnStore = () => {
+    try {
+      useGameStore.setState((state: any) => ({
+        casoActual: state.casoActual ? { ...state.casoActual, resuelto: true } : null,
+      }));
+    } catch {
+      // ignore
+    }
+  };
+
+  const registrarCasoEnHistorial = (payload: any) => {
+    const historialActual = JSON.parse(localStorage.getItem('historial-casos') || '[]');
+    localStorage.setItem('historial-casos', JSON.stringify([...historialActual, payload]));
+  };
 
   if (cargandoCaso && !casoActual) {
     return (
@@ -628,6 +654,7 @@ const TableroInvestigacion: React.FC = () => {
     
     setTimeout(() => {
       const esCorrecto = proponerCulpable(sospechosoId);
+      const culpable = casoActual?.sospechosos?.find(s => s.id === casoActual?.culpableId);
       
       // Calcular estadísticas
       const stats = {
@@ -642,35 +669,38 @@ const TableroInvestigacion: React.FC = () => {
         correcto: esCorrecto,
         mensaje: esCorrecto 
           ? '¡Correcto! Has resuelto el caso. El culpable ha sido identificado.' 
-          : 'Incorrecto. Este sospechoso no es el culpable. Sigue investigando.'
+          : `Acusación incorrecta. El culpable era ${culpable?.nombre || 'un sujeto no identificado'}. Logró salirse con la suya.`
       });
       
       setProponiendo(null);
       
+      if (!casoActual) return;
+
       if (!esCorrecto) {
-        setTimeout(() => {
-          setResultado(null);
-        }, 3000);
+        marcarCasoComoCerradoEnStore();
+        registrarCasoEnHistorial({
+          casoId: casoActual.id,
+          titulo: casoActual.titulo,
+          fecha: new Date().toISOString(),
+          resuelto: false,
+          estado: 'fallido',
+          culpable: culpable?.nombre,
+          tiempo: getTiempoTranscurrido(),
+          stats: { ...stats, puntaje: 0, fallido: true },
+          data: casoActual
+        });
       } else {
-        // Guardar en historial (localStorage para persistencia simple entre sesiones)
-        const historialActual = JSON.parse(localStorage.getItem('historial-casos') || '[]');
-        const nuevoRegistro = {
+        registrarCasoEnHistorial({
           casoId: casoActual.id,
           titulo: casoActual.titulo,
           fecha: new Date().toISOString(),
           resuelto: true,
+          estado: 'resuelto',
+          culpable: culpable?.nombre,
           tiempo: getTiempoTranscurrido(),
           stats: stats,
           data: casoActual
-        };
-        
-        localStorage.setItem('historial-casos', JSON.stringify([...historialActual, nuevoRegistro]));
-        
-        // Esperar para ver las estadísticas y luego limpiar/redirigir
-        setTimeout(() => {
-           nuevoCaso(); // Limpiar el caso actual del store
-           window.location.href = '/archivo';
-        }, 10000);
+        });
       }
     }, 1500);
   };
@@ -726,7 +756,7 @@ const TableroInvestigacion: React.FC = () => {
           </div>
           
           {/* Navegación Tabs */}
-          <div className="flex space-x-6 mt-6 border-b border-fondo-borde/30 px-2 overflow-x-auto no-scrollbar">
+          <div className="flex space-x-6 mt-6 border-b border-fondo-borde/30 px-2 overflow-x-auto no-scrollbar" data-guide="investigar-tabs">
             {['sospechosos', 'pistas', 'ayudas'].map((tab) => (
                <button
                   key={tab}
@@ -875,25 +905,19 @@ const TableroInvestigacion: React.FC = () => {
               >
                 <span className="group-hover:text-acento-azul transition-colors">Generar Nuevo Caso</span>
               </a>
+
+              <button
+                onClick={() => {
+                  window.location.href = '/archivo';
+                }}
+                className="block w-full py-3 bg-fondo-secundario/30 border border-fondo-borde rounded-xl text-texto-secundario text-center hover:border-acento-turquesa/40 hover:text-acento-turquesa transition-all duration-300 font-medium text-sm"
+              >
+                Resolver más tarde
+              </button>
               
               <button
                 onClick={() => {
-                 if (confirm('¿Seguro que quieres abandonar? El caso quedará registrado como no resuelto.')) {
-                    const historialActual = JSON.parse(localStorage.getItem('historial-casos') || '[]');
-                    const nuevoRegistro = {
-                      casoId: casoActual.id,
-                      titulo: casoActual.titulo,
-                      fecha: new Date().toISOString(),
-                      resuelto: false,
-                      tiempo: getTiempoTranscurrido(),
-                      stats: { puntaje: 0, abandono: true },
-                      data: casoActual
-                    };
-                    localStorage.setItem('historial-casos', JSON.stringify([...historialActual, nuevoRegistro]));
-                    
-                    nuevoCaso();
-                    window.location.href = '/';
-                  }
+                  setConfirmarCierreCaso('abandonar');
                 }}
                 className="block w-full py-3 bg-red-500/5 border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500/10 hover:border-red-500/40 transition-all duration-300 font-medium text-sm"
               >
@@ -904,9 +928,81 @@ const TableroInvestigacion: React.FC = () => {
         </div>
       </div>
 
+      {confirmarCierreCaso === 'abandonar' && (
+        <div className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+          <div className="w-full max-w-lg bg-gradient-to-br from-fondo-panel via-fondo-panel to-fondo-secundario border border-fondo-borde/60 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="p-6 border-b border-fondo-borde/40 bg-fondo-secundario/30">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-xs font-mono tracking-[0.28em] text-acento-azul/80 uppercase">
+                    EXPEDIENTE CONFIDENCIAL
+                  </div>
+                  <h3 className="text-2xl font-serif text-texto-principal mt-2">
+                    Cerrar investigación
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setConfirmarCierreCaso(null)}
+                  className="h-10 w-10 rounded-xl border border-fondo-borde/50 text-texto-secundario hover:text-texto-principal hover:bg-white/5 transition-colors"
+                  aria-label="Cerrar"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <p className="text-texto-secundario leading-relaxed">
+                Si abandonás ahora, el caso quedará inconcluso.
+              </p>
+              <div className="mt-4 p-4 rounded-xl bg-fondo-secundario/30 border border-fondo-borde/40">
+                <div className="text-[11px] font-mono text-texto-secundario/70 tracking-widest uppercase">
+                  Nota operativa
+                </div>
+                <div className="text-sm text-texto-principal mt-2">
+                  Esta acción cerrará el expediente y lo registrará como abandonado.
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setConfirmarCierreCaso(null)}
+                  className="py-3 rounded-xl border border-fondo-borde/60 bg-fondo-secundario/20 text-texto-principal hover:bg-white/5 transition-colors font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    if (!casoActual) return;
+                    const culpable = casoActual?.sospechosos?.find(s => s.id === casoActual?.culpableId);
+                    marcarCasoComoCerradoEnStore();
+                    registrarCasoEnHistorial({
+                      casoId: casoActual.id,
+                      titulo: casoActual.titulo,
+                      fecha: new Date().toISOString(),
+                      resuelto: false,
+                      estado: 'abandonado',
+                      culpable: culpable?.nombre,
+                      tiempo: getTiempoTranscurrido(),
+                      stats: { puntaje: 0, abandono: true },
+                      data: casoActual
+                    });
+                    setConfirmarCierreCaso(null);
+                    window.location.href = '/archivo';
+                  }}
+                  className="py-3 rounded-xl bg-gradient-to-r from-red-600 to-red-500 text-white font-bold hover:shadow-lg hover:shadow-red-500/20 transition-shadow"
+                >
+                  Abandonar caso
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Resultado de propuesta */}
       {resultado && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4 backdrop-blur-lg animate-fade-in">
+        <div className={`fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4 backdrop-blur-lg ${cerrandoResultado ? 'opacity-0 transition-opacity duration-200' : 'animate-fade-in'}`}>
           <div className={`max-w-md w-full rounded-2xl p-8 transform transition-all duration-500 animate-scale-in relative overflow-hidden ${
             resultado.correcto 
               ? 'bg-gradient-to-br from-fondo-panel via-fondo-panel to-green-900/10 border border-green-500/30' 
@@ -962,24 +1058,23 @@ const TableroInvestigacion: React.FC = () => {
                   </div>
               )}
               
-              {resultado.correcto && (
-                <div className="w-full bg-fondo-secundario/30 h-1 mb-6 rounded-full overflow-hidden">
-                   <div className="h-full bg-green-500 animate-[width_10s_linear] w-full origin-left" />
-                </div>
-              )}
-              {resultado.correcto && (
-                 <p className="text-xs text-green-400/60 mb-6 font-mono">AUTODESTRUCCIÓN DE MENSAJE EN 10 SEGUNDOS</p>
-              )}
               
               <button
-                onClick={() => setResultado(null)}
+                onClick={() => {
+                  if (redirectPendiente) return;
+                  if (resultado.correcto) {
+                    cerrarResultadoYRedirigir('/archivo');
+                    return;
+                  }
+                  cerrarResultadoYRedirigir('/archivo');
+                }}
                 className={`w-full py-4 text-white font-bold rounded-xl transition-all shadow-lg hover:translate-y-[-2px] active:translate-y-[1px] ${
                     resultado.correcto 
                     ? 'bg-gradient-to-r from-green-600 to-green-500 shadow-green-500/20' 
                     : 'bg-fondo-secundario border border-white/5 hover:bg-white/5'
                 }`}
               >
-                {resultado.correcto ? 'ARCHIVAR CASO' : 'REANUDAR INVESTIGACIÓN'}
+                {resultado.correcto ? 'ARCHIVAR CASO' : 'ARCHIVAR INFORME'}
               </button>
             </div>
           </div>

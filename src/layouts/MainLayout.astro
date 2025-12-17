@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Header from "../components/ui/Header";
 import Footer from "../components/ui/Footer";
+import GuideHost from "../components/guide/GuideHost";
 ---
 
 <!doctype html>
@@ -37,6 +38,8 @@ import Footer from "../components/ui/Footer";
     <!-- Componente Header React -->
     <Header client:load />
 
+    <GuideHost client:load />
+
     <!-- Contenido principal -->
     <main class="flex-grow">
       <slot />
@@ -70,20 +73,25 @@ import Footer from "../components/ui/Footer";
 
         // Prevenir comportamiento por defecto de formularios
         document.addEventListener("submit", function (e) {
-          if (e.target.tagName === "FORM") {
+          const target = e.target;
+          if (target instanceof HTMLFormElement) {
             e.preventDefault();
           }
         });
 
         // Mejorar experiencia de scroll suave
         document.addEventListener("click", function (e) {
-          if (e.target.matches('a[href^="#"]')) {
+          const target = e.target;
+          if (!(target instanceof HTMLElement)) return;
+
+          if (target.matches('a[href^="#"]')) {
             e.preventDefault();
-            const target = document.querySelector(
-              e.target.getAttribute("href")
-            );
-            if (target) {
-              target.scrollIntoView({ behavior: "smooth" });
+            const href = target.getAttribute("href");
+            if (!href) return;
+
+            const anchorTarget = document.querySelector(href);
+            if (anchorTarget) {
+              anchorTarget.scrollIntoView({ behavior: "smooth" });
             }
           }
         });
