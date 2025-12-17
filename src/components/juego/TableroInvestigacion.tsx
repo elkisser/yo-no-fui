@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { jsPDF } from 'jspdf';
-import { 
-  Search, 
-  FileText, 
-  Users, 
-  AlertCircle, 
-  HelpCircle,
-  Target,
-  Clock,
-  ChevronRight,
-  CheckCircle,
-  XCircle,
-  BookOpen,
-  MessageSquare,
-  Zap,
+import {
+  AlertCircle,
   ArrowRight,
+  BookOpen,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  Download,
+  FileText,
+  HelpCircle,
   Loader2,
-  Download
+  MessageSquare,
+  Search,
+  Target,
+  Users,
+  XCircle,
+  Zap,
 } from 'lucide-react';
 
 const PanelSospechosos: React.FC<{
@@ -29,12 +29,13 @@ const PanelSospechosos: React.FC<{
   if (!casoActual) return null;
 
   return (
-    <div className="space-y-6 animate-slide-up">
+    <div className="space-y-6 animate-slide-up" data-guide="investigar-panel-sospechosos">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
+        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3" data-guide="investigar-sospechosos-titulo">
           <Users className="w-6 h-6 text-acento-azul" />
           Perfiles de Sospechosos
         </h3>
+        
         <span className="text-sm text-texto-secundario bg-fondo-borde/50 backdrop-blur-sm px-3 py-1 rounded-full border border-fondo-borde/30">
           {casoActual.sospechosos.length} registros
         </span>
@@ -64,6 +65,7 @@ const PanelSospechosos: React.FC<{
                   <button
                     onClick={() => onProponer(sospechoso.id)}
                     disabled={proponiendo !== null || casoActual.resuelto}
+                    data-guide={index === 0 ? 'investigar-acusar' : undefined}
                     className={`btn-glow px-5 py-2.5 rounded-xl text-sm font-bold tracking-wide transition-all shadow-lg ${
                       proponiendo === sospechoso.id
                         ? 'bg-acento-azul/20 text-acento-azul ring-2 ring-acento-azul/20'
@@ -87,7 +89,7 @@ const PanelSospechosos: React.FC<{
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   {sospechoso.motivacion && (
-                    <div className="p-4 bg-fondo-secundario/30 rounded-xl border border-fondo-borde/30 hover:border-acento-azul/20 transition-colors">
+                    <div className="p-4 bg-fondo-secundario/30 rounded-xl border border-fondo-borde/30 hover:border-acento-turquesa/20 transition-colors">
                       <div className="flex items-center gap-2 text-xs font-bold text-acento-turquesa mb-2 uppercase tracking-wider">
                         <Target className="w-3 h-3" /> Motivación
                       </div>
@@ -96,7 +98,7 @@ const PanelSospechosos: React.FC<{
                   )}
                   
                   {sospechoso.alibi && (
-                    <div className="p-4 bg-fondo-secundario/30 rounded-xl border border-fondo-borde/30 hover:border-acento-azul/20 transition-colors">
+                    <div className="p-4 bg-fondo-secundario/30 rounded-xl border border-fondo-borde/30 hover:border-acento-turquesa/20 transition-colors">
                       <div className="flex items-center gap-2 text-xs font-bold text-acento-azul mb-2 uppercase tracking-wider">
                         <Clock className="w-3 h-3" /> Coartada
                       </div>
@@ -123,12 +125,13 @@ const PanelPistas: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6 animate-slide-up">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
+    <div className="space-y-6 animate-slide-up" data-guide="investigar-panel-pistas">
+      <div className="flex items-center justify-between mb-2" data-guide="investigar-pistas-header">
+        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3" data-guide="investigar-pistas-titulo">
           <Search className="w-6 h-6 text-acento-turquesa" />
           Evidencias Recolectadas
         </h3>
+        
         <span className="text-sm text-texto-secundario bg-fondo-borde/50 backdrop-blur-sm px-3 py-1 rounded-full border border-fondo-borde/30">
           {pistasDisponibles.length}/{casoActual.pistas.length} disponibles
         </span>
@@ -183,6 +186,7 @@ const PanelPistas: React.FC = () => {
                 {!descubierta && disponible && (
                   <button
                     onClick={() => descubrirPista(pista.id)}
+                    data-guide={index === 0 ? 'investigar-examinar-pista' : undefined}
                     className="px-3 py-1.5 text-xs font-bold bg-acento-azul/10 text-acento-azul rounded-lg hover:bg-acento-azul hover:text-white transition-all shadow-lg shadow-acento-azul/10 active:scale-95"
                   >
                     EXAMINAR
@@ -231,12 +235,13 @@ const PanelAyudas: React.FC = () => {
   if (!casoActual) return null;
 
   return (
-    <div className="space-y-6 animate-slide-up">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3">
+    <div className="space-y-6 animate-slide-up" data-guide="investigar-panel-ayudas">
+      <div className="flex items-center justify-between mb-2" data-guide="investigar-ayudas-header">
+        <h3 className="text-2xl font-serif text-texto-principal flex items-center gap-3" data-guide="investigar-ayudas-titulo">
           <HelpCircle className="w-6 h-6 text-acento-turquesa" />
           Herramientas de Investigación
         </h3>
+        
         <span className="text-sm text-texto-secundario bg-fondo-borde/50 backdrop-blur-sm px-3 py-1 rounded-full border border-fondo-borde/30">
           {ayudasUsadas.length}/3 usadas
         </span>
@@ -281,6 +286,7 @@ const PanelAyudas: React.FC = () => {
                   {!usada && ayudasUsadas.length < 3 && (
                     <button
                       onClick={() => usarAyuda(ayuda.id)}
+                      data-guide={index === 0 ? 'investigar-usar-ayuda' : undefined}
                       className="mt-2 w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-acento-turquesa to-acento-azul text-fondo-principal font-bold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-acento-azul/20 active:scale-95"
                     >
                       ACTIVAR HERRAMIENTA
@@ -746,6 +752,7 @@ const TableroInvestigacion: React.FC = () => {
 
                <button
                 onClick={generarPDF}
+                data-guide="investigar-legajo"
                 className="flex items-center gap-2 px-4 py-2 bg-fondo-secundario hover:bg-acento-azul/10 border border-fondo-borde hover:border-acento-azul/30 rounded-lg text-texto-secundario hover:text-acento-azul transition-all duration-300 group ml-2 active:scale-95"
                 title="Descargar Expediente"
               >
@@ -761,6 +768,7 @@ const TableroInvestigacion: React.FC = () => {
                <button
                   key={tab}
                   onClick={() => setPanelActivo(tab as any)}
+                  data-guide={`investigar-tab-${tab}`}
                   className={`pb-3 flex items-center gap-2 transition-all text-sm font-medium border-b-2 whitespace-nowrap px-4 py-2 rounded-t-lg ${
                     panelActivo === tab
                       ? 'text-acento-azul border-acento-azul bg-acento-azul/5'
@@ -837,7 +845,7 @@ const TableroInvestigacion: React.FC = () => {
                       className="h-full bg-gradient-to-r from-acento-azul via-acento-turquesa to-acento-azul background-animate rounded-full transition-all duration-1000 ease-out relative"
                       style={{ width: `${porcentajeProgreso}%`, backgroundSize: '200% 100%' }}
                     >
-                        <div className="absolute top-0 right-0 bottom-0 w-1 bg-white/50 blur-[2px]" />
+                        <div className="absolute top-0 right-0 w-1 bg-white/50 blur-[2px]" />
                     </div>
                   </div>
                 </div>
@@ -873,6 +881,7 @@ const TableroInvestigacion: React.FC = () => {
                 value={hipotesisActual || ''}
                 onChange={(e) => setHipotesis(e.target.value)}
                 placeholder="Escribe tu teoría aquí... (Documento Confidencial)"
+                data-guide="investigar-hipotesis"
                 className="w-full h-32 bg-fondo-secundario/50 border border-fondo-borde rounded-xl p-4 text-texto-principal text-sm focus:outline-none focus:border-acento-azul resize-none placeholder:text-texto-secundario/30 transition-all focus:ring-2 focus:ring-acento-azul/10 relative z-10"
               />
               
@@ -893,6 +902,7 @@ const TableroInvestigacion: React.FC = () => {
                 value={notas}
                 onChange={(e) => setNotas(e.target.value)}
                 placeholder="Observaciones..."
+                data-guide="investigar-notas"
                 className="w-full h-40 bg-fondo-secundario/50 border border-fondo-borde rounded-xl p-4 text-texto-principal text-sm focus:outline-none focus:border-acento-azul resize-none placeholder:text-texto-secundario/30 transition-all focus:ring-2 focus:ring-acento-azul/10"
               />
             </div>

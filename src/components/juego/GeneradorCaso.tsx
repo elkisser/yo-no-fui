@@ -107,7 +107,7 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
   return (
     <div className="w-full animate-fade-in">
       {/* Panel de configuración */}
-      <div className="card-neu p-8 mb-8 relative overflow-hidden group">
+      <div className="card-neu p-8 mb-8 relative overflow-hidden group" data-guide="nuevo-caso-config">
         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
            <Settings className="w-24 h-24 text-acento-azul transformer rotate-45" />
         </div>
@@ -127,7 +127,7 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
         </div>
 
         {/* Selector de tema */}
-        <div className="mb-8 relative z-10">
+        <div className="mb-8 relative z-10" data-guide="nuevo-caso-tema">
           <label className="block text-texto-principal mb-3 text-sm font-bold uppercase tracking-wider">
             Tema de Investigación (IA)
           </label>
@@ -135,6 +135,7 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
             <select 
               value={tema}
               onChange={(e) => setTema(e.target.value)}
+              data-guide="nuevo-caso-tema-select"
               className="w-full bg-fondo-secundario/50 border border-fondo-borde rounded-xl px-5 py-4 text-texto-principal text-base focus:outline-none focus:border-acento-azul focus:ring-2 focus:ring-acento-azul/20 transition-all appearance-none cursor-pointer hover:bg-fondo-secundario hover:border-acento-azul/50"
             >
               <option value="">Sorpréndeme - Tema aleatorio</option>
@@ -151,7 +152,7 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
         </div>
 
         {/* Selector de complejidad */}
-        <div className="mb-8 relative z-10">
+        <div className="mb-8 relative z-10" data-guide="nuevo-caso-dificultad">
           <label className="block text-texto-principal mb-4 text-sm font-bold uppercase tracking-wider">
             Nivel de Amenaza
           </label>
@@ -164,6 +165,7 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
               <button
                 key={nivel.id}
                 onClick={() => setComplejidad(nivel.id)}
+                data-guide={nivel.id === 'media' ? 'nuevo-caso-dificultad-media' : undefined}
                 className={`p-5 rounded-xl border transition-all duration-300 relative overflow-hidden group/btn ${
                   complejidad === nivel.id
                     ? `border-${nivel.color.split(' ')[1].split('/')[0]} bg-gradient-to-b ${nivel.color}/10 shadow-lg`
@@ -190,7 +192,7 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl animate-fade-in">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
               <div>
                 <p className="text-red-400 text-sm font-bold">ERROR DE SISTEMA</p>
                 <p className="text-red-400/80 text-xs mt-1">{error}</p>
@@ -205,6 +207,7 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
         <button
           onClick={() => generarCaso()}
           disabled={cargando}
+          data-guide="nuevo-caso-generar-ia"
           className="w-full py-5 bg-gradient-to-r from-acento-azul via-acento-turquesa to-acento-azul background-animate bg-[length:200%_auto] text-fondo-principal font-bold text-lg rounded-xl hover:shadow-[0_0_30px_rgba(77,163,255,0.4)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 relative overflow-hidden group shadow-xl active:scale-[0.99]"
         >
           {cargando ? (
@@ -224,6 +227,7 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
         <button
           onClick={() => generarCaso('offline')}
           disabled={cargando}
+          data-guide="nuevo-caso-generar-offline"
           className="w-full py-4 bg-fondo-secundario border border-fondo-borde/50 text-texto-secundario hover:text-texto-principal hover:border-white/20 hover:bg-fondo-panel font-medium rounded-xl transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 group"
         >
           <WifiOff className="w-4 h-4 group-hover:scale-110 transition-transform" />

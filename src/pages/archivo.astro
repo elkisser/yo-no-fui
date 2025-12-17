@@ -291,6 +291,7 @@ import {
           {/* Tarjeta de estadísticas */}
           <div
             class="bg-fondo-panel/20 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-2xl p-6 detective-desk"
+            data-guide="archivo-stats-card"
           >
             <div class="flex items-center gap-3 mb-6">
               <div
@@ -437,6 +438,7 @@ import {
             <div class="space-y-4">
               <button
                 onclick="exportarHistorial()"
+                data-guide="archivo-exportar"
                 class="w-full py-3.5 bg-fondo-secundario/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 flex items-center justify-center gap-3 group action-btn"
               >
                 <Download
@@ -447,6 +449,7 @@ import {
 
               <button
                 onclick="limpiarHistorial()"
+                data-guide="archivo-limpiar"
                 class="w-full py-3.5 bg-red-500/10 backdrop-blur-sm border-2 border-red-500/20 rounded-xl text-red-400 hover:bg-red-500/20 hover:border-red-500/40 transition-all duration-300 flex items-center justify-center gap-3 group action-btn"
               >
                 <Trash2
