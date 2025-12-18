@@ -312,28 +312,81 @@ export const casosMedios = [
     culpableId: "sospechoso_2"
   },
   {
-    titulo: "La Mesa 12",
-    historia: "En el restaurante La Aurora, una comensal murió tras ingerir un plato contaminado. Nadie más resultó afectado.\n\nCinco personas interactuaron con la Mesa 12 esa noche. Todas tuvieron acceso. Todas cometieron errores. Solo una cruzó una línea.\n\nEl caso no tiene un culpable fijo: el sistema selecciona quién cometió el acto final según el orden en que se descubran las pistas.",
-    ambientacion: "Restaurante elegante, hora pico.",
+    titulo: "La Carpeta Azul",
+    historia: "El Juzgado de Faltas N° 6 cerró a las 16:00 como todos los días, pero a las 18:30 la secretaria de mesa recibió una llamada inquietante: un abogado aseguraba que un expediente de inspección clave —la famosa carpeta azul— había sido adulterado y que, si se presentaba así al día siguiente, un comercio terminaría clausurado injustamente.\n\nCuando el personal regresó, encontró la puerta del archivo sin signos de violencia y el sistema de alarma activo. En la mesa de clasificación había una carpeta azul idéntica a la original, pero con hojas cambiadas: números de acta corregidos, una firma fotocopiada y un sello apenas desalineado.\n\n\"Alguien entró sin romper nada\", dijo el oficial de seguridad. Y eso, en un juzgado lleno de llaves duplicadas, no era una buena señal.\n\nSolo tres personas tenían acceso directo al archivo esa tarde: Celeste Paredes, la secretaria de mesa que llevaba los movimientos; Darío Velázquez, el auxiliar que ordenaba expedientes y conocía cada estante; y el doctor Víctor Manzano, abogado externo que solía pedir ver causas \"fuera de horario\".\n\nEl detalle más extraño: entre los papeles falsos había una hoja auténtica, con una anotación al margen hecha a mano. Quien armó la carpeta no quiso borrar todo: quiso guiar la investigación hacia un culpable específico.\n\nResolver el caso implica detectar qué documento no pertenece, y quién se beneficia de que el juzgado crea que fue un simple error administrativo.",
+    ambientacion: "Juzgado pequeño, pasillos con luces frías, archivo con estanterías metálicas y olor a papel viejo.",
     dificultad: "media",
-    jugadores: 3,
-    modo: "variable",
+    jugadores: 2,
     sospechosos: [
-      { id: "s1", nombre: "Chef principal", rasgo: "Control obsesivo" },
-      { id: "s2", nombre: "Sous-chef", rasgo: "Resentimiento" },
-      { id: "s3", nombre: "Mozo", rasgo: "Agotamiento" },
-      { id: "s4", nombre: "Gerente", rasgo: "Presión económica" },
-      { id: "s5", nombre: "Cliente habitual", rasgo: "Conocimiento interno" }
+      {
+        id: "sospechoso_1",
+        nombre: "Celeste Paredes",
+        descripcion: "Secretaria de mesa, metódica, controla sellos y firmas.",
+        motivacion: "Cubrir un error previo que podía costarle el puesto.",
+        alibi: "Dice que a las 17:10 estaba en un curso virtual desde su casa."
+      },
+      {
+        id: "sospechoso_2",
+        nombre: "Darío Velázquez",
+        descripcion: "Auxiliar de archivo, conoce rutinas y movimientos internos.",
+        motivacion: "Dinero: le ofrecieron pagarle por \"acomodar\" un expediente.",
+        alibi: "Asegura que se quedó ordenando hasta las 16:30 y luego se fue al gimnasio."
+      },
+      {
+        id: "sospechoso_3",
+        nombre: "Dr. Víctor Manzano",
+        descripcion: "Abogado externo, carismático, con contactos en el juzgado.",
+        motivacion: "Proteger a un cliente y perjudicar al denunciante.",
+        alibi: "Afirma que a las 18:00 estaba en una reunión por videollamada con un cliente."
+      }
     ],
     pistas: [
-      { id: "p1", titulo: "Ingrediente alterado", peso: "variable" },
-      { id: "p2", titulo: "Cambio de turno", peso: "variable" },
-      { id: "p3", titulo: "Cuenta modificada", peso: "variable" }
+      {
+        id: "pista_1",
+        titulo: "Sello desalineado",
+        descripcion: "El sello del juzgado está un milímetro corrido, como si se hubiera estampado con apuro en una superficie blanda.",
+        relevancia: "media",
+        descubierta: false,
+        tipo: "documento"
+      },
+      {
+        id: "pista_2",
+        titulo: "Firma fotocopiada",
+        descripcion: "Una de las firmas se repite exactamente (mismas imperfecciones), señal de copia.",
+        relevancia: "alta",
+        descubierta: false,
+        tipo: "documento"
+      },
+      {
+        id: "pista_3",
+        titulo: "Registro de acceso a impresora",
+        descripcion: "La impresora del juzgado registró una impresión a las 17:46 desde la cuenta del auxiliar.",
+        relevancia: "alta",
+        descubierta: false,
+        tipo: "digital"
+      }
     ],
     ayudas: [
-      { id: "a1", nombre: "Simulación de servicio", resultado: "Todos tuvieron acceso." },
-      { id: "a2", nombre: "Análisis de estrés", resultado: "El error no fue impulsivo." }
+      {
+        id: "ayuda_1",
+        nombre: "Peritaje de tinta",
+        descripcion: "Comparar tintas y sellos",
+        resultado: "El sello falso se hizo con una almohadilla distinta, comprada en librería común."
+      },
+      {
+        id: "ayuda_2",
+        nombre: "Cruce de cámaras",
+        descripcion: "Ver pasillo del archivo",
+        resultado: "A las 17:40 se ve a Darío entrando con una bolsa de gimnasio que no llevaba al salir."
+      },
+      {
+        id: "ayuda_3",
+        nombre: "Análisis de anotación marginal",
+        descripcion: "Revisar letra y estilo",
+        resultado: "La anotación marginal es de Celeste: es su forma habitual de marcar errores (un círculo y una flecha)."
+      }
     ],
-    giroFinal: "El culpable es quien tuvo oportunidad *y* motivo *después* de la última pista descubierta."
+    giroFinal: "Darío armó la carpeta falsa para Manzano, usando el acceso y la impresora. Dejó una hoja auténtica con una anotación de Celeste para que pareciera un error interno y así desviar la culpa.",
+    culpableId: "sospechoso_2"
   }
 ];

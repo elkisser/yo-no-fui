@@ -156,56 +156,6 @@ export const casosDificiles = [
     culpableId: "sospechoso_2"
   },
   {
-    titulo: "Cuatro Declaraciones y una Ausencia",
-    historia: "El cuerpo de Nora Ibáñez apareció en la sala de juntas de una cooperativa barrial. No había signos de lucha. Ninguna cámara funcionaba. No se halló el arma.\n\nCuatro personas declararon haber estado en el edificio esa noche. Las declaraciones son coherentes… pero solo si se leen por separado.\n\nEl error del investigador es asumir que todas las declaraciones ocurrieron en el mismo marco temporal.\n\nEste caso no se resuelve encontrando una mentira, sino detectando qué verdad fue dicha demasiado pronto.",
-    ambientacion: "Edificio cooperativo, noche lluviosa.",
-    dificultad: "difícil",
-    jugadores: 4,
-    sospechosos: [
-      { id: "s1", nombre: "Elena Moya", descripcion: "Presidenta", motivacion: "Conflictos internos", alibi: "Reunión previa" },
-      { id: "s2", nombre: "Raúl Giménez", descripcion: "Tesorero", motivacion: "Fondos faltantes", alibi: "Archivo" },
-      { id: "s3", nombre: "Lucía Torres", descripcion: "Secretaria", motivacion: "Acoso previo", alibi: "Llamada" },
-      { id: "s4", nombre: "Martín Ibáñez", descripcion: "Hermano", motivacion: "Herencia", alibi: "Llegó tarde" }
-    ],
-    pistas: [
-      { id: "p1", titulo: "Reloj detenido", descripcion: "Marcaba 21:18", tipo: "física", relevancia: "alta" },
-      { id: "p2", titulo: "Declaraciones incompatibles", descripcion: "Horarios válidos por separado", tipo: "testimonio", relevancia: "alta" },
-      { id: "p3", titulo: "Acta corregida", descripcion: "Firmas en distinto orden", tipo: "documento", relevancia: "media" }
-    ],
-    ayudas: [
-      { id: "a1", nombre: "Línea temporal", resultado: "Las declaraciones no ocurrieron el mismo día." },
-      { id: "a2", nombre: "Análisis de hábitos", resultado: "Nora siempre reiniciaba el reloj." },
-      { id: "a3", nombre: "Cruce de firmas", resultado: "Alguien firmó después de la muerte." }
-    ],
-    giroFinal: "El hermano dijo la verdad… pero sobre el día equivocado. El crimen ocurrió antes.",
-    culpableId: "s1"
-  },
-  {
-    titulo: "El Último Favor",
-    historia: "Sofía Benítez murió en su casa sin signos de violencia. La causa: una sustancia administrada voluntariamente.\n\nSofía padecía una enfermedad terminal. Había pedido ayuda.\n\nTres personas sabían. Dos se negaron. Una aceptó.\n\nEl caso no pregunta quién lo hizo. Pregunta si debe resolverse.",
-    ambientacion: "Casa familiar, madrugada.",
-    dificultad: "difícil",
-    jugadores: 2,
-    sospechosos: [
-      { id: "s1", nombre: "Hermana", motivacion: "Amor" },
-      { id: "s2", nombre: "Médico", motivacion: "Ética profesional" },
-      { id: "s3", nombre: "Amiga", motivacion: "Promesa" }
-    ],
-    pistas: [
-      { id: "p1", titulo: "Carta manuscrita", tipo: "documento" },
-      { id: "p2", titulo: "Historial médico", tipo: "legal" },
-      { id: "p3", titulo: "Conversaciones grabadas", tipo: "audio" }
-    ],
-    ayudas: [
-      { id: "a1", nombre: "Análisis legal", resultado: "Es delito." },
-      { id: "a2", nombre: "Análisis ético", resultado: "No es crueldad." }
-    ],
-    finalAlternativo: {
-      resolver: "Identificás a la amiga.",
-      noResolver: "Archivás el caso por humanidad."
-    }
-  },
-  {
     titulo: "La Habitación Sin Espejos",
     historia: "El sanatorio privado Santa Brígida se especializa en tratamientos psiquiátricos de alto perfil. Políticos, empresarios y figuras públicas han pasado por sus habitaciones aisladas del mundo exterior. Una de ellas, la número 417, tiene una particularidad: no posee espejos ni superficies reflectantes.\n\nAllí fue encontrado muerto el doctor Emiliano Krauss, psiquiatra jefe del área de internación voluntaria. Su muerte fue atribuida inicialmente a un paro cardíaco, pero la autopsia reveló una sobredosis administrada de forma progresiva.\n\nKrauss llevaba un registro personal —no oficial— de sus pacientes. Anotaba contradicciones, mentiras recurrentes y patrones de manipulación. Ese cuaderno desapareció la misma noche de su muerte.\n\nLos pacientes de la sala 4 no están allí por violencia, sino por su capacidad de manipular a otros sin culpa. Resolver el caso implica detectar quién miente mejor, no quién parece más nervioso.\n\nLa dificultad no radica en encontrar inconsistencias obvias, sino en notar qué historias encajan demasiado bien.",
     ambientacion: "Sanatorio psiquiátrico privado, noche silenciosa.",
@@ -608,5 +558,83 @@ export const casosDificiles = [
     ],
     giroFinal: "Rosa asesinó a Héctor para evitar que revelara el fraude que ella había cometido durante años.",
     culpableId: "sospechoso_3"
+  },
+  {
+    titulo: "El Silencio del Servidor",
+    historia: "La empresa de seguridad privada Orbis custodió durante años los sistemas de acceso de media ciudad: edificios públicos, clínicas, laboratorios y bancos. Su orgullo era un servidor viejo, encerrado en una sala sin ventanas, donde se almacenaban logs de entrada y salida que, en teoría, nadie podía alterar sin dejar rastro.\n\nLa noche del miércoles, a las 02:14, una alarma silenciosa se disparó en la central. No hubo robo, no hubo intrusión visible. Pero a las 07:30, cuando la auditora interna Valeria Núñez llegó a la oficina, encontró a Bruno Ledesma —administrador de sistemas— muerto en la sala de servidores. La puerta estaba cerrada por dentro con el sistema biométrico activado, y el aire acondicionado estaba demasiado frío, como si alguien hubiese forzado el termostato al mínimo.\n\nLa autopsia preliminar habló de un infarto, pero había un detalle incómodo: la pantalla del servidor mostraba una consola abierta con un comando a medio escribir. Y, en el registro de eventos, faltaban exactamente 11 minutos de logs: de 02:06 a 02:17.\n\n\"No se borran once minutos por accidente\", dijo Valeria, mirando el reloj de pared que no hacía ruido. En el edificio, esa noche, solo tres personas tenían acceso a la sala: Bruno, por supuesto; Iara Funes, jefa de operaciones que conocía el sistema por encima; y Esteban Roldán, técnico tercerizado que había estado reemplazando lectores en la planta baja.\n\nEl problema del caso no es solo quién mató a Bruno, sino por qué alguien necesitaba que esos once minutos desaparecieran. Y por qué Bruno murió con una consola abierta, como si hubiera intentado detener algo que ya estaba ocurriendo.\n\nLa investigación se vuelve particularmente difícil cuando se descubre que los logs faltantes no coinciden con ninguna caída de energía, y que el sistema registró accesos \"perfectos\" justo después: entradas limpias, sin errores, sin reintentos. Demasiado limpios.",
+    ambientacion: "Oficina de seguridad privada, madrugada, sala de servidores con zumbido constante y frío antinatural.",
+    dificultad: "difícil",
+    jugadores: 3,
+    sospechosos: [
+      {
+        id: "sospechoso_1",
+        nombre: "Iara Funes",
+        descripcion: "Jefa de operaciones, controla turnos y reportes, presión constante por contratos.",
+        motivacion: "Evitar que se descubra una alteración de accesos que compromete un cliente clave.",
+        alibi: "Dice que estaba en su casa, conectada al panel remoto por mantenimiento." 
+      },
+      {
+        id: "sospechoso_2",
+        nombre: "Esteban Roldán",
+        descripcion: "Técnico tercerizado, acceso temporal, conoce hardware y reemplazos de lectores.",
+        motivacion: "Cobrar por instalar una puerta trasera y culpar a Bruno si algo salía mal.",
+        alibi: "Asegura que a las 02:10 estaba en planta baja guardando herramientas, visto por nadie." 
+      },
+      {
+        id: "sospechoso_3",
+        nombre: "Valeria Núñez",
+        descripcion: "Auditora interna, meticulosa, investigaba irregularidades recientes.",
+        motivacion: "Silenciar a Bruno si él descubrió que su auditoría estaba comprometida desde adentro.",
+        alibi: "Afirma que esa noche no estuvo en el edificio; recién llegó a las 07:30." 
+      }
+    ],
+    pistas: [
+      {
+        id: "pista_1",
+        titulo: "Once minutos ausentes",
+        descripcion: "El log central tiene un hueco exacto de 02:06 a 02:17, sin registro de reinicio ni corte.",
+        relevancia: "alta",
+        descubierta: false,
+        tipo: "digital"
+      },
+      {
+        id: "pista_2",
+        titulo: "Termostato forzado",
+        descripcion: "El termostato de la sala marca 15°C y tiene un override manual activado desde el panel físico.",
+        relevancia: "media",
+        descubierta: false,
+        tipo: "física"
+      },
+      {
+        id: "pista_3",
+        titulo: "Comando incompleto",
+        descripcion: "En la consola quedó escrito: 'rsync --delete /var/log/...' como si Bruno hubiese intentado copiar o restaurar logs.",
+        relevancia: "alta",
+        descubierta: false,
+        tipo: "digital"
+      }
+    ],
+    ayudas: [
+      {
+        id: "ayuda_1",
+        nombre: "Forense de accesos",
+        descripcion: "Comparar logs locales vs central",
+        resultado: "En un lector de planta baja hay registros locales que no llegaron al servidor central durante esos 11 minutos." 
+      },
+      {
+        id: "ayuda_2",
+        nombre: "Análisis del override",
+        descripcion: "Revisar quién pudo tocar el panel",
+        resultado: "El override requiere una llave de gabinete; Esteban pidió esa llave por \"protocolo\" esa misma tarde." 
+      },
+      {
+        id: "ayuda_3",
+        nombre: "Recuperación de sesión",
+        descripcion: "Inspeccionar historial de terminal",
+        resultado: "Bruno inició sesión a las 02:05 y ejecutó un script llamado 'integridad_logs.sh'. A los 02:06 la sesión muestra comandos ejecutados desde otra cuenta con privilegios." 
+      }
+    ],
+    giroFinal: "Esteban instaló una puerta trasera en un lector y usó la llave del gabinete para forzar el clima y provocar una situación de estrés en Bruno mientras borraba el tramo de logs. Bruno intentó restaurarlos, pero Esteban ejecutó los comandos desde otra cuenta y lo dejó encerrado. La sala cerrada por dentro fue un montaje: el sistema aceptó un acceso 'limpio' gracias a la alteración de lecturas.",
+    culpableId: "sospechoso_2"
   }
 ];

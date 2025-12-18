@@ -44,21 +44,51 @@ const getCasosPorDificultad = (dificultad: string) => {
   }
 };
 
+const pickCasoLocalSinRepetir = (
+  casosDisponibles: any[],
+  historialTitulos: string[]
+) => {
+  const usados = new Set(
+    (historialTitulos || [])
+      .filter((t) => typeof t === 'string')
+      .map((t) => t.trim().toLowerCase())
+  );
+
+  const candidatos = casosDisponibles.filter((c: any) => {
+    const titulo = (c?.titulo || '').toString().trim().toLowerCase();
+    if (!titulo) return true;
+    return !usados.has(titulo);
+  });
+
+  const pool = candidatos.length > 0 ? candidatos : casosDisponibles;
+  const randomIndex = Math.floor(Math.random() * pool.length);
+  return pool[randomIndex];
+};
+
 export const POST: APIRoute = async ({ request }) => {
   // Inicializamos variables fuera del try para usarlas en el catch
   let dificultad = 'media';
+  let jugadoresSolicitados: number = 2;
   let aiAttempted = false;
   let aiUsed = false;
   let aiError: string | null = null;
+  let historialTitulos: string[] = [];
+  let body: any = {};
 
   try {
-    const body = await request.json().catch(() => ({}));
+    body = await request.json().catch(() => ({}));
     const { 
       tema = '', 
       jugadores = 2,
       tono = 'policial-realista',
       longitud = 'larga'
     } = body;
+
+    historialTitulos = Array.isArray(body.historialTitulos)
+      ? body.historialTitulos
+      : [];
+
+    jugadoresSolicitados = parseInt(jugadores as any) || 2;
     
     // Actualizamos la dificultad si viene en el body
     if (body.dificultad) dificultad = body.dificultad;
@@ -156,8 +186,8 @@ export const POST: APIRoute = async ({ request }) => {
       // MODO OFFLINE / FALLBACK MANUAL
       console.log(`Modo offline: seleccionando caso ${dificultad}`);
       const casosDisponibles = getCasosPorDificultad(dificultad);
-      const randomIndex = Math.floor(Math.random() * casosDisponibles.length);
-      casoGenerado = { ...casosDisponibles[randomIndex], source: 'example' };
+      const elegido = pickCasoLocalSinRepetir(casosDisponibles, historialTitulos);
+      casoGenerado = { ...elegido, source: 'example' };
     }
 
     // Validar y completar estructura
@@ -173,7 +203,7 @@ export const POST: APIRoute = async ({ request }) => {
       ...casoGenerado,
       id: `caso_${Date.now()}`,
       dificultad: dificultad,
-      jugadores: parseInt(jugadores as any) || 2,
+      jugadores: jugadoresSolicitados,
       pistasSolicitadas: 0,
       maxPistas: 3,
       resuelto: false,
@@ -224,17 +254,17 @@ export const POST: APIRoute = async ({ request }) => {
     
     // Fallback en caso de error de API
     const casosDisponibles = getCasosPorDificultad(dificultad);
-    const randomIndex = Math.floor(Math.random() * casosDisponibles.length);
+    const elegido = pickCasoLocalSinRepetir(casosDisponibles, historialTitulos);
     
     const casoFallback = {
-        ...casosDisponibles[randomIndex],
+        ...elegido,
         id: `caso_fallback_${Date.now()}`,
         resuelto: false,
         esFallback: true,
         source: 'fallback',
         errorOriginal: aiError || 'Error desconocido',
         creadoEn: new Date().toISOString(),
-        jugadores: 2,
+        jugadores: jugadoresSolicitados,
         dificultad: dificultad, // Asegurar que coincida
         aiUsed: false,
         aiAttempted,

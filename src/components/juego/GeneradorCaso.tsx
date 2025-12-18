@@ -19,6 +19,18 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
     
     try {
       console.log('Iniciando generación de caso...');
+
+      let historialTitulos: string[] = [];
+      try {
+        const historial = JSON.parse(localStorage.getItem('historial-casos') || '[]');
+        if (Array.isArray(historial)) {
+          historialTitulos = historial
+            .map((h: any) => h?.titulo)
+            .filter((t: any) => typeof t === 'string' && t.trim());
+        }
+      } catch (_) {
+        historialTitulos = [];
+      }
       
       const dificultadMap: Record<string, string> = {
         'baja': 'fácil',
@@ -34,7 +46,8 @@ const GeneradorCaso: React.FC<GeneradorCasoProps> = ({ onCasoGenerado }) => {
         },
         body: JSON.stringify({
           tema: temaOverride || tema || undefined,
-          dificultad: dificultadMap[complejidad] || 'media'
+          dificultad: dificultadMap[complejidad] || 'media',
+          historialTitulos
         })
       });
 

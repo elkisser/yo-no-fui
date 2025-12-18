@@ -154,5 +154,83 @@ export const casosFaciles = [
     ],
     giroFinal: "Clara sustrajo el manuscrito para eliminar pruebas del fraude que involucraba a su familia.",
     culpableId: "sospechoso_2"
+  },
+  {
+    titulo: "El Eco del Pasillo 3",
+    historia: "El Centro Cultural San Gabriel estaba por inaugurar su muestra más esperada: una colección de fotografías antiguas recuperadas del archivo municipal. La pieza central era una imagen enmarcada, pequeña y discreta, pero con un valor histórico enorme: la única foto conocida del primer sindicato del barrio.\n\nA las 19:10, minutos antes de que llegaran los invitados, la curadora Paula Arce notó que el marco colgaba torcido. Cuando lo acomodó, el vidrio estaba frío y sin huellas, pero detrás solo había cartón: la fotografía había sido reemplazada por una copia impresa de mala calidad.\n\n\"No puede ser\", murmuró Paula, apretando el marco contra el pecho. El guardia del pasillo 3 juró que nadie había pasado sin credencial. Sin embargo, a las 18:52 se escuchó un golpe metálico, como si algo hubiera caído en el depósito.\n\nEn el edificio solo quedaban tres personas con acceso real: Paula, que preparaba el montaje; Iván Salas, el técnico de iluminación que llevaba una escalera y herramientas; y Mirta Gadea, la encargada administrativa que custodiaba llaves y firmas.\n\nLa escena no parecía un robo común: no faltaba dinero, ni equipos, ni cuadros caros. Solo esa foto. Y alguien se tomó el trabajo de dejar una copia para que el vacío tardara en notarse.\n\nLa investigación se vuelve sencilla cuando se entiende que el ladrón no buscaba vender la foto: buscaba que nunca se exhibiera.",
+    ambientacion: "Centro cultural barrial, pasillos largos con fluorescentes parpadeantes y olor a pintura fresca.",
+    dificultad: "fácil",
+    jugadores: 2,
+    sospechosos: [
+      {
+        id: "sospechoso_1",
+        nombre: "Paula Arce",
+        descripcion: "Curadora joven, obsesiva con el montaje y el detalle.",
+        motivacion: "Proteger la muestra si la foto trae problemas legales.",
+        alibi: "Dice que estuvo todo el tiempo en la sala principal ajustando etiquetas."
+      },
+      {
+        id: "sospechoso_2",
+        nombre: "Iván Salas",
+        descripcion: "Técnico de iluminación, práctico y reservado, se mueve con herramientas por todo el edificio.",
+        motivacion: "Deudas urgentes y oportunidad de sacar algo pequeño sin levantar sospechas.",
+        alibi: "Afirma que a las 18:50 estaba en el techo revisando un dimmer."
+      },
+      {
+        id: "sospechoso_3",
+        nombre: "Mirta Gadea",
+        descripcion: "Administrativa, controla llaves, actas y autorizaciones.",
+        motivacion: "Evitar que se revele un dato comprometedor sobre su familia en la foto.",
+        alibi: "Sostiene que estuvo en su oficina imprimiendo invitaciones."
+      }
+    ],
+    pistas: [
+      {
+        id: "pista_1",
+        titulo: "Cinta adhesiva reciente",
+        descripcion: "En la parte trasera del marco hay un borde de cinta nueva, distinta a la usada en el montaje.",
+        relevancia: "alta",
+        descubierta: false,
+        tipo: "física"
+      },
+      {
+        id: "pista_2",
+        titulo: "Registro de llaves del depósito",
+        descripcion: "Falta una firma en el libro de llaves justo a la hora del golpe metálico.",
+        relevancia: "media",
+        descubierta: false,
+        tipo: "documento"
+      },
+      {
+        id: "pista_3",
+        titulo: "Copia impresa",
+        descripcion: "La copia tiene una marca de agua de una impresora de oficina específica del centro cultural.",
+        relevancia: "alta",
+        descubierta: false,
+        tipo: "digital"
+      }
+    ],
+    ayudas: [
+      {
+        id: "ayuda_1",
+        nombre: "Peritaje del marco",
+        descripcion: "Examinar el vidrio y el cartón trasero",
+        resultado: "No hay huellas en el vidrio, pero sí microfibras de guantes de látex en el cartón."
+      },
+      {
+        id: "ayuda_2",
+        nombre: "Revisión de impresoras",
+        descripcion: "Comparar la marca de agua",
+        resultado: "La copia salió de la impresora de la oficina administrativa, la que usa Mirta."
+      },
+      {
+        id: "ayuda_3",
+        nombre: "Entrevista al guardia",
+        descripcion: "Reconstruir quién pasó por el pasillo 3",
+        resultado: "El guardia recuerda haber dejado pasar a Mirta sin mirarla, porque llevaba una pila de carpetas que le tapaban la cara."
+      }
+    ],
+    giroFinal: "Mirta reemplazó la foto por una copia para ganar tiempo y retirarla sin escándalo: en la imagen se veía a su abuelo junto a un nombre clave de un fraude histórico.",
+    culpableId: "sospechoso_3"
   }
 ];
