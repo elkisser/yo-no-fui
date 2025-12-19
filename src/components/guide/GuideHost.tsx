@@ -11,6 +11,7 @@ type GuideStep = {
   allowInteractionWithinTarget?: boolean;
   presentation?: 'spotlight' | 'modal';
   ensureVisible?: { click: string };
+  skipIfMissing?: boolean;
 };
 
 type ActiveGuideState = {
@@ -208,6 +209,24 @@ const getGuideDefinitions = (): Record<GuideId, GuideStep[]> => {
         body: 'Usá filtros para separar resueltos, pendientes, fallidos o abandonados. La lectura rápida importa.',
         target: '#buscar-casos',
         next: { type: 'next' },
+      },
+      {
+        id: 'archivo.ver',
+        title: 'Ver resultado',
+        body: 'Cada expediente tiene un botón “Ver”. Abre un resumen con estado, fecha, duración y estadísticas. En expedientes “Abandonados”, esta acción no está disponible.',
+        target: '[data-guide="archivo-ver"]',
+        next: { type: 'next' },
+        allowInteractionWithinTarget: true,
+        skipIfMissing: true,
+      },
+      {
+        id: 'archivo.borrar',
+        title: 'Borrar expediente',
+        body: 'Este botón elimina el expediente del archivo en este dispositivo. En “Abandonados”, esta es la única acción disponible.',
+        target: '[data-guide="archivo-borrar"]',
+        next: { type: 'next' },
+        allowInteractionWithinTarget: true,
+        skipIfMissing: true,
       },
       {
         id: 'archivo.stats',
@@ -732,6 +751,21 @@ const GuideHost: React.FC = () => {
     if (!active) return;
     scheduleTick();
   }, [active?.guideId, active?.stepIndex]);
+
+  useEffect(() => {
+    if (!active || !derived.step) return;
+    if (!derived.step.skipIfMissing) return;
+
+    if (!derived.targetOk) {
+      const next = derived.step.next || { type: 'end' as const };
+      if (next.type === 'end') {
+        clearKey(LS_ACTIVE);
+        setActive(null);
+        return;
+      }
+      setActive({ ...active, stepIndex: derived.stepIndex + 1 });
+    }
+  }, [active?.guideId, active?.stepIndex, derived.step?.id, derived.targetOk]);
 
   const advance = () => {
     if (!active || !derived.step) return;

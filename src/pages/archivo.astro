@@ -114,19 +114,6 @@ import {
               Historial completo de investigaciones resueltas
             </p>
           </div>
-
-          <div class="flex items-center">
-            <button
-              id="btn-guia-archivo"
-              type="button"
-              onclick="(window.__yoNoFuiGuide && window.__yoNoFuiGuide.start) ? window.__yoNoFuiGuide.start('archivo') : console.warn('GuideHost no montado: window.__yoNoFuiGuide no disponible')"
-              class="h-12 px-5 bg-fondo-panel/30 backdrop-blur-sm border-2 border-fondo-borde/50 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 flex items-center gap-2 group action-btn"
-              title="Abrir guía del Archivo"
-            >
-              <Shield className="w-4 h-4 text-texto-secundario group-hover:text-acento-azul transition-colors" />
-              <span class="text-sm font-medium">Guía</span>
-            </button>
-          </div>
         </div>
 
         {/* Barra de búsqueda y filtros - Estilo interfaz policial */}
@@ -252,6 +239,24 @@ import {
             <div class="divide-y divide-fondo-borde/30">
               <div id="casos-lista" class="min-h-[400px]">
                 <!-- Los casos se cargarán aquí -->
+              </div>
+
+              <div id="paginacion-casos" class="hidden px-6 py-4 items-center justify-between border-t border-fondo-borde/30">
+                <button
+                  id="pagina-prev"
+                  type="button"
+                  class="h-10 px-4 bg-fondo-panel/20 backdrop-blur-sm border-2 border-fondo-borde/40 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 action-btn"
+                >
+                  Anterior
+                </button>
+                <div id="pagina-info" class="text-sm text-texto-secundario"></div>
+                <button
+                  id="pagina-next"
+                  type="button"
+                  class="h-10 px-4 bg-fondo-panel/20 backdrop-blur-sm border-2 border-fondo-borde/40 rounded-xl text-texto-principal hover:border-acento-azul hover:bg-acento-azul/5 transition-all duration-300 action-btn"
+                >
+                  Siguiente
+                </button>
               </div>
 
               <!-- Estado vacío -->
@@ -498,8 +503,8 @@ import {
         class="text-xl font-serif text-texto-principal mb-2"
       >
       </h3>
-      <p id="modal-mensaje" class="text-texto-secundario mb-8 leading-relaxed">
-      </p>
+      <div id="modal-mensaje" class="text-texto-secundario mb-8 leading-relaxed">
+      </div>
 
       <div class="flex justify-end gap-3">
         <button
@@ -584,8 +589,58 @@ import {
     }
 
     .action-btn.active {
-      border-color: var(--acento-azul);
-      background-color: rgba(0, 153, 255, 0.08);
+      /* El color específico lo define active-<tipo> */
+    }
+
+    .action-btn.active-todos {
+      border-color: #4da3ff;
+      background-color: rgba(77, 163, 255, 0.08);
+    }
+
+    .action-btn.active-resueltos {
+      border-color: rgb(74 222 128);
+      background-color: rgba(74, 222, 128, 0.10);
+    }
+
+    .action-btn.active-pendientes {
+      border-color: rgb(250 204 21);
+      background-color: rgba(250, 204, 21, 0.10);
+    }
+
+    .action-btn.active-fallidos {
+      border-color: rgb(248 113 113);
+      background-color: rgba(248, 113, 113, 0.10);
+    }
+
+    .action-btn.active-abandonados {
+      /* Fallback a turquesa si la variable no existe */
+      border-color: var(--acento-turquesa, #5eead4);
+      background-color: rgba(94, 234, 212, 0.10);
+    }
+
+    .action-btn.active-todos svg,
+    .action-btn.active-todos span {
+      color: var(--acento-azul);
+    }
+
+    .action-btn.active-resueltos svg,
+    .action-btn.active-resueltos span {
+      color: rgb(74 222 128);
+    }
+
+    .action-btn.active-pendientes svg,
+    .action-btn.active-pendientes span {
+      color: rgb(250 204 21);
+    }
+
+    .action-btn.active-fallidos svg,
+    .action-btn.active-fallidos span {
+      color: rgb(248 113 113);
+    }
+
+    .action-btn.active-abandonados svg,
+    .action-btn.active-abandonados span {
+      color: var(--acento-turquesa, #5eead4) !important;
     }
   </style>
 
@@ -598,6 +653,10 @@ import {
     const GUIDE_EVENT = 'yo-no-fui:guide';
     let filtroActual = "todos";
     let accionPendiente = null;
+
+    const LS_ARCHIVO_FILTRO = 'yo-no-fui-archivo-filtro';
+    const PAGE_SIZE = 6;
+    let paginaActual = 1;
 
     // Cargar historial de casos
     function cargarHistorial() {
@@ -661,6 +720,9 @@ import {
       if (contador) contador.textContent = String(historialFiltrado.length);
       actualizarEstadisticas();
 
+      // Resetear a página 1 cuando cambia el dataset
+      paginaActual = 1;
+
       if (historialFiltrado.length === 0) {
         mostrarSinCasos();
       } else {
@@ -668,25 +730,47 @@ import {
       }
     }
 
+    function totalPaginas() {
+      return Math.max(1, Math.ceil(historialFiltrado.length / PAGE_SIZE));
+    }
+
+    function setPagina(nuevaPagina: number) {
+      const total = totalPaginas();
+      paginaActual = Math.min(Math.max(1, nuevaPagina), total);
+      mostrarCasos();
+    }
+
     // Ordenar casos
     function ordenarCasos(orden: string) {
+      const getFechaMs = (obj: any) => {
+        const raw = obj?.fecha || obj?.fechaCreacion || obj?.creadoEn;
+        if (!raw) return 0;
+        const ms = new Date(raw).getTime();
+        return Number.isNaN(ms) ? 0 : ms;
+      };
+
+      const getEstado = (obj: any) => {
+        return obj?.estado || (obj?.resuelto ? 'resuelto' : 'pendiente');
+      };
+
+      const estadoOrden: Record<string, number> = {
+        pendiente: 0,
+        resuelto: 1,
+        fallido: 2,
+        abandonado: 3,
+      };
+
       historialFiltrado.sort((a, b) => {
         switch (orden) {
           case "antiguo":
-            return (
-              new Date(a.fechaCreacion || a.fecha).getTime() -
-              new Date(b.fechaCreacion || b.fecha).getTime()
-            );
+            return getFechaMs(a) - getFechaMs(b);
           case "titulo":
             return (a.titulo || "").localeCompare(b.titulo || "");
           case "estado":
-            return (b.resuelto ? 1 : 0) - (a.resuelto ? 1 : 0);
+            return (estadoOrden[getEstado(a)] ?? 99) - (estadoOrden[getEstado(b)] ?? 99);
           case "reciente":
           default:
-            return (
-              new Date(b.fechaCreacion || b.fecha).getTime() -
-              new Date(a.fechaCreacion || a.fecha).getTime()
-            );
+            return getFechaMs(b) - getFechaMs(a);
         }
       });
     }
@@ -695,12 +779,24 @@ import {
     function mostrarCasos() {
       const casosLista = document.getElementById("casos-lista");
       const sinCasos = document.getElementById("sin-casos");
+      const paginacion = document.getElementById("paginacion-casos");
+      const btnPrev = document.getElementById("pagina-prev") as HTMLButtonElement | null;
+      const btnNext = document.getElementById("pagina-next") as HTMLButtonElement | null;
+      const paginaInfo = document.getElementById("pagina-info");
 
       if (sinCasos) sinCasos.classList.add("hidden");
       if (casosLista) {
+        const total = historialFiltrado.length;
+        const totalPags = totalPaginas();
+        const start = (paginaActual - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        const casosPagina = historialFiltrado.slice(start, end);
+
         casosLista.classList.remove("hidden");
-        casosLista.innerHTML = historialFiltrado
+        casosLista.innerHTML = casosPagina
           .map((caso, index) => {
+            const guideVer = index === 0 ? ' data-guide="archivo-ver"' : '';
+            const guideBorrar = index === 0 ? ' data-guide="archivo-borrar"' : '';
             const estado = (caso.estado || (caso.resuelto ? 'resuelto' : 'pendiente')) as string;
             const badgeMap = {
               resuelto: {
@@ -817,27 +913,67 @@ import {
                 </div>
                 
                 <div class="flex flex-col items-center gap-2 ml-4">
-                  <button 
-                    onclick="verCasoDetalles('${caso.casoId}')"
-                    class="p-2 text-texto-secundario hover:text-acento-azul hover:bg-acento-azul/10 rounded-lg transition-all duration-300 opacity-0 group-hover/card:opacity-100 focus:opacity-100 flex items-center gap-1"
-                    title="Ver detalles"
-                  >
-                    <Eye class="w-4 h-4" />
-                  </button>
-                  
-                  <button 
-                    onclick="confirmarEliminarCaso('${caso.casoId}', '${caso.titulo || "este caso"}')"
-                    class="p-2 text-texto-secundario hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-300 opacity-0 group-hover/card:opacity-100 focus:opacity-100"
-                    title="Eliminar caso"
-                  >
-                    <X class="w-4 h-4" />
-                  </button>
+                  ${
+                    estado === 'abandonado'
+                      ? `
+                        <button 
+                          onclick="confirmarEliminarCaso('${caso.casoId}', '${caso.titulo || "este caso"}')"
+                          ${guideBorrar}
+                          class="p-2 text-texto-secundario hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-300 focus:opacity-100"
+                          title="Eliminar caso"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                        </button>
+                      `
+                      : `
+                        <button 
+                          onclick="verCasoResultado('${caso.casoId}')"
+                          ${guideVer}
+                          class="p-2 text-texto-secundario hover:text-acento-azul hover:bg-acento-azul/10 rounded-lg transition-all duration-300 focus:opacity-100 flex items-center gap-1"
+                          title="Ver resultado"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                        
+                        <button 
+                          onclick="confirmarEliminarCaso('${caso.casoId}', '${caso.titulo || "este caso"}')"
+                          ${guideBorrar}
+                          class="p-2 text-texto-secundario hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-300 focus:opacity-100"
+                          title="Eliminar caso"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                        </button>
+                      `
+                  }
                 </div>
               </div>
             </div>
           `;
           })
           .join("");
+
+        if (paginacion) {
+          if (total > PAGE_SIZE) {
+            paginacion.classList.remove("hidden");
+            paginacion.classList.add("flex");
+            if (paginaInfo) paginaInfo.textContent = `Página ${paginaActual} de ${totalPags}`;
+
+            if (btnPrev) {
+              btnPrev.disabled = paginaActual <= 1;
+              btnPrev.classList.toggle('opacity-50', btnPrev.disabled);
+              btnPrev.classList.toggle('pointer-events-none', btnPrev.disabled);
+            }
+
+            if (btnNext) {
+              btnNext.disabled = paginaActual >= totalPags;
+              btnNext.classList.toggle('opacity-50', btnNext.disabled);
+              btnNext.classList.toggle('pointer-events-none', btnNext.disabled);
+            }
+          } else {
+            paginacion.classList.add("hidden");
+            paginacion.classList.remove("flex");
+          }
+        }
       }
     }
 
@@ -953,7 +1089,7 @@ import {
       if (!modalTitulo || !modalMensaje || !modalBtn || !modalHeader) return;
 
       modalTitulo.textContent = titulo;
-      modalMensaje.textContent = mensaje;
+      (modalMensaje as HTMLElement).textContent = mensaje;
 
       // Resetear clases del botón
       (modalBtn as HTMLElement).className =
@@ -1017,6 +1153,160 @@ import {
       setTimeout(() => modal.classList.add("activo"), 10);
     }
 
+    function abrirModalResultado(caso: any) {
+      const modal = document.getElementById("modal-confirmacion");
+      const modalTitulo = document.getElementById("modal-titulo");
+      const modalMensaje = document.getElementById("modal-mensaje");
+      const modalBtn = document.getElementById("modal-accion-btn") as HTMLButtonElement | null;
+      const modalHeader = document.getElementById("modal-header");
+
+      if (!modal || !modalTitulo || !modalMensaje || !modalBtn || !modalHeader) return;
+
+      const estado = caso.estado || (caso.resuelto ? 'resuelto' : 'pendiente');
+      const tituloCaso = caso.titulo || 'Caso sin título';
+
+      const estadoUI: Record<string, any> = {
+        resuelto: {
+          badge: '✅ Resuelto',
+          ring: 'border-green-500/30',
+          headerBg: 'bg-green-500/10',
+          title: 'text-green-400',
+          btn: ['from-green-500', 'to-green-600', 'text-white', 'hover:shadow-green-500/30'],
+          icon: `<div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 border-2 border-green-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>`,
+        },
+        fallido: {
+          badge: '❌ Fallido',
+          ring: 'border-red-500/30',
+          headerBg: 'bg-red-500/10',
+          title: 'text-red-400',
+          btn: ['from-red-500', 'to-red-600', 'text-white', 'hover:shadow-red-500/30'],
+          icon: `<div class="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 border-2 border-red-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </div>`,
+        },
+        pendiente: {
+          badge: '⏳ Pendiente',
+          ring: 'border-yellow-500/30',
+          headerBg: 'bg-yellow-500/10',
+          title: 'text-yellow-400',
+          btn: ['from-yellow-500', 'to-yellow-600', 'text-fondo-principal', 'hover:shadow-yellow-500/30'],
+          icon: `<div class="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-400 border-2 border-yellow-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>`,
+        },
+        abandonado: {
+          badge: '📁 Abandonado',
+          ring: 'border-acento-turquesa/30',
+          headerBg: 'bg-acento-turquesa/10',
+          title: 'text-acento-turquesa',
+          btn: ['from-acento-azul', 'to-acento-turquesa', 'text-fondo-principal', 'hover:shadow-acento-azul/30'],
+          icon: `<div class="w-10 h-10 rounded-full bg-acento-turquesa/20 flex items-center justify-center text-acento-turquesa border-2 border-acento-turquesa/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7"/><path d="M4 7a2 2 0 0 1 2-2h3.5l1.5 2H18a2 2 0 0 1 2 2v3H4V7Z"/></svg>
+          </div>`,
+        },
+      };
+
+      const ui = estadoUI[estado] || estadoUI.pendiente;
+
+      modalTitulo.textContent = tituloCaso;
+      modalHeader.innerHTML = `${ui.icon}
+        <div class="flex-1">
+          <div class="text-sm font-mono tracking-widest uppercase ${ui.title}">Resultado del expediente</div>
+          <div class="mt-1 inline-flex items-center px-3 py-1 rounded-full ${ui.headerBg} ${ui.ring} border text-xs font-bold">${ui.badge}</div>
+        </div>`;
+
+      const formatDate = (value: any) => {
+        if (!value) return '—';
+        try {
+          const d = new Date(value);
+          if (Number.isNaN(d.getTime())) return '—';
+          return d.toLocaleString('es-AR', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        } catch {
+          return '—';
+        }
+      };
+
+      const id = caso.casoId || caso.id || '—';
+      const fechaStr = formatDate(caso.fecha || caso.fechaCreacion || caso.creadoEn);
+
+      const duracion = caso.tiempo || caso.tiempoResolucion || caso.stats?.tiempoTotal || '—';
+      const dificultad = caso.dificultad || caso.data?.configuracion?.complejidad || caso.data?.dificultad || '—';
+      const errores = (typeof caso.stats?.erroresCometidos === 'number')
+        ? String(caso.stats.erroresCometidos)
+        : (typeof caso.errores === 'number' ? String(caso.errores) : '—');
+      const ayudas = (typeof caso.stats?.ayudasUtilizadas === 'number') ? String(caso.stats.ayudasUtilizadas) : '—';
+      const puntaje = (typeof caso.stats?.puntaje === 'number') ? String(caso.stats.puntaje) : '—';
+      const culpable = caso.culpable || caso.data?.culpable || caso.data?.culpableNombre || '—';
+      const ambientacion = caso.data?.ambientacion || caso.ambientacion || '—';
+
+      (modalMensaje as HTMLElement).innerHTML = `
+        <div class="rounded-2xl border ${ui.ring} ${ui.headerBg} p-4">
+          <div class="mb-4">
+            <div class="text-xs text-texto-secundario">Ambientación</div>
+            <div class="text-sm text-texto-principal/90 leading-relaxed">${String(ambientacion)}</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="rounded-xl bg-fondo-panel/20 border border-fondo-borde/30 p-3">
+              <div class="text-xs text-texto-secundario">ID</div>
+              <div class="font-mono text-texto-principal truncate">${id}</div>
+            </div>
+            <div class="rounded-xl bg-fondo-panel/20 border border-fondo-borde/30 p-3">
+              <div class="text-xs text-texto-secundario">Fecha</div>
+              <div class="text-texto-principal">${fechaStr}</div>
+            </div>
+            <div class="rounded-xl bg-fondo-panel/20 border border-fondo-borde/30 p-3">
+              <div class="text-xs text-texto-secundario">Duración</div>
+              <div class="text-texto-principal">${duracion}</div>
+            </div>
+            <div class="rounded-xl bg-fondo-panel/20 border border-fondo-borde/30 p-3">
+              <div class="text-xs text-texto-secundario">Dificultad</div>
+              <div class="text-texto-principal">${dificultad}</div>
+            </div>
+            <div class="rounded-xl bg-fondo-panel/20 border border-fondo-borde/30 p-3">
+              <div class="text-xs text-texto-secundario">Errores</div>
+              <div class="text-texto-principal">${errores}</div>
+            </div>
+            <div class="rounded-xl bg-fondo-panel/20 border border-fondo-borde/30 p-3">
+              <div class="text-xs text-texto-secundario">Culpable</div>
+              <div class="text-texto-principal truncate">${culpable}</div>
+            </div>
+            <div class="rounded-xl bg-fondo-panel/20 border border-fondo-borde/30 p-3">
+              <div class="text-xs text-texto-secundario">Ayudas</div>
+              <div class="text-texto-principal">${ayudas}</div>
+            </div>
+            <div class="rounded-xl bg-fondo-panel/20 border border-fondo-borde/30 p-3">
+              <div class="text-xs text-texto-secundario">Puntaje</div>
+              <div class="text-texto-principal">${puntaje}</div>
+            </div>
+          </div>
+
+          ${(caso.descripcion || caso.data?.descripcion || caso.data?.resumen) ? `
+            <div class="mt-4 pt-4 border-t border-fondo-borde/30">
+              <div class="text-xs text-texto-secundario mb-2">Resumen</div>
+              <div class="text-sm text-texto-principal/90 leading-relaxed">${String(caso.descripcion || caso.data?.descripcion || caso.data?.resumen)}</div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      modalBtn.className = "px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all duration-200 transform hover:scale-105 action-btn bg-gradient-to-r";
+      modalBtn.classList.add(...ui.btn);
+      modalBtn.textContent = "Cerrar";
+      modalBtn.onclick = cerrarModal;
+
+      modal.classList.remove("hidden");
+      setTimeout(() => modal.classList.add("activo"), 10);
+    }
+
     function cerrarModal() {
       const modal = document.getElementById("modal-confirmacion");
       if (!modal) return;
@@ -1027,8 +1317,19 @@ import {
 
     // Funciones de filtro
     function filtrarCasos(tipo: string) {
+      // Si vuelve a tocar el filtro activo, lo desactiva volviendo a "todos"
+      if (tipo === filtroActual && tipo !== 'todos') {
+        tipo = 'todos';
+      }
+
       filtroActual = tipo;
       aplicarFiltro();
+
+      try {
+        localStorage.setItem(LS_ARCHIVO_FILTRO, tipo);
+      } catch (_) {
+        // ignore
+      }
 
       // Remover clase activa de todos los botones
       document
@@ -1040,7 +1341,17 @@ import {
             "bg-green-500/10",
             "border-green-500",
             "bg-yellow-500/10",
-            "border-yellow-500"
+            "border-yellow-500",
+            "bg-red-500/10",
+            "border-red-500",
+            "bg-acento-turquesa/10",
+            "border-acento-turquesa",
+            "active",
+            "active-todos",
+            "active-resueltos",
+            "active-pendientes",
+            "active-fallidos",
+            "active-abandonados"
           );
         });
 
@@ -1049,14 +1360,40 @@ import {
         `button[onclick="filtrarCasos('${tipo}')"]`
       );
       if (botonActual) {
+        (botonActual as HTMLElement).classList.add('active');
         if (tipo === "todos") {
           (botonActual as HTMLElement).classList.add("bg-acento-azul/10", "border-acento-azul");
+          (botonActual as HTMLElement).classList.add("active-todos");
         } else if (tipo === "resueltos") {
           (botonActual as HTMLElement).classList.add("bg-green-500/10", "border-green-500");
+          (botonActual as HTMLElement).classList.add("active-resueltos");
         } else if (tipo === "pendientes") {
           (botonActual as HTMLElement).classList.add("bg-yellow-500/10", "border-yellow-500");
+          (botonActual as HTMLElement).classList.add("active-pendientes");
+        } else if (tipo === "fallidos") {
+          (botonActual as HTMLElement).classList.add("bg-red-500/10", "border-red-500");
+          (botonActual as HTMLElement).classList.add("active-fallidos");
+        } else if (tipo === "abandonados") {
+          (botonActual as HTMLElement).classList.add("bg-acento-turquesa/10", "border-acento-turquesa");
+          (botonActual as HTMLElement).classList.add("active-abandonados");
         }
       }
+    }
+
+    function verCasoResultado(casoId: string) {
+      const caso = historialOriginal.find((c) => c.casoId === casoId);
+
+      if (!caso) {
+        abrirModal(
+          "info",
+          "Caso No Encontrado",
+          "No se pudo encontrar la información del caso.",
+          null
+        );
+        return;
+      }
+
+      abrirModalResultado(caso);
     }
 
     // ELIMINAR CASO INDIVIDUAL - CORREGIDO
@@ -1297,8 +1634,25 @@ import {
         ordenarSelect.addEventListener("change", aplicarFiltro);
       }
 
-      // Aplicar filtro inicial
-      filtrarCasos("todos");
+      const btnPrev = document.getElementById("pagina-prev");
+      if (btnPrev) {
+        btnPrev.addEventListener("click", () => setPagina(paginaActual - 1));
+      }
+
+      const btnNext = document.getElementById("pagina-next");
+      if (btnNext) {
+        btnNext.addEventListener("click", () => setPagina(paginaActual + 1));
+      }
+
+      // Aplicar filtro inicial (persistido si existe)
+      let filtroInicial = "todos";
+      try {
+        const saved = localStorage.getItem(LS_ARCHIVO_FILTRO);
+        if (saved) filtroInicial = saved;
+      } catch (_) {
+        // ignore
+      }
+      filtrarCasos(filtroInicial);
 
       // Efecto de escritura en el título
       const title = document.querySelector("h1");
@@ -1325,6 +1679,7 @@ import {
     (window as any).limpiarHistorial = limpiarHistorial;
     (window as any).confirmarEliminarCaso = confirmarEliminarCaso;
     (window as any).verCasoDetalles = verCasoDetalles;
+    (window as any).verCasoResultado = verCasoResultado;
     (window as any).cerrarModal = cerrarModal;
   </script>
 </MainLayout>

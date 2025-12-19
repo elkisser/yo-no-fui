@@ -32,31 +32,30 @@ const Footer: React.FC = () => {
           <div className="hidden md:block w-px h-6 bg-gradient-to-b from-transparent via-fondo-borde to-transparent"></div>
 
           {/* Enlaces centrales */}
-          <div className="flex items-center space-x-6">
-            <a 
-              href="/" 
-              className="text-xs text-texto-secundario hover:text-texto-principal transition-colors"
-            >
-              Escritorio
-            </a>
-            <a 
-              href="/nuevo-caso" 
-              className="text-xs text-texto-secundario hover:text-texto-principal transition-colors"
-            >
-              Nuevo Caso
-            </a>
-            <a 
-              href="/investigar" 
-              className="text-xs text-texto-secundario hover:text-texto-principal transition-colors"
-            >
-              Investigar
-            </a>
-            <a 
-              href="/archivo" 
-              className="text-xs text-texto-secundario hover:text-texto-principal transition-colors"
-            >
-              Archivo
-            </a>
+          <div className="flex items-center">
+            {(
+              [
+                { href: '/', label: 'Inicio' },
+                { href: '/nuevo-caso', label: 'Nuevo Caso' },
+                { href: '/archivo', label: 'Archivo' },
+              ] as const
+            ).map((link, index, all) => (
+              <React.Fragment key={link.href}>
+                <a
+                  href={link.href}
+                  className="text-xs text-texto-secundario hover:text-acento-turquesa transition-colors"
+                >
+                  {link.label}
+                </a>
+                {index < all.length - 1 && (
+                  <span aria-hidden="true" className="mx-4 inline-flex items-center text-texto-secundario/50">
+                    <svg width="4" height="4" viewBox="0 0 4 4" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="2" cy="2" r="2" />
+                    </svg>
+                  </span>
+                )}
+              </React.Fragment>
+            ))}
           </div>
 
           {/* Separador visual */}
