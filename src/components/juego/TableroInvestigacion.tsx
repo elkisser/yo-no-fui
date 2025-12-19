@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { jsPDF } from 'jspdf';
+import AccusationSeal from './AccusationSeal';
 import {
   AlertCircle,
   ArrowRight,
@@ -347,11 +348,24 @@ const TableroInvestigacion: React.FC = () => {
   const [notas, setNotas] = useState('');
   const [proponiendo, setProponiendo] = useState<string | null>(null);
   const [resultado, setResultado] = useState<{ correcto: boolean; mensaje: string } | null>(null);
+  const [mostrarSello, setMostrarSello] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  const selloTimerRef = React.useRef<number | null>(null);
   const [estadisticasFinales, setEstadisticasFinales] = useState<any>(null);
   const [tiempoVisual, setTiempoVisual] = useState(getTiempoTranscurrido());
   const [cerrandoResultado, setCerrandoResultado] = useState(false);
   const [redirectPendiente, setRedirectPendiente] = useState<string | null>(null);
   const [confirmarCierreCaso, setConfirmarCierreCaso] = useState<null | 'abandonar'>(null);
+
+  useEffect(() => {
+    return () => {
+      if (selloTimerRef.current) {
+        window.clearTimeout(selloTimerRef.current);
+        selloTimerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (casoActual) {
@@ -656,6 +670,27 @@ const TableroInvestigacion: React.FC = () => {
   };
 
   const handleProponerCulpable = (sospechosoId: string) => {
+    if (selloTimerRef.current) {
+      window.clearTimeout(selloTimerRef.current);
+      selloTimerRef.current = null;
+    }
+    setMostrarModal(false);
+    setMostrarSello(false);
+    setResultado(null);
+    setCerrandoResultado(false);
+    setRedirectPendiente(null);
+
+    try {
+      if (!audioContext) {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        setAudioContext(ctx);
+        ctx.resume?.().catch(() => {});
+      } else {
+        audioContext.resume?.().catch(() => {});
+      }
+    } catch {
+    }
+
     setProponiendo(sospechosoId);
     
     setTimeout(() => {
@@ -677,6 +712,12 @@ const TableroInvestigacion: React.FC = () => {
           ? '¡Correcto! Has resuelto el caso. El culpable ha sido identificado.' 
           : `Acusación incorrecta. El culpable era ${culpable?.nombre || 'un sujeto no identificado'}. Logró salirse con la suya.`
       });
+
+      setMostrarSello(true);
+      selloTimerRef.current = window.setTimeout(() => {
+        setMostrarSello(false);
+        setMostrarModal(true);
+      }, 2400);
       
       setProponiendo(null);
       
@@ -716,6 +757,12 @@ const TableroInvestigacion: React.FC = () => {
   return (
     <div className="min-h-screen bg-fondo-principal bg-grid-pattern relative overflow-hidden animate-fade-in">
        <div className="absolute inset-0 bg-gradient-radial from-transparent to-fondo-principal/90 pointer-events-none" />
+
+      <AccusationSeal
+        correcto={!!resultado?.correcto}
+        visible={mostrarSello}
+        audioContext={audioContext}
+      />
        
       {/* Header */}
       <div className="bg-fondo-principal/80 backdrop-blur-xl border-b border-fondo-borde/50 sticky top-0 z-50 transition-all duration-300 shadow-2xl shadow-black/20">
@@ -1011,7 +1058,7 @@ const TableroInvestigacion: React.FC = () => {
       )}
 
       {/* Resultado de propuesta */}
-      {resultado && (
+      {resultado && mostrarModal && (
         <div className={`fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4 backdrop-blur-lg ${cerrandoResultado ? 'opacity-0 transition-opacity duration-200' : 'animate-fade-in'}`}>
           <div className={`max-w-md w-full rounded-2xl p-8 transform transition-all duration-500 animate-scale-in relative overflow-hidden ${
             resultado.correcto 

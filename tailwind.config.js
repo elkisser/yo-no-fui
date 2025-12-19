@@ -27,6 +27,7 @@ export default {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'blur-in': 'blurIn 0.3s ease-out',
         'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+        'seal-stamp': 'sealStamp 780ms cubic-bezier(0.16, 1, 0.3, 1) both',
       },
       keyframes: {
         fadeIn: {
@@ -40,7 +41,27 @@ export default {
         glowPulse: {
           '0%, 100%': { boxShadow: '0 0 5px rgba(77, 163, 255, 0.5)' },
           '50%': { boxShadow: '0 0 20px rgba(77, 163, 255, 0.8)' },
-        }
+        },
+        sealStamp: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(-38px) scale(2.0) rotate(-18deg)',
+          },
+          '45%': {
+            opacity: '1',
+            transform: 'translateY(0px) scale(1.0) rotate(-8deg)',
+          },
+          '65%': {
+            transform: 'translateY(2px) scale(1.02) rotate(-6deg)',
+          },
+          '80%': {
+            transform: 'translateY(-4px) scale(0.985) rotate(-7deg)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0px) scale(1.0) rotate(-6deg)',
+          },
+        },
       }
     },
   },
