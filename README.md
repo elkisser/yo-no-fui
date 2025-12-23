@@ -1,7 +1,5 @@
 # 🕵️‍♂️ Yo No Fui - Juego de Misterio y Deducción
 
-[![Netlify Status](https://yonofui.netlify.app/)]
-
 Un emocionante juego de misterio donde te conviertes en un detective que debe resolver casos intrigantes. Analiza pistas, interroga sospechosos y resuelve crímenes en este juego de deducción inmersivo.
 
 ## 🎮 Características Principales
